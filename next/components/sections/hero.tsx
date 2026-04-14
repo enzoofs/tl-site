@@ -129,7 +129,7 @@ export function Hero() {
         className="hero-right"
       >
         <motion.img
-          src="/assets/selo-hero.svg"
+          src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/assets/selo-hero.svg`}
           alt="Selo TimeLabs — hexágono dourado com logotipo"
           initial={{ opacity: 0, scale: 0.92 }}
           animate={{ opacity: 1, scale: 1 }}
