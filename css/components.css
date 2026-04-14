@@ -1,0 +1,155 @@
+/* ==========================================================================
+   COMPONENTS · atomos reutilizaveis
+   ========================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 18px 32px;
+  border: 1px solid var(--ink);
+  position: relative;
+  cursor: pointer;
+  transition: background .3s var(--ease), color .3s var(--ease);
+}
+.btn-primary {
+  background: var(--ink);
+  color: var(--mercury);
+  border-color: var(--ink);
+}
+.btn-primary:hover { background: #1d1914; }
+.btn-secondary {
+  background: transparent;
+  color: var(--fg);
+  border-color: var(--fg);
+}
+[data-theme="dark"] .btn-secondary { border-color: var(--paper); color: var(--paper); }
+.btn-secondary:hover { background: var(--fg); color: var(--bg); }
+.btn-mercury {
+  background: var(--mercury);
+  color: var(--ink);
+  border: 0;
+}
+.btn-mercury:hover { background: var(--mercury-soft); }
+
+.btn .btn-hex {
+  position: absolute;
+  top: 6px; right: 8px;
+  width: 8px; height: 9px;
+  background: var(--mercury);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  transition: transform .35s var(--ease);
+}
+.btn:hover .btn-hex { transform: scale(1.25); }
+
+/* --- STAT CARD (atom) --- */
+.stat-card {
+  position: relative;
+  padding: var(--sp-3) var(--sp-3) var(--sp-3) 40px;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+  min-width: 180px;
+}
+.stat-card .sc-cota {
+  position: absolute;
+  left: 6px; top: 50%;
+  transform: translateY(-50%) rotate(180deg);
+  writing-mode: vertical-rl;
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--ink-soft);
+}
+.stat-card .sc-num {
+  font-family: var(--ff-display);
+  font-size: 52px;
+  line-height: 1;
+  margin: 0;
+  letter-spacing: -0.03em;
+}
+.stat-card .sc-num span {
+  font-family: var(--ff-italic);
+  font-style: italic;
+  font-size: 0.45em;
+  color: var(--ink-soft);
+  margin-left: 3px;
+}
+.stat-card .sc-label {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--ink-soft);
+  margin: 8px 0 0;
+}
+
+/* --- NAV PILL (atom) --- */
+.nav-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  text-decoration: none;
+  font-family: var(--ff-body);
+  font-size: 15px;
+  transition: background .25s var(--ease), color .25s;
+}
+[data-theme="dark"] .nav-pill { background: #332c25; color: var(--paper); border-color: var(--paper); }
+.nav-pill:hover { background: var(--ink); color: var(--paper); }
+.nav-pill:hover .np-dot { background: var(--mercury); }
+.nav-pill .np-num {
+  font-family: var(--ff-display);
+  font-size: 17px;
+  color: var(--ink-soft);
+}
+.nav-pill:hover .np-num { color: var(--mercury); }
+.nav-pill .np-dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  background: var(--mercury);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+}
+
+/* --- BADGE (atom) --- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  padding: 6px 12px;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+}
+.badge-processing {
+  background: var(--mercury);
+  color: var(--ink);
+  border-color: var(--mercury);
+  position: relative;
+  padding-left: 20px;
+}
+.badge-processing::before {
+  content: "";
+  position: absolute;
+  left: 8px; top: 50%;
+  width: 6px; height: 6px;
+  background: var(--ink);
+  border-radius: 50%;
+  transform: translateY(-50%);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+.badge-done {
+  background: transparent;
+  color: var(--ink);
+}
+[data-theme="dark"] .badge-done { color: var(--paper); border-color: var(--paper); }
