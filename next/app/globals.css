@@ -300,9 +300,9 @@ html.mouse-active .hex-halo { opacity: 1; }
    ========================================================================== */
 
 @media (max-width: 639px) {
-  /* Tighter section padding on mobile */
+  /* ---- AGGRESSIVE MOBILE SPACING ---- */
   #hero {
-    padding: var(--sp-4) var(--sp-3) !important;
+    padding: var(--sp-3) var(--sp-2) var(--sp-4) !important;
     min-height: 100svh !important;
   }
   #problema,
@@ -310,49 +310,54 @@ html.mouse-active .hex-halo { opacity: 1; }
   #metodo,
   #resultados,
   #agendar {
-    padding: var(--sp-5) var(--sp-3) !important;
+    padding: var(--sp-4) var(--sp-2) !important;
   }
 
-  /* Eyebrow: compact on mobile */
+  /* Eyebrow */
   .eyebrow {
     letter-spacing: 3px !important;
-    font-size: 10px !important;
-    margin-bottom: var(--sp-3) !important;
-  }
-
-  /* Headings: bold and readable on mobile */
-  .hl-gloock {
-    font-size: clamp(32px, 8vw, 48px) !important;
+    font-size: 9px !important;
     margin-bottom: var(--sp-2) !important;
   }
+
+  /* Headings */
+  .hl-gloock {
+    font-size: clamp(28px, 7.5vw, 40px) !important;
+    margin-bottom: var(--sp-1) !important;
+  }
   .hl-gloock.hl-mid {
-    font-size: clamp(28px, 7vw, 40px) !important;
+    font-size: clamp(24px, 6.5vw, 36px) !important;
   }
   .hl-gloock.hl-big {
-    font-size: clamp(36px, 10vw, 52px) !important;
+    font-size: clamp(32px, 9vw, 48px) !important;
   }
 
   /* Tagline */
   .tagline {
-    font-size: clamp(20px, 5vw, 28px) !important;
-    margin: var(--sp-1) 0 var(--sp-3) !important;
+    font-size: clamp(18px, 4.5vw, 26px) !important;
+    margin: var(--sp-1) 0 var(--sp-2) !important;
   }
 
   /* Citation */
   .citation {
-    font-size: clamp(22px, 5vw, 30px) !important;
-    margin-top: var(--sp-4) !important;
+    font-size: clamp(20px, 5vw, 28px) !important;
+    margin-top: var(--sp-3) !important;
   }
 
   /* Italic headline */
   .hl-italic {
-    font-size: clamp(20px, 5vw, 32px) !important;
-    margin-bottom: var(--sp-3) !important;
+    font-size: clamp(18px, 4.5vw, 28px) !important;
+    margin-bottom: var(--sp-2) !important;
   }
 
-  /* Body text: comfortable reading on mobile */
+  /* Body text */
   body {
-    font-size: 16px;
-    line-height: 1.6;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  /* Hex mesh: lower opacity on mobile for readability */
+  .sec-mesh {
+    opacity: 0.4 !important;
   }
 }

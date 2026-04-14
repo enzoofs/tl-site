@@ -102,7 +102,10 @@ export function Problema() {
         }
         @media (max-width: 639px) {
           .problema-grid {
-            gap: var(--sp-3);
+            gap: var(--sp-2);
+          }
+          .problema-card {
+            padding-top: var(--sp-2) !important;
           }
         }
       `}</style>

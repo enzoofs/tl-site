@@ -115,6 +115,11 @@ export function Resultados() {
             grid-template-columns: 1fr;
           }
         }
+        @media (max-width: 639px) {
+          .resultados-grid {
+            gap: var(--sp-3);
+          }
+        }
       `}</style>
     </SectionReveal>
   );

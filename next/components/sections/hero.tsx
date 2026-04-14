@@ -183,16 +183,23 @@ export function Hero() {
         }
         @media (max-width: 639px) {
           .wordmark {
-            font-size: clamp(40px, 11vw, 56px);
+            font-size: clamp(36px, 11vw, 52px);
+          }
+          .hero-grid {
+            gap: var(--sp-3) !important;
+            min-height: calc(100svh - 50px - var(--sp-3) * 2) !important;
+            align-content: center !important;
           }
           .hero-selo {
-            max-width: 160px !important;
+            max-width: 120px !important;
+            margin: 0 auto;
           }
           .hero-left {
             max-width: 100% !important;
           }
           .hero-right {
             order: -1;
+            justify-content: center !important;
           }
           .hero-cta-row {
             flex-direction: column !important;
@@ -201,6 +208,7 @@ export function Hero() {
           .hero-cta-row button {
             width: 100%;
             text-align: center;
+            justify-content: center;
           }
         }
       `}</style>

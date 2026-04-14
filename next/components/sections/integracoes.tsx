@@ -76,6 +76,20 @@ export function Integracoes() {
           background: var(--fg) !important;
           color: var(--bg) !important;
         }
+        @media (max-width: 639px) {
+          #integracoes {
+            padding: var(--sp-4) 0 !important;
+          }
+          #integracoes .eyebrow,
+          #integracoes .hl-gloock {
+            padding: 0 var(--sp-2);
+          }
+          .integ-pill {
+            padding: 8px 14px !important;
+            font-size: 10px !important;
+            letter-spacing: 1.5px !important;
+          }
+        }
       `}</style>
     </section>
   );
