@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 240" width="600" height="240">
+  <rect width="600" height="240" fill="#F5F2EA"/>
+  <!-- Simbolo: hexagono + ampulheta -->
+  <g transform="translate(60,60)">
+    <!-- hexagono outer -->
+    <polygon points="60,0 112,30 112,90 60,120 8,90 8,30"
+             fill="none" stroke="#2B2B2B" stroke-width="3"/>
+    <!-- ampulheta interna -->
+    <path d="M 35,30 L 85,30 L 60,60 L 85,90 L 35,90 L 60,60 Z"
+          fill="#F5C842" stroke="#2B2B2B" stroke-width="1.5" stroke-linejoin="round"/>
+    <!-- ponto central -->
+    <circle cx="60" cy="60" r="3" fill="#2B2B2B"/>
+  </g>
+  <!-- Wordmark -->
+  <g font-family="Inter, Montserrat, sans-serif" font-size="56" font-weight="500">
+    <text x="210" y="140" fill="#F5C842">time</text>
+    <text x="350" y="140" fill="#2B2B2B">labs</text>
+  </g>
+  <!-- Tagline -->
+  <text x="210" y="170" font-family="Inter, sans-serif" font-size="11"
+        fill="#6B6B6B" letter-spacing="3">A ALQUIMIA DO TEMPO</text>
+</svg>

@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1100" width="1600" height="1100">
+  <defs><filter id="paper"><feTurbulence type="fractalNoise" baseFrequency="1.7" numOctaves="2" seed="5"/><feColorMatrix values="0 0 0 0 0.14  0 0 0 0 0.11  0 0 0 0 0.08  0 0 0 0.05 0"/></filter></defs>
+  <rect width="1600" height="1100" fill="#EFE9DA"/>
+  <rect width="1600" height="1100" filter="url(#paper)"/>
+
+  <text x="90" y="118" font-family="'IBM Plex Mono'" font-size="11" fill="#2B2520" letter-spacing="4">TIMELABS · PALETA</text>
+  <text x="1510" y="118" text-anchor="end" font-family="'IBM Plex Mono'" font-size="11" fill="#2B2520" letter-spacing="4">FOLIO 05 / 10</text>
+  <line x1="90" y1="136" x2="1510" y2="136" stroke="#2B2520" stroke-width="0.4"/>
+
+  <text x="90" y="210" font-family="'IBM Plex Mono'" font-size="12" fill="#E0B03A" letter-spacing="8">§ V · CROMIA</text>
+  <text x="90" y="290" font-family="'Gloock', serif" font-size="72" fill="#2B2520">Quatro tintas.</text>
+  <text x="90" y="350" font-family="'Instrument Serif', serif" font-style="italic" font-size="28" fill="#2B2520">Nao usamos mais que o necessario.</text>
+
+  <line x1="90" y1="400" x2="360" y2="400" stroke="#2B2520" stroke-width="0.5"/>
+
+  <!-- Swatches em linha -->
+  <g transform="translate(90,470)">
+    <!-- Papel -->
+    <g transform="translate(0,0)">
+      <rect x="0" y="0" width="320" height="320" fill="#EFE9DA" stroke="#2B2520" stroke-width="1"/>
+      <text x="20" y="40" font-family="'IBM Plex Mono'" font-size="10" fill="#2B2520" letter-spacing="3">I · PAPEL</text>
+      <text x="20" y="260" font-family="'Gloock', serif" font-size="26" fill="#2B2520">Pergaminho</text>
+      <g font-family="'IBM Plex Mono'" font-size="11" fill="#2B2520">
+        <text x="20" y="290">#EFE9DA</text>
+        <text x="20" y="306">RGB 239 233 218</text>
+      </g>
+    </g>
+
+    <!-- Tinta -->
+    <g transform="translate(355,0)">
+      <rect x="0" y="0" width="320" height="320" fill="#2B2520"/>
+      <text x="20" y="40" font-family="'IBM Plex Mono'" font-size="10" fill="#E0B03A" letter-spacing="3">II · TINTA</text>
+      <text x="20" y="260" font-family="'Gloock', serif" font-size="26" fill="#EFE9DA">Ferro-galica</text>
+      <g font-family="'IBM Plex Mono'" font-size="11" fill="#EFE9DA">
+        <text x="20" y="290">#2B2520</text>
+        <text x="20" y="306">RGB  43  37  32</text>
+      </g>
+    </g>
+
+    <!-- Mercurio -->
+    <g transform="translate(710,0)">
+      <rect x="0" y="0" width="320" height="320" fill="#E0B03A"/>
+      <text x="20" y="40" font-family="'IBM Plex Mono'" font-size="10" fill="#2B2520" letter-spacing="3">III · MERCURIO</text>
+      <text x="20" y="260" font-family="'Gloock', serif" font-size="26" fill="#2B2520">Ouro alquimico</text>
+      <g font-family="'IBM Plex Mono'" font-size="11" fill="#2B2520">
+        <text x="20" y="290">#E0B03A</text>
+        <text x="20" y="306">RGB 224 176  58</text>
+      </g>
+    </g>
+
+    <!-- Secundaria -->
+    <g transform="translate(1065,0)">
+      <rect x="0" y="0" width="320" height="320" fill="#6B6258"/>
+      <text x="20" y="40" font-family="'IBM Plex Mono'" font-size="10" fill="#EFE9DA" letter-spacing="3">IV · NEBLINA</text>
+      <text x="20" y="260" font-family="'Gloock', serif" font-size="26" fill="#EFE9DA">Grafite fumo</text>
+      <g font-family="'IBM Plex Mono'" font-size="11" fill="#EFE9DA">
+        <text x="20" y="290">#6B6258</text>
+        <text x="20" y="306">RGB 107  98  88</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Proporcoes e regras -->
+  <g transform="translate(90,870)">
+    <text x="0" y="0" font-family="'IBM Plex Mono'" font-size="11" fill="#E0B03A" letter-spacing="3">· PROPORCOES RECOMENDADAS</text>
+    <!-- barra proporcional -->
+    <g transform="translate(0,18)">
+      <rect x="0" y="0" width="800" height="26" fill="#EFE9DA" stroke="#2B2520" stroke-width="0.5"/>
+      <rect x="0" y="0" width="520" height="26" fill="#EFE9DA"/>
+      <rect x="520" y="0" width="200" height="26" fill="#2B2520"/>
+      <rect x="720" y="0" width="60" height="26" fill="#E0B03A"/>
+      <rect x="780" y="0" width="20" height="26" fill="#6B6258"/>
+      <g font-family="'IBM Plex Mono'" font-size="10" fill="#2B2520" letter-spacing="2">
+        <text x="0" y="64">65% PAPEL</text>
+        <text x="520" y="64" fill="#2B2520">25% TINTA</text>
+        <text x="720" y="64">7% MERCURIO</text>
+        <text x="800" y="64" text-anchor="end">3%</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Regras -->
+  <g transform="translate(1050,870)" font-family="'IBM Plex Mono'" font-size="10" fill="#2B2520" letter-spacing="2">
+    <text x="0" y="0" fill="#E0B03A">· REGRAS</text>
+    <text x="0" y="20">Mercurio SEMPRE em minoria</text>
+    <text x="0" y="38">Papel SEMPRE domina</text>
+    <text x="0" y="56">Sem gradientes entre tintas</text>
+    <text x="0" y="74">Neblina apenas em metadata</text>
+  </g>
+
+  <line x1="90" y1="990" x2="1510" y2="990" stroke="#2B2520" stroke-width="0.4"/>
+  <text x="90" y="1012" font-family="'IBM Plex Mono'" font-size="10" fill="#2B2520" letter-spacing="3">TIMELABSBR.COM</text>
+  <text x="1510" y="1012" text-anchor="end" font-family="'Instrument Serif'" font-style="italic" font-size="14" fill="#2B2520">V</text>
+</svg>

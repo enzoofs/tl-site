@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 400" width="500" height="400">
+  <rect width="500" height="400" fill="#F5F2EA"/>
+  <!-- Simbolo: dois hexagonos empilhados compartilhando aresta -->
+  <g transform="translate(130,0)">
+    <!-- hex superior: TIME -->
+    <polygon points="260,130 230,78 170,78 140,130 170,182 230,182"
+             fill="none" stroke="#2B2B2B" stroke-width="4" stroke-linejoin="miter"/>
+    <!-- entrada: aresta superior esquerda destacada -->
+    <line x1="170" y1="78" x2="140" y2="130" stroke="#E8C872" stroke-width="4" stroke-linecap="round"/>
+    <text x="200" y="137" text-anchor="middle" font-family="Inter, Montserrat, sans-serif"
+          font-weight="600" font-size="24" fill="#2B2B2B" letter-spacing="2">TIME</text>
+
+    <!-- hex inferior: LABS -->
+    <polygon points="260,234 230,182 170,182 140,234 170,286 230,286"
+             fill="none" stroke="#2B2B2B" stroke-width="4" stroke-linejoin="miter"/>
+    <!-- saida: aresta inferior direita destacada -->
+    <line x1="230" y1="286" x2="260" y2="234" stroke="#E8C872" stroke-width="4" stroke-linecap="round"/>
+    <text x="200" y="241" text-anchor="middle" font-family="Inter, Montserrat, sans-serif"
+          font-weight="600" font-size="24" fill="#2B2B2B" letter-spacing="2">LABS</text>
+
+    <!-- nucleo: aresta compartilhada, amarelo forte -->
+    <line x1="170" y1="182" x2="230" y2="182" stroke="#F5C842" stroke-width="6" stroke-linecap="round"/>
+  </g>
+</svg>

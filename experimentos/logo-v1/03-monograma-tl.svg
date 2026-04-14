@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 240" width="600" height="240">
+  <rect width="600" height="240" fill="#F5F2EA"/>
+  <!-- Simbolo: hexagono com TL -->
+  <g transform="translate(60,50)">
+    <!-- hexagono preenchido sutil -->
+    <polygon points="70,0 130,35 130,105 70,140 10,105 10,35"
+             fill="#2B2B2B"/>
+    <!-- letras T + L -->
+    <g font-family="Inter, Montserrat, sans-serif" font-weight="700">
+      <text x="30" y="88" font-size="56" fill="#F5C842">T</text>
+      <text x="78" y="88" font-size="56" fill="#F5F2EA">L</text>
+    </g>
+    <!-- linha de fluxo saindo -->
+    <polyline points="130,70 155,55 180,70 205,55"
+              fill="none" stroke="#E8C872" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="205" cy="55" r="4" fill="#F5C842"/>
+  </g>
+  <!-- Wordmark vertical compacto -->
+  <g font-family="Inter, Montserrat, sans-serif" font-size="36" font-weight="500">
+    <text x="330" y="115" fill="#F5C842">time</text>
+    <text x="420" y="115" fill="#2B2B2B">labs</text>
+  </g>
+  <text x="330" y="145" font-family="Inter, sans-serif" font-size="10"
+        fill="#6B6B6B" letter-spacing="3">A ALQUIMIA DO TEMPO</text>
+</svg>

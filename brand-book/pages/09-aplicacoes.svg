@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1100" width="1600" height="1100">
+  <defs><filter id="paper"><feTurbulence type="fractalNoise" baseFrequency="1.7" numOctaves="2" seed="9"/><feColorMatrix values="0 0 0 0 0.14  0 0 0 0 0.11  0 0 0 0 0.08  0 0 0 0.05 0"/></filter></defs>
+  <rect width="1600" height="1100" fill="#EFE9DA"/>
+  <rect width="1600" height="1100" filter="url(#paper)"/>
+
+  <text x="90" y="118" font-family="'IBM Plex Mono'" font-size="11" fill="#2B2520" letter-spacing="4">TIMELABS · APLICACOES</text>
+  <text x="1510" y="118" text-anchor="end" font-family="'IBM Plex Mono'" font-size="11" fill="#2B2520" letter-spacing="4">FOLIO 09 / 10</text>
+  <line x1="90" y1="136" x2="1510" y2="136" stroke="#2B2520" stroke-width="0.4"/>
+
+  <text x="90" y="210" font-family="'IBM Plex Mono'" font-size="12" fill="#E0B03A" letter-spacing="8">§ IX · VIDA</text>
+  <text x="90" y="290" font-family="'Gloock', serif" font-size="56" fill="#2B2520">Como a marca vive.</text>
+
+  <!-- Cartao 1: Capa proposta -->
+  <g transform="translate(90,360)">
+    <rect x="0" y="0" width="420" height="560" fill="#EFE9DA" stroke="#2B2520" stroke-width="0.8"/>
+    <!-- conteudo simulando cover de proposta -->
+    <text x="30" y="55" font-family="'IBM Plex Mono'" font-size="9" fill="#2B2520" letter-spacing="4">TIMELABS · PROPOSTA 2026.04</text>
+    <line x1="30" y1="70" x2="390" y2="70" stroke="#2B2520" stroke-width="0.3"/>
+    <!-- selo reduzido -->
+    <g transform="translate(210,210)">
+      <circle r="70" fill="none" stroke="#2B2520" stroke-width="1.2"/>
+      <circle r="55" fill="none" stroke="#2B2520" stroke-width="0.4"/>
+      <polygon points="28,0 14,-24 -14,-24 -28,0 -14,24 14,24" fill="#EFE9DA" stroke="#2B2520" stroke-width="0.8"/>
+      <circle r="8" fill="#E0B03A"/>
+      <text x="0" y="4" text-anchor="middle" font-family="'Gloock', serif" font-size="14" fill="#2B2520">TL</text>
+    </g>
+    <text x="30" y="380" font-family="'Gloock', serif" font-size="36" fill="#2B2520">Alquimia</text>
+    <text x="30" y="420" font-family="'Gloock', serif" font-size="36" fill="#2B2520">operacional</text>
+    <text x="30" y="465" font-family="'Instrument Serif', serif" font-style="italic" font-size="17" fill="#2B2520">proposta tecnica · abril 2026</text>
+    <line x1="30" y1="495" x2="180" y2="495" stroke="#E0B03A" stroke-width="2"/>
+    <text x="30" y="530" font-family="'IBM Plex Mono'" font-size="8" fill="#2B2520" letter-spacing="3" opacity="0.7">FOLIO 01 · REV A</text>
+    <text x="30" y="540" font-family="'IBM Plex Mono'" font-size="10" fill="#6B6258" letter-spacing="4">I · COVER DE PROPOSTA</text>
+  </g>
+
+  <!-- Cartao 2: Post social quadrado -->
+  <g transform="translate(550,360)">
+    <rect x="0" y="0" width="420" height="420" fill="#2B2520"/>
+    <text x="30" y="55" font-family="'IBM Plex Mono'" font-size="9" fill="#E0B03A" letter-spacing="4">· PRINCIPIO III</text>
+    <text x="30" y="180" font-family="'Gloock', serif" font-size="54" fill="#EFE9DA">Nao eh</text>
+    <text x="30" y="240" font-family="'Gloock', serif" font-size="54" fill="#EFE9DA">magia.</text>
+    <text x="30" y="300" font-family="'Instrument Serif', serif" font-style="italic" font-size="28" fill="#E0B03A">eh metodo.</text>
+    <line x1="30" y1="340" x2="120" y2="340" stroke="#E0B03A" stroke-width="1.5"/>
+    <text x="30" y="385" font-family="'IBM Plex Mono'" font-size="10" fill="#EFE9DA" letter-spacing="4">TIMELABSBR.COM</text>
+    <text x="550" y="440" text-anchor="end" font-family="'IBM Plex Mono'" font-size="10" fill="#6B6258" letter-spacing="4">II · POST 1:1 · DARK</text>
+  </g>
+
+  <!-- Cartao 3: Header de site -->
+  <g transform="translate(1010,360)">
+    <rect x="0" y="0" width="500" height="420" fill="#EFE9DA" stroke="#2B2520" stroke-width="0.8"/>
+    <!-- browser bar -->
+    <line x1="0" y1="30" x2="500" y2="30" stroke="#2B2520" stroke-width="0.4"/>
+    <g transform="translate(12,15)" fill="#6B6258">
+      <circle cx="0" cy="0" r="4"/><circle cx="14" cy="0" r="4"/><circle cx="28" cy="0" r="4"/>
+    </g>
+    <text x="250" y="19" text-anchor="middle" font-family="'IBM Plex Mono'" font-size="9" fill="#6B6258">timelabsbr.com</text>
+
+    <!-- header bar -->
+    <line x1="20" y1="75" x2="480" y2="75" stroke="#2B2520" stroke-width="0.3"/>
+    <text x="20" y="62" font-family="'Gloock', serif" font-size="22" fill="#2B2520">timelabs</text>
+    <g font-family="'IBM Plex Mono'" font-size="8" fill="#2B2520" letter-spacing="3">
+      <text x="350" y="62">METODO</text>
+      <text x="410" y="62">FOLIO</text>
+      <text x="455" y="62">AGENDAR</text>
+    </g>
+
+    <!-- hero content -->
+    <text x="20" y="150" font-family="'Gloock', serif" font-size="38" fill="#2B2520">Devolvemos</text>
+    <text x="20" y="195" font-family="'Gloock', serif" font-size="38" fill="#2B2520">tempo ao negocio.</text>
+    <text x="20" y="235" font-family="'Instrument Serif', serif" font-style="italic" font-size="18" fill="#2B2520">automacao que parece metodo.</text>
+
+    <!-- CTA -->
+    <rect x="20" y="260" width="160" height="38" fill="#2B2520"/>
+    <text x="100" y="285" text-anchor="middle" font-family="'IBM Plex Mono'" font-size="11" fill="#E0B03A" letter-spacing="3">AGENDAR ANALISE</text>
+
+    <!-- hexagon decorative -->
+    <g transform="translate(400,230)" stroke="#2B2520" fill="none" stroke-width="0.6" opacity="0.4">
+      <polygon points="60,0 30,-52 -30,-52 -60,0 -30,52 30,52"/>
+      <polygon points="40,0 20,-35 -20,-35 -40,0 -20,35 20,35"/>
+    </g>
+    <circle cx="400" cy="230" r="7" fill="#E0B03A"/>
+
+    <text x="20" y="395" font-family="'IBM Plex Mono'" font-size="10" fill="#6B6258" letter-spacing="4">III · HEADER DE SITE</text>
+  </g>
+
+  <!-- Label inferior -->
+  <g transform="translate(90,940)" font-family="'IBM Plex Mono'" font-size="11" fill="#2B2520" letter-spacing="3">
+    <text x="0" y="0" fill="#E0B03A">· NOTA</text>
+    <text x="60" y="0">Cada aplicacao preserva o mesmo DNA: paleta, tipografia, catalogacao. A marca viaja por contextos sem perder identidade.</text>
+  </g>
+
+  <line x1="90" y1="990" x2="1510" y2="990" stroke="#2B2520" stroke-width="0.4"/>
+  <text x="90" y="1012" font-family="'IBM Plex Mono'" font-size="10" fill="#2B2520" letter-spacing="3">TIMELABSBR.COM</text>
+  <text x="1510" y="1012" text-anchor="end" font-family="'Instrument Serif'" font-style="italic" font-size="14" fill="#2B2520">IX</text>
+</svg>

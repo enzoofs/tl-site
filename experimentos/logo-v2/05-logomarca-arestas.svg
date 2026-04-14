@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 280" width="600" height="280">
+  <rect width="600" height="280" fill="#F5F2EA"/>
+
+  <!-- Grade base: duas colunas de hexagonos (flat-top, s=50, altura edge = 50*sqrt(3) ~ 87) -->
+  <!-- T: coluna esquerda, dois hex empilhados em torno de (180,140) -->
+  <!-- S: coluna direita, dois hex empilhados em torno de (420,140) -->
+
+  <!-- Outlines sutis dos hexagonos que geram as letras -->
+  <g stroke="#2B2B2B" stroke-width="1.5" fill="none" opacity="0.18">
+    <!-- T: hex superior e inferior -->
+    <polygon points="230,96 205,53 155,53 130,96 155,139 205,139"/>
+    <polygon points="230,183 205,140 155,140 130,183 155,226 205,226"/>
+    <!-- S: hex superior e inferior -->
+    <polygon points="470,96 445,53 395,53 370,96 395,139 445,139"/>
+    <polygon points="470,183 445,140 395,140 370,183 395,226 445,226"/>
+  </g>
+
+  <!-- ============ LETRA T ============ -->
+  <!-- Construida com 3 arestas do hex superior formando barra + V invertido (braços),
+       e aresta vertical-conceitual (eixo) do hex inferior formando haste -->
+  <g stroke="#2B2B2B" stroke-width="11" stroke-linecap="square" stroke-linejoin="miter" fill="none">
+    <!-- Barra do T: aresta SUPERIOR do hex de cima (flat-top) -->
+    <line x1="155" y1="53" x2="205" y2="53"/>
+    <!-- Bracos descendo em diagonal: as duas arestas laterais-superiores -->
+    <line x1="155" y1="53" x2="130" y2="96"/>
+    <line x1="205" y1="53" x2="230" y2="96"/>
+  </g>
+  <!-- Haste do T: linha vertical amarela percorrendo eixo dos dois hexes (nucleo) -->
+  <line x1="180" y1="53" x2="180" y2="226"
+        stroke="#F5C842" stroke-width="11" stroke-linecap="square"/>
+
+  <!-- ============ LETRA S ============ -->
+  <!-- Construida com 7 arestas consecutivas dos dois hexes empilhados,
+       tracando zigzag S: esquerda-diagonal-direita-diagonal-esquerda -->
+  <!--
+    Caminho:
+    (445,53) → (395,53)  : aresta topo do hex superior, indo ESQ
+    (395,53) → (370,96)  : aresta topo-esq do hex superior, DIAGONAL DESC-ESQ
+    (370,96) → (395,139) : aresta base-esq do hex superior, DIAGONAL DESC-DIR (curva de retorno)
+    (395,139) → (445,139): aresta compartilhada (base sup / topo inf), indo DIR
+    (445,139) → (470,183): aresta topo-dir do hex inferior, DIAGONAL DESC-DIR
+    (470,183) → (445,226): aresta base-dir do hex inferior, DIAGONAL DESC-ESQ (2a curva)
+    (445,226) → (395,226): aresta base do hex inferior, indo ESQ
+  -->
+  <polyline points="445,53 395,53 370,96 395,139 445,139 470,183 445,226 395,226"
+            fill="none" stroke="#2B2B2B" stroke-width="11"
+            stroke-linecap="square" stroke-linejoin="miter"/>
+  <!-- Acento amarelo: o trecho central horizontal (aresta compartilhada) = nucleo do S -->
+  <line x1="395" y1="139" x2="445" y2="139"
+        stroke="#F5C842" stroke-width="11" stroke-linecap="square"/>
+</svg>

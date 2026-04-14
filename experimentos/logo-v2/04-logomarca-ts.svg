@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 260" width="500" height="260">
+  <rect width="500" height="260" fill="#F5F2EA"/>
+
+  <!-- HEXAGONO 1 = T -->
+  <!-- Hex centrado em (130,130), raio 70 (flat-top) -->
+  <!-- Vertices: (200,130) (165,69) (95,69) (60,130) (95,191) (165,191) -->
+  <g>
+    <!-- outline sutil do hexagono -->
+    <polygon points="200,130 165,69 95,69 60,130 95,191 165,191"
+             fill="none" stroke="#2B2B2B" stroke-width="2" opacity="0.35"/>
+    <!-- barra do T: aresta superior reforcada -->
+    <line x1="95" y1="69" x2="165" y2="69"
+          stroke="#2B2B2B" stroke-width="10" stroke-linecap="square"/>
+    <!-- haste do T: vertical central amarela (nucleo) -->
+    <line x1="130" y1="69" x2="130" y2="191"
+          stroke="#F5C842" stroke-width="10" stroke-linecap="square"/>
+  </g>
+
+  <!-- HEXAGONO 2 = S -->
+  <!-- Hex centrado em (360,130), mesmo raio -->
+  <!-- Vertices: (430,130) (395,69) (325,69) (290,130) (325,191) (395,191) -->
+  <g>
+    <!-- outline sutil -->
+    <polygon points="430,130 395,69 325,69 290,130 325,191 395,191"
+             fill="none" stroke="#2B2B2B" stroke-width="2" opacity="0.35"/>
+    <!-- S composto: topo-esq + diagonal descida-esq + horizontal meio + diagonal descida-dir + base-esq -->
+    <polyline points="395,69 325,69 290,130 430,130 395,191 325,191"
+              fill="none" stroke="#2B2B2B" stroke-width="10"
+              stroke-linecap="square" stroke-linejoin="miter"/>
+    <!-- acento amarelo: a horizontal central (nucleo do S) -->
+    <line x1="290" y1="130" x2="430" y2="130"
+          stroke="#F5C842" stroke-width="10" stroke-linecap="square"/>
+  </g>
+</svg>

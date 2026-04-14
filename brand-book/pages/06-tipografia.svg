@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1100" width="1600" height="1100">
+  <defs><filter id="paper"><feTurbulence type="fractalNoise" baseFrequency="1.7" numOctaves="2" seed="6"/><feColorMatrix values="0 0 0 0 0.14  0 0 0 0 0.11  0 0 0 0 0.08  0 0 0 0.05 0"/></filter></defs>
+  <rect width="1600" height="1100" fill="#EFE9DA"/>
+  <rect width="1600" height="1100" filter="url(#paper)"/>
+
+  <text x="90" y="118" font-family="'IBM Plex Mono'" font-size="11" fill="#2B2520" letter-spacing="4">TIMELABS · TIPOGRAFIA</text>
+  <text x="1510" y="118" text-anchor="end" font-family="'IBM Plex Mono'" font-size="11" fill="#2B2520" letter-spacing="4">FOLIO 06 / 10</text>
+  <line x1="90" y1="136" x2="1510" y2="136" stroke="#2B2520" stroke-width="0.4"/>
+
+  <text x="90" y="210" font-family="'IBM Plex Mono'" font-size="12" fill="#E0B03A" letter-spacing="8">§ VI · TIPOS</text>
+
+  <!-- Gloock spec -->
+  <g transform="translate(90,260)">
+    <text x="0" y="0" font-family="'IBM Plex Mono'" font-size="10" fill="#6B6258" letter-spacing="4">I · DISPLAY · GLOOCK</text>
+    <text x="0" y="80" font-family="'Gloock', serif" font-size="120" fill="#2B2520">Alquimia</text>
+    <text x="0" y="140" font-family="'Gloock', serif" font-size="44" fill="#2B2520">ABCDEFGHIJKLMNOPQRSTUVWXYZ</text>
+    <text x="0" y="175" font-family="'Gloock', serif" font-size="28" fill="#2B2520">abcdefghijklmnopqrstuvwxyz · 0123456789</text>
+    <g font-family="'IBM Plex Mono'" font-size="9" fill="#6B6258" letter-spacing="3">
+      <text x="0" y="210">USO · TITULOS · CAPITULARES · MARCAS · SEMPRE DISPLAY</text>
+    </g>
+  </g>
+
+  <line x1="90" y1="510" x2="1510" y2="510" stroke="#2B2520" stroke-width="0.3"/>
+
+  <!-- Instrument Serif Italic -->
+  <g transform="translate(90,550)">
+    <text x="0" y="0" font-family="'IBM Plex Mono'" font-size="10" fill="#6B6258" letter-spacing="4">II · ITALICO · INSTRUMENT SERIF</text>
+    <text x="0" y="70" font-family="'Instrument Serif', serif" font-style="italic" font-size="78" fill="#2B2520">tempo, silencio e metodo</text>
+    <text x="0" y="115" font-family="'Instrument Serif', serif" font-style="italic" font-size="26" fill="#2B2520">abcdefghijklmnopqrstuvwxyz · ABCDEFGHIJKLMNOPQRSTUVWXYZ</text>
+    <g font-family="'IBM Plex Mono'" font-size="9" fill="#6B6258" letter-spacing="3">
+      <text x="0" y="148">USO · TAGLINES · CITACOES · LEGENDAS EDITORIAIS</text>
+    </g>
+  </g>
+
+  <line x1="90" y1="730" x2="1510" y2="730" stroke="#2B2520" stroke-width="0.3"/>
+
+  <!-- IBM Plex Serif (body) -->
+  <g transform="translate(90,770)">
+    <text x="0" y="0" font-family="'IBM Plex Mono'" font-size="10" fill="#6B6258" letter-spacing="4">III · CORPO · IBM PLEX SERIF</text>
+    <text x="0" y="40" font-family="'IBM Plex Serif', serif" font-size="22" fill="#2B2520">TimeLabs devolve tempo ao negocio. Automatiza, integra, otimiza e analisa</text>
+    <text x="0" y="68" font-family="'IBM Plex Serif', serif" font-size="22" fill="#2B2520">transformando caos operacional em ordem via tecnologia invisivel.</text>
+    <g font-family="'IBM Plex Mono'" font-size="9" fill="#6B6258" letter-spacing="3">
+      <text x="0" y="100">USO · CORPO DE TEXTO · PARAGRAFOS · DOCUMENTACAO</text>
+    </g>
+  </g>
+
+  <!-- Mono box direita -->
+  <g transform="translate(1060,260)">
+    <rect x="0" y="0" width="450" height="210" fill="none" stroke="#2B2520" stroke-width="0.5"/>
+    <text x="20" y="40" font-family="'IBM Plex Mono'" font-size="10" fill="#6B6258" letter-spacing="4">IV · MONO · IBM PLEX MONO</text>
+    <text x="20" y="95" font-family="'IBM Plex Mono'" font-size="32" fill="#2B2520" letter-spacing="2">CODEX · MMXXVI</text>
+    <text x="20" y="135" font-family="'IBM Plex Mono'" font-size="15" fill="#2B2520" letter-spacing="3">TIMELABSBR.COM</text>
+    <text x="20" y="170" font-family="'IBM Plex Mono'" font-size="10" fill="#6B6258" letter-spacing="3">CATALOGACAO · METADADOS · ETIQUETAS</text>
+  </g>
+
+  <line x1="90" y1="990" x2="1510" y2="990" stroke="#2B2520" stroke-width="0.4"/>
+  <text x="90" y="1012" font-family="'IBM Plex Mono'" font-size="10" fill="#2B2520" letter-spacing="3">TIMELABSBR.COM</text>
+  <text x="1510" y="1012" text-anchor="end" font-family="'Instrument Serif'" font-style="italic" font-size="14" fill="#2B2520">VI</text>
+</svg>

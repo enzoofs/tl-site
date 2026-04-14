@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1100" width="1600" height="1100">
+  <defs><filter id="paper"><feTurbulence type="fractalNoise" baseFrequency="1.7" numOctaves="2" seed="2"/><feColorMatrix values="0 0 0 0 0.14  0 0 0 0 0.11  0 0 0 0 0.08  0 0 0 0.05 0"/></filter></defs>
+  <rect width="1600" height="1100" fill="#EFE9DA"/>
+  <rect width="1600" height="1100" filter="url(#paper)"/>
+
+  <!-- header -->
+  <text x="90" y="118" font-family="'IBM Plex Mono'" font-size="11" fill="#2B2520" letter-spacing="4">TIMELABS · MANIFESTO</text>
+  <text x="1510" y="118" text-anchor="end" font-family="'IBM Plex Mono'" font-size="11" fill="#2B2520" letter-spacing="4">FOLIO 02 / 10</text>
+  <line x1="90" y1="136" x2="1510" y2="136" stroke="#2B2520" stroke-width="0.4"/>
+
+  <!-- Secao label -->
+  <text x="90" y="210" font-family="'IBM Plex Mono'" font-size="12" fill="#E0B03A" letter-spacing="8">§ I · ESSENCIA</text>
+
+  <!-- Title -->
+  <text x="90" y="310" font-family="'Gloock', 'IBM Plex Serif', serif" font-size="96" fill="#2B2520">Nao eh magia.</text>
+  <text x="90" y="400" font-family="'Instrument Serif', serif" font-style="italic" font-size="72" fill="#2B2520">Eh metodo, tecnologia</text>
+  <text x="90" y="475" font-family="'Instrument Serif', serif" font-style="italic" font-size="72" fill="#2B2520">e inteligencia.</text>
+
+  <!-- Divider -->
+  <line x1="90" y1="555" x2="540" y2="555" stroke="#2B2520" stroke-width="0.5"/>
+
+  <!-- Body -->
+  <g font-family="'IBM Plex Serif', serif" font-size="20" fill="#2B2520">
+    <text x="90" y="610">O alquimista do seculo 14 registrava transmutacoes em codices iluminados.</text>
+    <text x="90" y="642">O engenheiro do seculo 20 registrava maquinas em blueprints.</text>
+    <text x="90" y="674">O engenheiro do seculo 21 registra automacoes em dashboards flat genericos.</text>
+  </g>
+
+  <text x="90" y="750" font-family="'Gloock', 'IBM Plex Serif', serif" font-size="30" fill="#2B2520">TimeLabs recusa o dashboard flat.</text>
+
+  <g font-family="'IBM Plex Serif', serif" font-size="18" fill="#2B2520" opacity="0.85">
+    <text x="90" y="800">Herda do codex a reverencia pelo registro. Do blueprint a precisao da cota.</text>
+    <text x="90" y="828">Do Swiss o espaco vazio como valor. A marca nao comunica — ela <tspan font-style="italic">registra</tspan>.</text>
+  </g>
+
+  <!-- Arquetipo card -->
+  <g transform="translate(1050,210)">
+    <rect x="0" y="0" width="460" height="700" fill="none" stroke="#2B2520" stroke-width="0.5"/>
+    <rect x="8" y="8" width="444" height="684" fill="none" stroke="#2B2520" stroke-width="0.2"/>
+    <text x="30" y="50" font-family="'IBM Plex Mono'" font-size="10" fill="#E0B03A" letter-spacing="6">§ II · ARQUETIPO</text>
+    <text x="30" y="110" font-family="'Gloock', 'IBM Plex Serif', serif" font-size="44" fill="#2B2520">O Alquimista</text>
+    <text x="30" y="160" font-family="'Gloock', 'IBM Plex Serif', serif" font-size="44" fill="#2B2520">Moderno</text>
+    <line x1="30" y1="185" x2="150" y2="185" stroke="#E0B03A" stroke-width="2"/>
+    <g font-family="'IBM Plex Serif', serif" font-size="17" fill="#2B2520">
+      <text x="30" y="240">Trabalha em um laboratorio digital.</text>
+      <text x="30" y="272">Manipula e otimiza o tempo.</text>
+      <text x="30" y="304">Usa tecnologia invisivel.</text>
+      <text x="30" y="336">Gera transformacao continua.</text>
+    </g>
+
+    <!-- Small hex + mercury as illustration -->
+    <g transform="translate(230,510)">
+      <polygon points="100,0 50,-87 -50,-87 -100,0 -50,87 50,87" fill="none" stroke="#2B2520" stroke-width="1.5"/>
+      <polygon points="70,0 35,-61 -35,-61 -70,0 -35,61 35,61" fill="none" stroke="#2B2520" stroke-width="0.8" opacity="0.5"/>
+      <circle r="20" fill="#E0B03A"/>
+      <circle r="20" fill="none" stroke="#2B2520" stroke-width="1"/>
+    </g>
+    <text x="230" y="670" text-anchor="middle" font-family="'IBM Plex Mono'" font-size="9" fill="#2B2520" letter-spacing="4" opacity="0.6">FIG. I · REATOR</text>
+  </g>
+
+  <!-- footer -->
+  <line x1="90" y1="990" x2="1510" y2="990" stroke="#2B2520" stroke-width="0.4"/>
+  <text x="90" y="1012" font-family="'IBM Plex Mono'" font-size="10" fill="#2B2520" letter-spacing="3">TIMELABSBR.COM</text>
+  <text x="1510" y="1012" text-anchor="end" font-family="'Instrument Serif'" font-style="italic" font-size="14" fill="#2B2520">II</text>
+</svg>

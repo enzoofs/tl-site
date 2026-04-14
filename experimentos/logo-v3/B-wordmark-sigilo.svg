@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" width="1200" height="500">
+  <defs>
+    <filter id="paper-b" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="1.7" numOctaves="2" seed="13"/>
+      <feColorMatrix values="0 0 0 0 0.14  0 0 0 0 0.11  0 0 0 0 0.08  0 0 0 0.05 0"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="500" fill="#EFE9DA"/>
+  <rect width="1200" height="500" filter="url(#paper-b)"/>
+
+  <!-- Moldura de codex: linhas duplas finas como pagina de tratado -->
+  <g stroke="#2B2520" fill="none">
+    <rect x="60" y="60" width="1080" height="380" stroke-width="0.6"/>
+    <rect x="68" y="68" width="1064" height="364" stroke-width="0.3"/>
+  </g>
+
+  <!-- Cabecalho tipografico: numeracao do folio -->
+  <g font-family="'IBM Plex Mono'" fill="#2B2520">
+    <text x="90" y="98" font-size="9" letter-spacing="4">FOLIO · I</text>
+    <text x="1110" y="98" text-anchor="end" font-size="9" letter-spacing="4">MARCA · PRINCIPAL</text>
+  </g>
+  <line x1="90" y1="108" x2="1110" y2="108" stroke="#2B2520" stroke-width="0.3"/>
+
+  <!-- WORDMARK: 'timelabs' em Gloock (didone de alto contraste) -->
+  <!-- Tratamento cirurgico: renderizamos em pedacos pra trocar o 't' do 'i' -->
+  <!-- Baseline unica ~y=270 -->
+
+  <!-- 't' inicial -->
+  <text x="90" y="285" font-family="'Gloock', 'IBM Plex Serif', serif"
+        font-size="180" fill="#2B2520">t</text>
+
+  <!-- 'i' sem ponto - hex amarelo sera colocado no lugar do tittle -->
+  <!-- Em Gloock, 'i' tem um tittle natural. Pra remové-lo sem custom font,
+       usamos 'ı' (dotless i - U+0131) -->
+  <text x="175" y="285" font-family="'Gloock', 'IBM Plex Serif', serif"
+        font-size="180" fill="#2B2520">ı</text>
+
+  <!-- Hex amarelo como tittle do i: centro ~x=197, y do tittle ~168 -->
+  <g transform="translate(197, 148)">
+    <polygon points="14,0 7,-12 -7,-12 -14,0 -7,12 7,12"
+             fill="#E0B03A" stroke="#2B2520" stroke-width="1.8"/>
+    <!-- micro-glifo interno: ponto central -->
+    <circle r="2.2" fill="#2B2520"/>
+  </g>
+
+  <!-- Resto: 'melabs' -->
+  <text x="225" y="285" font-family="'Gloock', 'IBM Plex Serif', serif"
+        font-size="180" fill="#2B2520">melabs</text>
+
+  <!-- Tagline em italico abaixo do wordmark -->
+  <text x="90" y="350" font-family="'Instrument Serif', 'IBM Plex Serif', serif"
+        font-style="italic" font-size="38" fill="#2B2520">
+    a alquimia do tempo para empresas
+  </text>
+
+  <!-- Sigilo miudo no final, direito, alinhado a baseline da tagline -->
+  <g transform="translate(1010, 335)" fill="none" stroke="#2B2520">
+    <circle r="28" stroke-width="0.8"/>
+    <circle r="24" stroke-width="1.3"/>
+    <!-- hex inscrito -->
+    <polygon points="16,0 8,-13.9 -8,-13.9 -16,0 -8,13.9 8,13.9" stroke-width="1.2"/>
+    <!-- gota de mercurio central -->
+    <circle r="5" fill="#E0B03A" stroke="#2B2520" stroke-width="0.8"/>
+    <!-- 4 marcas cardinais -->
+    <line x1="0" y1="-28" x2="0" y2="-24" stroke-width="1"/>
+    <line x1="28" y1="0" x2="24" y2="0" stroke-width="1"/>
+    <line x1="0" y1="28" x2="0" y2="24" stroke-width="1"/>
+    <line x1="-28" y1="0" x2="-24" y2="0" stroke-width="1"/>
+  </g>
+
+  <!-- Rodape: metadados de catalogacao -->
+  <line x1="90" y1="390" x2="1110" y2="390" stroke="#2B2520" stroke-width="0.3"/>
+  <g font-family="'IBM Plex Mono'" font-size="9" fill="#2B2520" letter-spacing="4">
+    <text x="90" y="415">EST. MMXXVI</text>
+    <text x="350" y="415">TIMELABSBR.COM</text>
+    <text x="1110" y="415" text-anchor="end">CODEX · OPERANDI</text>
+  </g>
+</svg>

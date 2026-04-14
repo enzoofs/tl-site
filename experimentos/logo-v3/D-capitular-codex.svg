@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400" width="900" height="400">
+  <rect width="900" height="400" fill="#EFE9DA"/>
+
+  <!-- Capitular iluminada: T gigante serif com ornamento hex-grid ao redor -->
+  <g transform="translate(80,60)">
+    <!-- Moldura do capitular (quadrada, estilo codice) -->
+    <rect x="0" y="0" width="260" height="260" fill="#2B2B2B"/>
+    <rect x="8" y="8" width="244" height="244" fill="#EFE9DA"/>
+
+    <!-- Ornamento hexagonal ao redor do T (substitui as arabescos medievais) -->
+    <g stroke="#2B2B2B" stroke-width="0.8" fill="none" opacity="0.6">
+      <!-- teia de hexagonos miudos -->
+      <g transform="translate(40,40)">
+        <polygon points="14,0 7,-12 -7,-12 -14,0 -7,12 7,12"/>
+        <polygon points="40,20 33,8 19,8 12,20 19,32 33,32"/>
+        <polygon points="14,40 7,28 -7,28 -14,40 -7,52 7,52"/>
+      </g>
+      <g transform="translate(195,40)">
+        <polygon points="14,0 7,-12 -7,-12 -14,0 -7,12 7,12"/>
+        <polygon points="-12,20 -19,8 -33,8 -40,20 -33,32 -19,32"/>
+        <polygon points="14,40 7,28 -7,28 -14,40 -7,52 7,52"/>
+      </g>
+      <g transform="translate(40,200)">
+        <polygon points="14,0 7,-12 -7,-12 -14,0 -7,12 7,12"/>
+        <polygon points="40,20 33,8 19,8 12,20 19,32 33,32"/>
+      </g>
+      <g transform="translate(195,200)">
+        <polygon points="14,0 7,-12 -7,-12 -14,0 -7,12 7,12"/>
+        <polygon points="-12,20 -19,8 -33,8 -40,20 -33,32 -19,32"/>
+      </g>
+    </g>
+
+    <!-- O T capitular: serif didone gigante -->
+    <text x="130" y="205" text-anchor="middle"
+          font-family="'GT Sectra', 'Playfair Display', 'Didot', Georgia, serif"
+          font-size="220" font-weight="400" fill="#2B2B2B">T</text>
+
+    <!-- gota de mercurio como ornamento na base do T -->
+    <circle cx="130" cy="220" r="7" fill="#E8B84A" stroke="#2B2B2B" stroke-width="0.8"/>
+
+    <!-- Detalhe dourado canto superior direito (iluminura) -->
+    <g transform="translate(225,25)">
+      <polygon points="14,0 7,-12 -7,-12 -14,0 -7,12 7,12"
+               fill="#E8B84A" stroke="#2B2B2B" stroke-width="1"/>
+    </g>
+  </g>
+
+  <!-- Texto de abertura do codice "ime labs" continuando em serif -->
+  <g transform="translate(370,60)">
+    <text x="0" y="150"
+          font-family="'GT Sectra', 'Playfair Display', 'Didot', Georgia, serif"
+          font-size="100" font-weight="400" fill="#2B2B2B" letter-spacing="-2">ime labs</text>
+
+    <!-- Tagline em italico -->
+    <text x="0" y="200"
+          font-family="'GT Sectra', 'Playfair Display', Georgia, serif"
+          font-size="28" font-style="italic" fill="#2B2B2B">
+      a alquimia do tempo
+    </text>
+
+    <!-- Linha -->
+    <line x1="0" y1="225" x2="480" y2="225" stroke="#2B2B2B" stroke-width="0.8"/>
+
+    <!-- Metadados tecnicos -->
+    <text x="0" y="250"
+          font-family="'IBM Plex Mono', monospace" font-size="10"
+          fill="#2B2B2B" letter-spacing="4">
+      FOLIO I · CAPITULO PRIMO · MMXXVI
+    </text>
+  </g>
+</svg>
