@@ -239,7 +239,7 @@ export function Header() {
       </AnimatePresence>
 
       {/* Responsive styles */}
-      <style jsx>{`
+      <style>{`
         @media (max-width: 639px) {
           .header-desktop-nav {
             display: none !important;

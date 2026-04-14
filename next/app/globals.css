@@ -300,44 +300,59 @@ html.mouse-active .hex-halo { opacity: 1; }
    ========================================================================== */
 
 @media (max-width: 639px) {
-  #hero,
+  /* Tighter section padding on mobile */
+  #hero {
+    padding: var(--sp-4) var(--sp-3) !important;
+    min-height: 100svh !important;
+  }
   #problema,
   #operacoes,
   #metodo,
   #resultados,
   #agendar {
-    padding: var(--sp-6) var(--sp-3) !important;
+    padding: var(--sp-5) var(--sp-3) !important;
   }
 
-  /* Eyebrow: reduce letter-spacing on mobile */
+  /* Eyebrow: compact on mobile */
   .eyebrow {
-    letter-spacing: 4px !important;
+    letter-spacing: 3px !important;
     font-size: 10px !important;
+    margin-bottom: var(--sp-3) !important;
   }
 
-  /* Headings: tighter on mobile */
+  /* Headings: bold and readable on mobile */
   .hl-gloock {
-    font-size: clamp(36px, 8vw, 52px) !important;
+    font-size: clamp(32px, 8vw, 48px) !important;
+    margin-bottom: var(--sp-2) !important;
   }
   .hl-gloock.hl-mid {
-    font-size: clamp(32px, 7vw, 42px) !important;
+    font-size: clamp(28px, 7vw, 40px) !important;
   }
   .hl-gloock.hl-big {
-    font-size: clamp(40px, 10vw, 56px) !important;
+    font-size: clamp(36px, 10vw, 52px) !important;
   }
 
-  /* Tagline: scale down */
+  /* Tagline */
   .tagline {
-    font-size: clamp(20px, 4vw, 28px) !important;
+    font-size: clamp(20px, 5vw, 28px) !important;
+    margin: var(--sp-1) 0 var(--sp-3) !important;
   }
 
-  /* Citation: scale down */
+  /* Citation */
   .citation {
-    font-size: clamp(22px, 5vw, 32px) !important;
+    font-size: clamp(22px, 5vw, 30px) !important;
+    margin-top: var(--sp-4) !important;
   }
 
-  /* Italic headline: scale down */
+  /* Italic headline */
   .hl-italic {
-    font-size: clamp(22px, 5vw, 36px) !important;
+    font-size: clamp(20px, 5vw, 32px) !important;
+    margin-bottom: var(--sp-3) !important;
+  }
+
+  /* Body text: comfortable reading on mobile */
+  body {
+    font-size: 16px;
+    line-height: 1.6;
   }
 }

@@ -140,6 +140,19 @@ export function CtaFinal() {
           </motion.p>
         )}
       </div>
+
+      <style>{`
+        @media (max-width: 639px) {
+          #agendar form {
+            flex-direction: column;
+            align-items: stretch !important;
+          }
+          #agendar input {
+            max-width: 100% !important;
+            flex: 1 1 auto !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

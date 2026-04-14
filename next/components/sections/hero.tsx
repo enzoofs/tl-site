@@ -92,10 +92,10 @@ export function Hero() {
           transition={{ duration: 0.7, delay: 0.5, ease }}
           style={{
             fontFamily: "var(--font-body)",
-            fontSize: "clamp(18px, 2vw, 22px)",
+            fontSize: "clamp(16px, 2.5vw, 22px)",
             lineHeight: 1.6,
             color: "var(--fg)",
-            margin: "0 0 var(--sp-5)",
+            margin: "0 0 var(--sp-4)",
           }}
         >
           Automatizamos processos repetitivos, integramos os sistemas que
@@ -108,6 +108,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.65, ease }}
+          className="hero-cta-row"
           style={{ display: "flex", flexWrap: "wrap", gap: "var(--sp-2)" }}
         >
           <Button variant="primary" href="#agendar">
@@ -147,7 +148,7 @@ export function Hero() {
         />
       </div>
 
-      <style jsx>{`
+      <style>{`
         .wordmark {
           font-family: var(--font-display);
           font-size: clamp(52px, 8vw, 96px);
@@ -185,10 +186,21 @@ export function Hero() {
             font-size: clamp(40px, 11vw, 56px);
           }
           .hero-selo {
-            max-width: 200px !important;
+            max-width: 160px !important;
           }
           .hero-left {
             max-width: 100% !important;
+          }
+          .hero-right {
+            order: -1;
+          }
+          .hero-cta-row {
+            flex-direction: column !important;
+          }
+          .hero-cta-row a,
+          .hero-cta-row button {
+            width: 100%;
+            text-align: center;
           }
         }
       `}</style>
