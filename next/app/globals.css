@@ -1,0 +1,311 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   TOKENS · Codex Operandi — ported from vanilla CSS
+   ========================================================================== */
+
+:root {
+  --paper:        #EFE9DA;
+  --paper-alt:    #FAF8F2;
+  --paper-dim:    #DFDACB;
+  --ink:          #2B2520;
+  --ink-soft:     #6B6258;
+  --mercury:      #E0B03A;
+  --mercury-soft: #E8C872;
+
+  --bg:      var(--paper);
+  --bg-alt:  var(--paper-alt);
+  --fg:      var(--ink);
+  --fg-soft: var(--ink-soft);
+
+  --sp-1: 8px;
+  --sp-2: 16px;
+  --sp-3: 24px;
+  --sp-4: 32px;
+  --sp-5: 48px;
+  --sp-6: 64px;
+  --sp-7: 96px;
+  --sp-8: 128px;
+
+  --track-mono: 0.2em;
+  --track-display: -0.02em;
+
+  --ease: cubic-bezier(.22,.61,.36,1);
+}
+
+/* Dark mode — inverts paper/ink, preserves mercury */
+[data-theme="dark"] {
+  --bg:      var(--ink);
+  --bg-alt:  #332c25;
+  --fg:      var(--paper);
+  --fg-soft: #a39987;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-alt: var(--paper-alt);
+  --color-paper-dim: var(--paper-dim);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-mercury: var(--mercury);
+  --color-mercury-soft: var(--mercury-soft);
+  --color-bg: var(--bg);
+  --color-bg-alt: var(--bg-alt);
+  --color-fg: var(--fg);
+  --color-fg-soft: var(--fg-soft);
+
+  --font-display: var(--font-gloock);
+  --font-italic: var(--font-instrument-serif);
+  --font-body: var(--font-ibm-plex-serif);
+  --font-mono: var(--font-ibm-plex-mono);
+
+  --spacing-sp-1: var(--sp-1);
+  --spacing-sp-2: var(--sp-2);
+  --spacing-sp-3: var(--sp-3);
+  --spacing-sp-4: var(--sp-4);
+  --spacing-sp-5: var(--sp-5);
+  --spacing-sp-6: var(--sp-6);
+  --spacing-sp-7: var(--sp-7);
+  --spacing-sp-8: var(--sp-8);
+}
+
+/* ==========================================================================
+   GLOBAL STYLES
+   ========================================================================== */
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.65;
+  font-feature-settings: "onum" 1, "kern" 1;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  hyphens: manual;
+  transition: background .4s var(--ease), color .4s var(--ease);
+}
+
+:focus-visible {
+  outline: 2px solid var(--mercury);
+  outline-offset: 3px;
+}
+
+/* ==========================================================================
+   TYPOGRAPHY UTILITIES
+   ========================================================================== */
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 8px;
+  text-transform: uppercase;
+  color: var(--fg);
+  margin: 0 0 var(--sp-5);
+}
+.eyebrow-gold { color: var(--mercury); }
+
+.hl-gloock {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(48px, 7vw, 92px);
+  line-height: 1.02;
+  letter-spacing: var(--track-display);
+  color: var(--fg);
+  margin: 0 0 var(--sp-3);
+  hyphens: none;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+.hl-gloock.hl-mid { font-size: clamp(42px, 6vw, 72px); }
+.hl-gloock.hl-big { font-size: clamp(64px, 10vw, 96px); }
+.hl-paper { color: var(--paper); }
+
+.hl-italic {
+  font-family: var(--font-italic);
+  font-style: italic;
+  font-size: clamp(30px, 5vw, 52px);
+  line-height: 1.15;
+  color: var(--fg);
+  margin: 0 0 var(--sp-5);
+}
+.hl-gold { color: var(--mercury); }
+
+.tagline {
+  font-family: var(--font-italic);
+  font-style: italic;
+  font-size: clamp(24px, 2.6vw, 38px);
+  line-height: 1.2;
+  color: var(--fg);
+  margin: var(--sp-2) 0 var(--sp-4);
+}
+
+.citation {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3vw, 42px);
+  line-height: 1.2;
+  color: var(--fg);
+  margin-top: var(--sp-5);
+}
+
+/* ==========================================================================
+   HEX MESH STYLES
+   ========================================================================== */
+
+.sec-mesh {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0.7;
+  transition: opacity .6s var(--ease);
+  color: rgba(43, 37, 32, 0.13);
+}
+
+[data-theme="dark"] .sec-mesh { color: rgba(239, 233, 218, 0.14); }
+
+/* Dark-background sections override mesh color regardless of theme */
+.sec-mesh--dark { color: rgba(239, 233, 218, 0.14); }
+
+/* Hover: mesh goes from 0.7 to 1 opacity when hovering the section */
+section:hover > .sec-mesh,
+section:hover .sec-mesh,
+div:hover > .sec-mesh { opacity: 1; }
+
+.sec-mesh svg { width: 100%; height: 100%; display: block; }
+.sec-mesh .hx {
+  fill: currentColor; fill-opacity: 0;
+  stroke: currentColor; stroke-width: 0.5;
+  transition: fill 0.35s ease, fill-opacity 0.35s ease;
+}
+.sec-mesh .hx-shade {
+  stroke: currentColor; stroke-width: 0.5;
+  fill: currentColor; fill-opacity: 0.35;
+  transition: fill 0.35s ease, fill-opacity 0.35s ease;
+}
+.sec-mesh .hx-lit {
+  fill: rgba(224, 176, 58, 0.34);
+  stroke: rgba(224, 176, 58, 0.65);
+  stroke-width: 0.8;
+  animation: lit-breathe 5s ease-in-out infinite;
+}
+.sec-mesh .hx-lit:nth-child(2n) { animation-delay: -2s; }
+.sec-mesh .hx-lit:nth-child(3n) { animation-delay: -3.5s; }
+
+.sec-mesh .conn {
+  fill: none;
+  stroke: rgba(224, 176, 58, 0.48);
+  stroke-width: 1;
+  stroke-linejoin: round;
+  stroke-linecap: square;
+}
+
+/* Pulse styles removed — now using stroke-dasharray light pulse */
+
+@keyframes lit-breathe {
+  0%, 100% { fill-opacity: 0.28; stroke-opacity: 0.55; }
+  50%      { fill-opacity: 0.55; stroke-opacity: 0.85; }
+}
+
+/* ==========================================================================
+   HALO GLOBAL
+   ========================================================================== */
+
+.hex-halo {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  --mx: 50%;
+  --my: 50%;
+  background: radial-gradient(
+    340px circle at var(--mx) var(--my),
+    rgba(224, 176, 58, 0.12),
+    rgba(224, 176, 58, 0.04) 35%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity .35s var(--ease);
+  mix-blend-mode: multiply;
+}
+html.mouse-active .hex-halo { opacity: 1; }
+[data-theme="dark"] .hex-halo { mix-blend-mode: screen; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sec-mesh .hx-lit { animation: none; }
+}
+
+/* ==========================================================================
+   UTILITY: screen reader only
+   ========================================================================== */
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* ==========================================================================
+   SKIP LINK (keyboard a11y)
+   ========================================================================== */
+
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 8px;
+  z-index: 200;
+  padding: 12px 24px;
+  background: var(--mercury);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: top 0.15s var(--ease);
+}
+.skip-link:focus {
+  top: 8px;
+}
+
+/* ==========================================================================
+   INFINITE SLIDER / MARQUEE
+   ========================================================================== */
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ==========================================================================
+   SECTION RESPONSIVE PADDING
+   Desktop: var(--sp-8) vertical, var(--sp-5) horizontal
+   Mobile (<640px): var(--sp-6) vertical, var(--sp-3) horizontal
+   ========================================================================== */
+
+@media (max-width: 639px) {
+  #hero,
+  #problema,
+  #operacoes,
+  #metodo,
+  #resultados,
+  #agendar {
+    padding: var(--sp-6) var(--sp-3) !important;
+  }
+}
