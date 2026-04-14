@@ -100,6 +100,11 @@ export function Problema() {
             grid-template-columns: 1fr;
           }
         }
+        @media (max-width: 639px) {
+          .problema-grid {
+            gap: var(--sp-3);
+          }
+        }
       `}</style>
     </SectionReveal>
   );

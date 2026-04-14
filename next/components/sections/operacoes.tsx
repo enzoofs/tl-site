@@ -7,86 +7,86 @@ import HexMesh from "@/components/ui/hex-mesh";
 /* SVG glyph icons (56x56) for each operation                        */
 /* ------------------------------------------------------------------ */
 
+const DUR = "2s";
+
+function dash(hovered: boolean) {
+  return {
+    strokeDasharray: 200,
+    strokeDashoffset: hovered ? 0 : 200,
+    transition: `stroke-dashoffset ${DUR} var(--ease)`,
+  };
+}
+
+/* Gear/cog — universal automation symbol */
 function GlyphAutomatizar({ hovered }: { hovered: boolean }) {
   return (
     <svg width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true">
-      <polygon
-        points="28,6 50,28 28,50 6,28"
+      <path
+        d="M28 10 L31 16 L37 14 L36 21 L43 22 L39 27 L43 32 L36 33 L37 40 L31 38 L28 44 L25 38 L19 40 L20 33 L13 32 L17 27 L13 22 L20 21 L19 14 L25 16 Z"
+        stroke="var(--paper)"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+        fill="none"
+        style={dash(hovered)}
+      />
+      <circle cx="28" cy="27" r="6" stroke="var(--mercury)" strokeWidth="1.5" fill="none" style={dash(hovered)} />
+    </svg>
+  );
+}
+
+/* Two interlocking chain links — connection/integration */
+function GlyphIntegrar({ hovered }: { hovered: boolean }) {
+  return (
+    <svg width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true">
+      <rect
+        x="6" y="20" width="22" height="16" rx="8"
         stroke="var(--paper)"
         strokeWidth="1.5"
         fill="none"
-        style={{
-          strokeDasharray: 400,
-          strokeDashoffset: hovered ? 0 : 400,
-          transition: "stroke-dashoffset 0.8s var(--ease)",
-        }}
+        style={dash(hovered)}
       />
-      <line
-        x1="14"
-        y1="28"
-        x2="42"
-        y2="28"
+      <rect
+        x="28" y="20" width="22" height="16" rx="8"
         stroke="var(--mercury)"
         strokeWidth="1.5"
-        style={{
-          strokeDasharray: 400,
-          strokeDashoffset: hovered ? 0 : 400,
-          transition: "stroke-dashoffset 0.8s var(--ease)",
-        }}
+        fill="none"
+        style={dash(hovered)}
       />
     </svg>
   );
 }
 
-function GlyphIntegrar({ hovered }: { hovered: boolean }) {
-  const dash = {
-    strokeDasharray: 400,
-    strokeDashoffset: hovered ? 0 : 400,
-    transition: "stroke-dashoffset 0.8s var(--ease)",
-  };
-  return (
-    <svg width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true">
-      <circle cx="14" cy="28" r="5" stroke="var(--paper)" strokeWidth="1.5" fill="none" style={dash} />
-      <circle cx="42" cy="14" r="5" stroke="var(--paper)" strokeWidth="1.5" fill="none" style={dash} />
-      <circle cx="42" cy="42" r="5" stroke="var(--paper)" strokeWidth="1.5" fill="none" style={dash} />
-      <line x1="19" y1="26" x2="37" y2="16" stroke="var(--mercury)" strokeWidth="1.2" style={dash} />
-      <line x1="19" y1="30" x2="37" y2="40" stroke="var(--mercury)" strokeWidth="1.2" style={dash} />
-    </svg>
-  );
-}
-
+/* Upward diagonal arrow — improvement/optimization */
 function GlyphOtimizar({ hovered }: { hovered: boolean }) {
-  const dash = {
-    strokeDasharray: 400,
-    strokeDashoffset: hovered ? 0 : 400,
-    transition: "stroke-dashoffset 0.8s var(--ease)",
-  };
   return (
     <svg width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true">
-      <polygon
-        points="28,4 52,28 28,52 4,28"
+      <line
+        x1="14" y1="42" x2="42" y2="14"
         stroke="var(--paper)"
         strokeWidth="1.5"
-        fill="none"
-        style={dash}
+        strokeLinecap="round"
+        style={dash(hovered)}
       />
-      <line x1="28" y1="16" x2="28" y2="40" stroke="var(--mercury)" strokeWidth="1.5" style={dash} />
+      <polyline
+        points="26,14 42,14 42,30"
+        stroke="var(--mercury)"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+        style={dash(hovered)}
+      />
     </svg>
   );
 }
 
+/* Three ascending bars — chart/data analysis */
 function GlyphAnalisar({ hovered }: { hovered: boolean }) {
-  const dash = {
-    strokeDasharray: 400,
-    strokeDashoffset: hovered ? 0 : 400,
-    transition: "stroke-dashoffset 0.8s var(--ease)",
-  };
   return (
     <svg width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true">
-      <ellipse cx="28" cy="28" rx="20" ry="14" stroke="var(--paper)" strokeWidth="1.5" fill="none" style={dash} />
-      <circle cx="28" cy="28" r="3" fill="var(--mercury)" style={{ opacity: hovered ? 1 : 0.4, transition: "opacity 0.6s var(--ease)" }} />
-      <line x1="18" y1="12" x2="18" y2="44" stroke="var(--mercury)" strokeWidth="1" style={dash} />
-      <line x1="38" y1="12" x2="38" y2="44" stroke="var(--mercury)" strokeWidth="1" style={dash} />
+      <line x1="16" y1="44" x2="16" y2="32" stroke="var(--paper)" strokeWidth="3" strokeLinecap="round" style={dash(hovered)} />
+      <line x1="28" y1="44" x2="28" y2="24" stroke="var(--paper)" strokeWidth="3" strokeLinecap="round" style={dash(hovered)} />
+      <line x1="40" y1="44" x2="40" y2="16" stroke="var(--mercury)" strokeWidth="3" strokeLinecap="round" style={dash(hovered)} />
     </svg>
   );
 }
@@ -137,11 +137,11 @@ function OpCard({
 
   return (
     <div
-      className={className}
+      className={`ops-card ${className || ""}`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        background: "var(--ink)",
+        background: hovered ? "rgba(43, 37, 32, 0.70)" : "var(--ink)",
         border: "1px solid rgba(239, 233, 218, 0.2)",
         padding: "var(--sp-4)",
         minHeight: 280,
@@ -149,8 +149,10 @@ function OpCard({
         flexDirection: "column",
         justifyContent: "flex-start",
         gap: "var(--sp-3)",
-        transition: "border-color 0.3s var(--ease)",
+        transition: "border-color 0.4s var(--ease), transform 0.4s var(--ease), box-shadow 0.4s var(--ease), background 0.4s var(--ease)",
         borderColor: hovered ? "rgba(224, 176, 58, 0.5)" : "rgba(239, 233, 218, 0.2)",
+        transform: hovered ? "translateY(-4px)" : "translateY(0)",
+        boxShadow: hovered ? "0 8px 32px rgba(224, 176, 58, 0.12)" : "none",
       }}
     >
       <op.Glyph hovered={hovered} />
@@ -261,6 +263,10 @@ export function Operacoes() {
         @media (max-width: 639px) {
           .ops-bento {
             grid-template-columns: 1fr;
+          }
+          .ops-card {
+            min-height: auto !important;
+            padding: var(--sp-3) !important;
           }
         }
       `}</style>

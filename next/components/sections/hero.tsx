@@ -180,6 +180,17 @@ export function Hero() {
             max-width: 280px !important;
           }
         }
+        @media (max-width: 639px) {
+          .wordmark {
+            font-size: clamp(40px, 11vw, 56px);
+          }
+          .hero-selo {
+            max-width: 200px !important;
+          }
+          .hero-left {
+            max-width: 100% !important;
+          }
+        }
       `}</style>
       </div>
     </section>

@@ -143,7 +143,7 @@ export function Header() {
             background: "none",
             border: "none",
             cursor: "pointer",
-            padding: 8,
+            padding: 14,
           }}
         >
           <svg

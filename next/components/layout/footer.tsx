@@ -153,6 +153,12 @@ export function Footer() {
         @media (max-width: 639px) {
           .footer-grid {
             grid-template-columns: 1fr;
+            gap: var(--sp-4);
+          }
+          .footer-link {
+            font-size: 16px;
+            padding: 6px 0;
+            margin-bottom: 4px;
           }
         }
       `}</style>
