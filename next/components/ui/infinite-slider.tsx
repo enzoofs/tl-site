@@ -23,9 +23,9 @@ export default function InfiniteSlider({
       style={{
         overflow: "hidden",
         maskImage:
-          "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
+          "linear-gradient(to right, transparent, black 80px, black calc(100% - 80px), transparent)",
         WebkitMaskImage:
-          "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
+          "linear-gradient(to right, transparent, black 80px, black calc(100% - 80px), transparent)",
       }}
     >
       <div

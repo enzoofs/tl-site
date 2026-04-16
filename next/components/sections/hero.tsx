@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Button from "@/components/ui/button";
 import HexMesh from "@/components/ui/hex-mesh";
+import TextReveal from "@/components/ui/text-reveal";
 
 const ease = [0.22, 0.61, 0.36, 1] as const;
 
@@ -75,15 +76,10 @@ export function Hero() {
           </h1>
         </motion.div>
 
-        {/* Tagline */}
-        <motion.p
-          className="tagline"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.3, ease }}
-        >
+        {/* Tagline — cinematic blur reveal por caractere */}
+        <TextReveal as="p" className="tagline">
           Devolvemos tempo ao seu negócio.
-        </motion.p>
+        </TextReveal>
 
         {/* Lede */}
         <motion.p

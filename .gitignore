@@ -16,3 +16,10 @@ Thumbs.db
 # Python server artifacts
 __pycache__/
 *.pyc
+
+# Claude Code / MCP — local configs e secrets (nunca commitar!)
+.mcp.json
+.claude/
+.agents/
+skills-lock.json
+PROMPT-FRONTPAGE.md

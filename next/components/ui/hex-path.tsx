@@ -470,17 +470,34 @@ function buildPathSVG(
   }
   defs.appendChild(mask);
 
-  /* Filter pra glow das ancoras quando pulso passa por elas */
+  /* Filter bloom duplo pra ancoras: tight glow + wide halo = efeito constelacao */
   const anchorGlowFilter = document.createElementNS(SVG_NS, "filter");
   anchorGlowFilter.setAttribute("id", "hex-anchor-glow");
-  anchorGlowFilter.setAttribute("x", "-100%");
-  anchorGlowFilter.setAttribute("y", "-100%");
-  anchorGlowFilter.setAttribute("width", "300%");
-  anchorGlowFilter.setAttribute("height", "300%");
-  const anchorBlur = document.createElementNS(SVG_NS, "feGaussianBlur");
-  anchorBlur.setAttribute("in", "SourceGraphic");
-  anchorBlur.setAttribute("stdDeviation", "7");
-  anchorGlowFilter.appendChild(anchorBlur);
+  anchorGlowFilter.setAttribute("x", "-150%");
+  anchorGlowFilter.setAttribute("y", "-150%");
+  anchorGlowFilter.setAttribute("width", "400%");
+  anchorGlowFilter.setAttribute("height", "400%");
+  /* Camada 1: glow tight (nucleo brilhante) */
+  const tightBlur = document.createElementNS(SVG_NS, "feGaussianBlur");
+  tightBlur.setAttribute("in", "SourceGraphic");
+  tightBlur.setAttribute("stdDeviation", "4");
+  tightBlur.setAttribute("result", "tight");
+  anchorGlowFilter.appendChild(tightBlur);
+  /* Camada 2: halo wide (bloom que sangra pra fora) */
+  const wideBlur = document.createElementNS(SVG_NS, "feGaussianBlur");
+  wideBlur.setAttribute("in", "SourceGraphic");
+  wideBlur.setAttribute("stdDeviation", "14");
+  wideBlur.setAttribute("result", "wide");
+  anchorGlowFilter.appendChild(wideBlur);
+  /* Merge: tight + wide compostos juntos */
+  const merge = document.createElementNS(SVG_NS, "feMerge");
+  const mergeWide = document.createElementNS(SVG_NS, "feMergeNode");
+  mergeWide.setAttribute("in", "wide");
+  merge.appendChild(mergeWide);
+  const mergeTight = document.createElementNS(SVG_NS, "feMergeNode");
+  mergeTight.setAttribute("in", "tight");
+  merge.appendChild(mergeTight);
+  anchorGlowFilter.appendChild(merge);
   defs.appendChild(anchorGlowFilter);
 
   svg.appendChild(defs);
@@ -547,6 +564,14 @@ function buildPathSVG(
     masked.appendChild(core);
   }
 
+  /* Brightness variavel por anchor: cria variacao de profundidade (uns brilham mais
+     que outros). Bias pro centro vertical da pagina pra efeito de concentracao organica. */
+  const anchorBrightness: number[] = anchors.map((a) => {
+    const centerFrac = 1 - Math.abs((a.row * ROW_H) / docH - 0.5) * 2;
+    const base = 0.4 + Math.random() * 0.6;
+    return Math.min(1, base * (0.5 + centerFrac * 0.5));
+  });
+
   /* Ancoras renderizadas POR ULTIMO. Cada cluster recebe animacao sincronizada
      a janela em que o pulso o atravessa: fill-opacity sobe e glow acende, depois volta. */
   for (let i = 0; i < anchors.length; i++) {
@@ -564,20 +589,26 @@ function buildPathSVG(
     const t3 = Math.min(0.9999, exitFrac + rampOut);
     const keyTimes = `0;${t0.toFixed(4)};${t1.toFixed(4)};${t2.toFixed(4)};${t3.toFixed(4)};1`;
 
+    const bright = anchorBrightness[i];
+    /* Opacidades escaladas pelo brightness do anchor */
+    const glowBaseOp = (0.25 + bright * 0.35).toFixed(2);
+    const litBaseFill = (0.3 + bright * 0.35).toFixed(2);
+    const litPeakFill = (0.5 + bright * 0.5).toFixed(2);
+
     for (const cell of clusters[i]) {
       const { cx, cy } = cellCenter(cell.col, cell.row);
 
-      /* Glow atras: maior, borrado, opacity 0 → 1 na janela */
+      /* Glow atras: raio 1.6x = halo amplo, bloom duplo borra pra criar constelacao */
       if (!reducedMotion && hasSpan) {
         const glowLit = document.createElementNS(SVG_NS, "polygon");
-        glowLit.setAttribute("points", hexPoints(cx, cy, HEX_R * 1.1));
-        glowLit.setAttribute("fill", "rgba(224, 176, 58, 0.35)");
+        glowLit.setAttribute("points", hexPoints(cx, cy, HEX_R * 1.6));
+        glowLit.setAttribute("fill", `rgba(224, 176, 58, ${glowBaseOp})`);
         glowLit.setAttribute("stroke", "none");
         glowLit.setAttribute("filter", "url(#hex-anchor-glow)");
         glowLit.setAttribute("opacity", "0");
         const gAnim = document.createElementNS(SVG_NS, "animate");
         gAnim.setAttribute("attributeName", "opacity");
-        gAnim.setAttribute("values", "0;0;1;1;0;0");
+        gAnim.setAttribute("values", `0;0;${bright.toFixed(2)};${bright.toFixed(2)};0;0`);
         gAnim.setAttribute("keyTimes", keyTimes);
         gAnim.setAttribute("dur", pulseDur.toFixed(2) + "s");
         gAnim.setAttribute("repeatCount", "indefinite");
@@ -585,14 +616,14 @@ function buildPathSVG(
         svg.appendChild(glowLit);
       }
 
-      /* Hex solido: fill-opacity animado da baseline (0.45) ao pico (1) na janela */
+      /* Hex solido: fill-opacity escalado pelo brightness deste anchor */
       const lit = document.createElementNS(SVG_NS, "polygon");
       lit.setAttribute("class", "hx-lit");
       lit.setAttribute("points", hexPoints(cx, cy, HEX_R * 0.95));
       if (!reducedMotion && hasSpan) {
         const anim = document.createElementNS(SVG_NS, "animate");
         anim.setAttribute("attributeName", "fill-opacity");
-        anim.setAttribute("values", "0.45;0.45;0.6;0.6;0.45;0.45");
+        anim.setAttribute("values", `${litBaseFill};${litBaseFill};${litPeakFill};${litPeakFill};${litBaseFill};${litBaseFill}`);
         anim.setAttribute("keyTimes", keyTimes);
         anim.setAttribute("dur", pulseDur.toFixed(2) + "s");
         anim.setAttribute("repeatCount", "indefinite");

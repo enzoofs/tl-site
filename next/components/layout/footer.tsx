@@ -31,12 +31,14 @@ function FooterLink({
 export function Footer() {
   return (
     <footer
+      className="hex-frost"
       style={{
         background: "var(--ink)",
         color: "var(--paper)",
         padding: "var(--sp-7) var(--sp-4) var(--sp-5)",
       }}
     >
+      <div className="hex-frost-content">
       <div
         style={{
           maxWidth: 1200,
@@ -126,6 +128,8 @@ export function Footer() {
           &copy; 2026 TimeLabs &middot; São Paulo, Brasil
         </p>
       </div>
+
+      </div>{/* /hex-frost-content */}
 
       <style>{`
         .footer-link {
