@@ -37,7 +37,8 @@
   });
 
   // =====================================================================
-  // HEX MESH por secao · linhas sempre via centros dos hexes
+  // HEX MESH · grid global continuo. Base (hx/shade) renderizada por secao
+  // em coords globais; path + pulso num overlay unico sobre todo o documento.
   // =====================================================================
   const HEX_R = 24;
   const HEX_W = HEX_R * Math.sqrt(3);
@@ -53,12 +54,20 @@
     return pts.join(' ');
   }
 
+  // Centro global da celula (col, row) — row negativo/positivo aceito
   const cellCenter = (col, row) => ({
-    cx: col * HEX_W + ((row % 2) ? HEX_W / 2 : 0),
+    cx: col * HEX_W + (((row % 2) + 2) % 2 ? HEX_W / 2 : 0),
     cy: row * ROW_H
   });
 
-  // axial offset -> cube coords (para hex distance)
+  // Hash deterministico por (col,row) global -> [0,1). Garante que o mesmo
+  // hex fica sombreado independente de qual seccao o renderiza.
+  function cellHash(col, row) {
+    let h = (col * 73856093) ^ (row * 19349663);
+    h = Math.imul(h ^ (h >>> 13), 1274126177);
+    return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+  }
+
   function offsetToCube(col, row) {
     const x = col - (row - (row & 1)) / 2;
     const z = row;
@@ -69,36 +78,29 @@
     return (Math.abs(a.x - b.x) + Math.abs(a.y - b.y) + Math.abs(a.z - b.z)) / 2;
   }
   function neighbors(col, row) {
-    const odd = row % 2 === 1;
+    const odd = ((row % 2) + 2) % 2 === 1;
     return [
-      [col + 1, row],                 // E
-      [col - 1, row],                 // W
-      [col + (odd ? 1 : 0), row - 1], // NE
-      [col - (odd ? 0 : 1), row - 1], // NW
-      [col + (odd ? 1 : 0), row + 1], // SE
-      [col - (odd ? 0 : 1), row + 1], // SW
+      [col + 1, row], [col - 1, row],
+      [col + (odd ? 1 : 0), row - 1], [col - (odd ? 0 : 1), row - 1],
+      [col + (odd ? 1 : 0), row + 1], [col - (odd ? 0 : 1), row + 1],
     ];
   }
 
-  /**
-   * Caminho greedy passando hex-a-hex do start ao end, sempre via centros.
-   * Em cada passo, escolhe o vizinho que mais reduz a distancia hex.
-   * Empates sao quebrados alternando pra dar zig-zag natural.
-   */
-  function gridPath(start, end, cols, rows) {
+  /** Greedy: vai do start ao end por vizinhos, via centros. */
+  function gridPath(start, end, bounds) {
+    const { colMin, colMax, rowMin, rowMax } = bounds;
     const path = [start];
     let cur = { ...start };
     let parity = 0;
     let safety = 0;
-    while ((cur.col !== end.col || cur.row !== end.row) && safety++ < 80) {
+    while ((cur.col !== end.col || cur.row !== end.row) && safety++ < 400) {
       const curDist = hexDist(cur.col, cur.row, end.col, end.row);
       const opts = neighbors(cur.col, cur.row)
-        .filter(([c, r]) => c >= 0 && r >= 0 && c < cols && r < rows)
+        .filter(([c, r]) => c >= colMin && c <= colMax && r >= rowMin && r <= rowMax)
         .map(([c, r]) => ({ c, r, d: hexDist(c, r, end.col, end.row) }))
         .filter(o => o.d < curDist)
         .sort((a, b) => a.d - b.d);
       if (!opts.length) break;
-      // pega o primeiro ou segundo alternando (dá o zig-zag)
       const pick = opts[parity % Math.min(opts.length, 2)];
       parity++;
       cur = { col: pick.c, row: pick.r };
@@ -107,128 +109,36 @@
     return path;
   }
 
-  /** Ancoras bem espacadas: ~10 celulas ao longo do eixo X da seccao */
-  function pickAnchors(cols, rows) {
-    const total = 8 + Math.floor(Math.random() * 3);
-    const anchors = [];
-    const step = cols / total;
-    for (let i = 0; i < total; i++) {
-      const col = Math.round(step * (i + 0.5) + (Math.random() - 0.5) * step * 0.4);
-      // varia a linha pra criar ondulacao
-      const midRow = Math.floor(rows / 2);
-      const amp = Math.min(rows / 2 - 1, 4 + Math.random() * 3);
-      const row = Math.round(midRow + Math.sin(i * 1.3 + Math.random()) * amp);
-      anchors.push({
-        col: Math.max(1, Math.min(cols - 2, col)),
-        row: Math.max(1, Math.min(rows - 2, row))
-      });
-    }
-    return anchors;
-  }
-
   function buildSectionMesh(section) {
     const w = section.offsetWidth;
     const h = section.offsetHeight;
     if (!w || !h) return;
 
+    const rect = section.getBoundingClientRect();
+    const docY = rect.top + window.scrollY;
+
     const cols = Math.ceil(w / HEX_W) + 2;
-    const rows = Math.ceil(h / ROW_H) + 2;
+    const rowStart = Math.floor(docY / ROW_H) - 1;
+    const rowEnd = Math.ceil((docY + h) / ROW_H) + 1;
 
-    // Gera hex mesh base
-    const cells = [];
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        cells.push({ col: c, row: r, ...cellCenter(c, r) });
-      }
-    }
-
-    // Sombra aleatoria ~12%
-    const shadeSet = new Set();
-    const nShade = Math.floor(cells.length * 0.12);
-    for (let i = 0; i < nShade; i++) shadeSet.add(Math.floor(Math.random() * cells.length));
-
-    // Ancoras e caminho via centros (retas/diagonais no grid)
-    const anchors = pickAnchors(cols, rows);
-    const fullPath = [];
-    for (let i = 0; i < anchors.length - 1; i++) {
-      const seg = gridPath(anchors[i], anchors[i + 1], cols, rows);
-      if (i === 0) fullPath.push(...seg);
-      else fullPath.push(...seg.slice(1));
-    }
-
-    // Build SVG
     const svg = document.createElementNS(SVG_NS, 'svg');
-    svg.setAttribute('viewBox', `0 0 ${cols * HEX_W} ${rows * ROW_H}`);
-    svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+    svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+    svg.setAttribute('preserveAspectRatio', 'xMinYMin slice');
 
-    // base mesh
     const meshG = document.createElementNS(SVG_NS, 'g');
-    for (let i = 0; i < cells.length; i++) {
-      const p = document.createElementNS(SVG_NS, 'polygon');
-      p.setAttribute('class', shadeSet.has(i) ? 'hx-shade' : 'hx');
-      p.setAttribute('points', hexPoints(cells[i].cx, cells[i].cy));
-      meshG.appendChild(p);
+    for (let r = rowStart; r <= rowEnd; r++) {
+      for (let c = -1; c <= cols; c++) {
+        const { cx, cy } = cellCenter(c, r);
+        const localCy = cy - docY;
+        const shaded = cellHash(c, r) < 0.12;
+        const p = document.createElementNS(SVG_NS, 'polygon');
+        p.setAttribute('class', shaded ? 'hx-shade' : 'hx');
+        p.setAttribute('points', hexPoints(cx, localCy));
+        meshG.appendChild(p);
+      }
     }
     svg.appendChild(meshG);
 
-    // conn: polyline passando por TODOS os centros do fullPath
-    if (fullPath.length > 1) {
-      const ptsStr = fullPath
-        .map(n => {
-          const { cx, cy } = cellCenter(n.col, n.row);
-          return `${cx.toFixed(1)},${cy.toFixed(1)}`;
-        })
-        .join(' ');
-      const conn = document.createElementNS(SVG_NS, 'polyline');
-      conn.setAttribute('class', 'conn');
-      conn.setAttribute('points', ptsStr);
-      svg.appendChild(conn);
-
-      // Lit cells = apenas os ancoras (não todo hex do path)
-      for (const a of anchors) {
-        const { cx, cy } = cellCenter(a.col, a.row);
-        const lit = document.createElementNS(SVG_NS, 'polygon');
-        lit.setAttribute('class', 'hx-lit');
-        lit.setAttribute('points', hexPoints(cx, cy, HEX_R * 0.9));
-        svg.appendChild(lit);
-      }
-
-      // Pulse: percorre o caminho via animateMotion
-      if (!reducedMotion) {
-        const pathD = 'M ' + fullPath
-          .map(n => {
-            const { cx, cy } = cellCenter(n.col, n.row);
-            return `${cx.toFixed(1)} ${cy.toFixed(1)}`;
-          })
-          .join(' L ');
-
-        const dur = Math.max(7, fullPath.length * 0.45).toFixed(1);
-
-        // rastro
-        const trail = document.createElementNS(SVG_NS, 'circle');
-        trail.setAttribute('r', '7');
-        trail.setAttribute('class', 'pulse-trail');
-        const animT = document.createElementNS(SVG_NS, 'animateMotion');
-        animT.setAttribute('dur', dur + 's');
-        animT.setAttribute('repeatCount', 'indefinite');
-        animT.setAttribute('path', pathD);
-        trail.appendChild(animT);
-        svg.appendChild(trail);
-
-        // nucleo
-        const pulse = document.createElementNS(SVG_NS, 'circle');
-        pulse.setAttribute('r', '3');
-        pulse.setAttribute('class', 'pulse');
-        const animP = document.createElementNS(SVG_NS, 'animateMotion');
-        animP.setAttribute('dur', dur + 's');
-        animP.setAttribute('repeatCount', 'indefinite');
-        animP.setAttribute('path', pathD);
-        pulse.appendChild(animP);
-        svg.appendChild(pulse);
-      }
-    }
-
-    // Inject
     let wrap = section.querySelector(':scope > .sec-mesh');
     if (!wrap) {
       wrap = document.createElement('div');
@@ -241,8 +151,108 @@
     wrap.appendChild(svg);
   }
 
+  // --- Overlay global: path + pulso atravessando toda a pagina ---
+  function buildGlobalPath() {
+    const docH = Math.max(
+      document.documentElement.scrollHeight,
+      document.body.scrollHeight
+    );
+    const docW = document.documentElement.clientWidth;
+
+    const cols = Math.ceil(docW / HEX_W) + 2;
+    const rowMin = 0;
+    const rowMax = Math.ceil(docH / ROW_H) + 1;
+    const bounds = { colMin: 0, colMax: cols - 1, rowMin, rowMax };
+
+    // Ancoras: ~1 por ~280px de altura, ondulando em X
+    const nAnchors = Math.max(8, Math.round(docH / 280));
+    const anchors = [];
+    for (let i = 0; i < nAnchors; i++) {
+      const t = (i + 0.5) / nAnchors;
+      const wave = Math.sin(i * 1.7 + 0.6) * (cols * 0.32);
+      const col = Math.round(cols / 2 + wave + (Math.random() - 0.5) * cols * 0.18);
+      const row = Math.round(t * rowMax + (Math.random() - 0.5) * 3);
+      anchors.push({
+        col: Math.max(1, Math.min(cols - 2, col)),
+        row: Math.max(rowMin + 1, Math.min(rowMax - 1, row))
+      });
+    }
+
+    const fullPath = [];
+    for (let i = 0; i < anchors.length - 1; i++) {
+      const seg = gridPath(anchors[i], anchors[i + 1], bounds);
+      if (i === 0) fullPath.push(...seg);
+      else fullPath.push(...seg.slice(1));
+    }
+
+    const svg = document.createElementNS(SVG_NS, 'svg');
+    svg.setAttribute('viewBox', `0 0 ${docW} ${docH}`);
+    svg.setAttribute('preserveAspectRatio', 'xMinYMin slice');
+    svg.setAttribute('aria-hidden', 'true');
+
+    if (fullPath.length > 1) {
+      const ptsStr = fullPath.map(n => {
+        const { cx, cy } = cellCenter(n.col, n.row);
+        return `${cx.toFixed(1)},${cy.toFixed(1)}`;
+      }).join(' ');
+      const conn = document.createElementNS(SVG_NS, 'polyline');
+      conn.setAttribute('class', 'conn');
+      conn.setAttribute('points', ptsStr);
+      svg.appendChild(conn);
+
+      for (const a of anchors) {
+        const { cx, cy } = cellCenter(a.col, a.row);
+        const lit = document.createElementNS(SVG_NS, 'polygon');
+        lit.setAttribute('class', 'hx-lit');
+        lit.setAttribute('points', hexPoints(cx, cy, HEX_R * 0.9));
+        svg.appendChild(lit);
+      }
+
+      if (!reducedMotion) {
+        const pathD = 'M ' + fullPath.map(n => {
+          const { cx, cy } = cellCenter(n.col, n.row);
+          return `${cx.toFixed(1)} ${cy.toFixed(1)}`;
+        }).join(' L ');
+        const dur = Math.max(18, fullPath.length * 0.32).toFixed(1);
+
+        const trail = document.createElementNS(SVG_NS, 'circle');
+        trail.setAttribute('r', '7');
+        trail.setAttribute('class', 'pulse-trail');
+        const animT = document.createElementNS(SVG_NS, 'animateMotion');
+        animT.setAttribute('dur', dur + 's');
+        animT.setAttribute('repeatCount', 'indefinite');
+        animT.setAttribute('path', pathD);
+        trail.appendChild(animT);
+        svg.appendChild(trail);
+
+        const pulse = document.createElementNS(SVG_NS, 'circle');
+        pulse.setAttribute('r', '3');
+        pulse.setAttribute('class', 'pulse');
+        const animP = document.createElementNS(SVG_NS, 'animateMotion');
+        animP.setAttribute('dur', dur + 's');
+        animP.setAttribute('repeatCount', 'indefinite');
+        animP.setAttribute('path', pathD);
+        pulse.appendChild(animP);
+        svg.appendChild(pulse);
+      }
+    }
+
+    let wrap = document.getElementById('hex-global');
+    if (!wrap) {
+      wrap = document.createElement('div');
+      wrap.id = 'hex-global';
+      wrap.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(wrap);
+    } else {
+      wrap.innerHTML = '';
+    }
+    wrap.style.height = docH + 'px';
+    wrap.appendChild(svg);
+  }
+
   function buildAllMeshes() {
     document.querySelectorAll('section[data-folio], footer.colofon').forEach(buildSectionMesh);
+    buildGlobalPath();
   }
 
   // Run after paint pra ter offsetHeight correto

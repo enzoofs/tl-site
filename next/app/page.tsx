@@ -8,6 +8,7 @@ import { Resultados } from "@/components/sections/resultados";
 import { Integracoes } from "@/components/sections/integracoes";
 import { CtaFinal } from "@/components/sections/cta-final";
 import Halo from "@/components/ui/halo";
+import HexPath from "@/components/ui/hex-path";
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
         Pular para o conteúdo
       </a>
       <Halo />
+      <HexPath />
       <Header />
       <main id="main-content" className="pt-[50px]">
         <Hero />
