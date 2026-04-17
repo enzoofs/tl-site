@@ -2,6 +2,10 @@
 
 import { useState } from "react";
 import HexMesh from "@/components/ui/hex-mesh";
+import {
+  LiquidGlassCard,
+  LiquidGlassFilter,
+} from "@/components/ui/liquid-glass-card";
 
 /* ------------------------------------------------------------------ */
 /* SVG glyph icons (56x56) for each operation                        */
@@ -126,21 +130,6 @@ const ops = [
 /* Card component                                                     */
 /* ------------------------------------------------------------------ */
 
-/* Shared SVG filter — subtle liquid distortion applied to a decorative overlay
-   (kept off the backdrop-filter layer, otherwise Chromium drops the blur) */
-function GlassFilterDef() {
-  return (
-    <svg aria-hidden="true" style={{ position: "absolute", width: 0, height: 0, pointerEvents: "none" }}>
-      <defs>
-        <filter id="ops-glass-distort" x="-20%" y="-20%" width="140%" height="140%" filterUnits="objectBoundingBox">
-          <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves={2} result="turb" />
-          <feDisplacementMap in="SourceGraphic" in2="turb" scale="40" xChannelSelector="R" yChannelSelector="G" />
-        </filter>
-      </defs>
-    </svg>
-  );
-}
-
 function OpCard({
   op,
   className,
@@ -149,133 +138,36 @@ function OpCard({
   className?: string;
 }) {
   const [hovered, setHovered] = useState(false);
-
-  /* Edge highlights — swap to gold on hover */
-  const edgeShadow = hovered
-    ? "inset 3px 3px 3px 0 rgba(224, 176, 58, 0.55), inset -3px -3px 3px 0 rgba(224, 176, 58, 0.55)"
-    : "inset 3px 3px 3px 0 rgba(255, 255, 255, 0.45), inset -3px -3px 3px 0 rgba(255, 255, 255, 0.45)";
-
-  /* Face glow — outer depth + soft white bloom */
-  const faceShadow = hovered
-    ? "0 6px 8px rgba(0, 0, 0, 0.22), 0 0 16px rgba(0, 0, 0, 0.1), 0 0 48px rgba(224, 176, 58, 0.28)"
-    : "0 4px 4px rgba(0, 0, 0, 0.15), 0 0 12px rgba(0, 0, 0, 0.08), 0 0 32px rgba(255, 255, 255, 0.15)";
-
   return (
-    <div
+    <LiquidGlassCard
       className={`ops-card ${className || ""}`}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        position: "relative",
-        zIndex: 1,
-        minHeight: 280,
-        padding: "var(--sp-4)",
-        cursor: "default",
-        transition: "transform 0.4s var(--ease)",
-        transform: hovered ? "translateY(-4px)" : "translateY(0)",
-      }}
+      onHoverChange={setHovered}
     >
-      {/* Bend layer — pure backdrop blur, no SVG filter here (it would void the blur) */}
-      <div
-        aria-hidden="true"
+      <op.Glyph hovered={hovered} />
+      <h3
         style={{
-          position: "absolute",
-          inset: 0,
-          zIndex: 0,
-          backdropFilter: "blur(32px) saturate(140%)",
-          WebkitBackdropFilter: "blur(32px) saturate(140%)",
-        }}
-      />
-      {/* Tint layer — damps what remains of the mesh so content stays readable */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          inset: 0,
-          zIndex: 1,
-          background: hovered
-            ? "rgba(43, 37, 32, 0.55)"
-            : "rgba(43, 37, 32, 0.62)",
-          transition: "background 0.4s var(--ease)",
-        }}
-      />
-      {/* Liquid shimmer — subtle SVG displacement on a translucent paper wash,
-          kept off the backdrop layer so blur survives */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          inset: 0,
-          zIndex: 2,
-          background:
-            "linear-gradient(135deg, rgba(239, 233, 218, 0.10) 0%, rgba(239, 233, 218, 0) 45%, rgba(224, 176, 58, 0.08) 100%)",
-          filter: "url(#ops-glass-distort)",
-          mixBlendMode: "screen",
-          opacity: hovered ? 1 : 0.75,
-          transition: "opacity 0.4s var(--ease)",
-        }}
-      />
-      {/* Face layer — outer shadow and glow */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          inset: 0,
-          zIndex: 3,
-          boxShadow: faceShadow,
-          transition: "box-shadow 0.4s var(--ease)",
-          pointerEvents: "none",
-        }}
-      />
-      {/* Edge layer — inner highlights simulate glass rim */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          inset: 0,
-          zIndex: 4,
-          boxShadow: edgeShadow,
-          transition: "box-shadow 0.4s var(--ease)",
-          pointerEvents: "none",
-        }}
-      />
-      {/* Content */}
-      <div
-        style={{
-          position: "relative",
-          zIndex: 5,
-          display: "flex",
-          flexDirection: "column",
-          gap: "var(--sp-3)",
-          height: "100%",
+          fontFamily: "var(--font-display)",
+          fontSize: 28,
+          color: "var(--paper)",
+          margin: 0,
+          lineHeight: 1.15,
         }}
       >
-        <op.Glyph hovered={hovered} />
-        <h3
-          style={{
-            fontFamily: "var(--font-display)",
-            fontSize: 28,
-            color: "var(--paper)",
-            margin: 0,
-            lineHeight: 1.15,
-          }}
-        >
-          {op.title}
-        </h3>
-        <p
-          style={{
-            fontFamily: "var(--font-body)",
-            fontSize: 15,
-            lineHeight: 1.6,
-            color: "var(--paper)",
-            opacity: 0.82,
-            margin: 0,
-          }}
-        >
-          {op.desc}
-        </p>
-      </div>
-    </div>
+        {op.title}
+      </h3>
+      <p
+        style={{
+          fontFamily: "var(--font-body)",
+          fontSize: 15,
+          lineHeight: 1.6,
+          color: "var(--paper)",
+          opacity: 0.82,
+          margin: 0,
+        }}
+      >
+        {op.desc}
+      </p>
+    </LiquidGlassCard>
   );
 }
 
@@ -297,7 +189,7 @@ export function Operacoes() {
       }}
     >
       <HexMesh variant="dark" />
-      <GlassFilterDef />
+      <LiquidGlassFilter />
       <div style={{ position: "relative", maxWidth: 1280, margin: "0 auto" }}>
         <p className="eyebrow eyebrow-gold">O que fazemos</p>
         <h2 className="hl-gloock hl-paper">Quatro operações.</h2>
