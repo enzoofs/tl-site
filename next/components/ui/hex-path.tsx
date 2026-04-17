@@ -668,13 +668,15 @@ function buildPathSVG(opts: BuildOpts): BuildResult | null {
   for (let i = 0; i < ordered.length; i++) {
     const primary = ordered[i];
 
-    const entryFrac = Math.max(0.01, Math.min(0.98, shadeFracs[i]));
-    /* 5 keyframes: t0=inicio-rampIn (cinza), t1=peak, t2=fim-hold, t3=fim-fade.
-       Clamp pra nao passar de 0.995 — keyTimes estritamente crescentes e <=1. */
-    const t0 = Math.max(0.001, entryFrac - rampInFrac);
-    const t1 = Math.max(t0 + 0.001, entryFrac);
-    const t2 = Math.min(0.985, t1 + holdFrac);
-    const t3 = Math.min(0.995, t2 + fadeOutFrac);
+    const entryFrac = Math.max(0.001, Math.min(0.98, shadeFracs[i]));
+    /* 5 keyframes: o toque do pulso (entryFrac) eh o MOMENTO de inicio do
+       acender — nao o pico. O hex fica em 0 ate ali, rampa em rampInFrac,
+       mantem no pico durante holdFrac, faz fade em fadeOutFrac.
+       keyTimes estritamente crescentes e <=1. */
+    const t0 = entryFrac;
+    const t1 = Math.min(0.99, t0 + rampInFrac);
+    const t2 = Math.min(0.993, t1 + holdFrac);
+    const t3 = Math.min(0.997, t2 + fadeOutFrac);
     const keyTimes = `0;${t0.toFixed(4)};${t1.toFixed(4)};${t2.toFixed(4)};${t3.toFixed(4)};1`;
 
     const bright = 0.7 + rng() * 0.3;
