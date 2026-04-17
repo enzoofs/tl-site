@@ -135,6 +135,7 @@ export function Metodo() {
   return (
     <section
       id="metodo"
+      data-hex-density="0.06"
       style={{
         position: "relative",
         isolation: "isolate",

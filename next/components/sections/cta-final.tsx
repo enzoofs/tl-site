@@ -19,6 +19,7 @@ export function CtaFinal() {
   return (
     <section
       id="agendar"
+      data-hex-density="0.12"
       style={{
         background: "var(--ink)",
         color: "var(--paper)",

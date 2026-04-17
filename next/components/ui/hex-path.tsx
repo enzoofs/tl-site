@@ -1,71 +1,265 @@
 "use client";
 
 import { useEffect, useRef, useCallback } from "react";
+import {
+  HEX_R,
+  HEX_W,
+  ROW_H,
+  SVG_NS,
+  Cell,
+  Pt,
+  cellCenter,
+  cellHash,
+  hexPoints,
+  cornersOf,
+  cornerKey,
+  cellCornerKey,
+} from "./hex-grid";
 
 /* ==========================================================================
-   HEX PATH — overlay global. Path percorre o grafo de vertices/corners
-   (arestas entre hexes). Ancoras sao "atravessadas" via arco de boundary.
-   Clusters de 1-3 hexes dourados pulsam ao pulso chegar.
+   HEX PATH — overlay global (lamplighter ciclico).
+
+   Conceito: um pulso dourado (invisivel como trajeto, so o pingo eh visto)
+   entra off-screen no topo, desce em serpente tocando os centros de TODOS
+   os .hx-shade existentes, sai off-screen no pe. Cada shade tocado acende,
+   segura alguns segundos, e apaga — cauda de luz seguindo o pulso como um
+   lamplighter classico apagando as lampadas atras de si. O pulso loopa
+   indefinidamente, a cidade respira.
    ========================================================================== */
 
-const HEX_R = 24;
-const HEX_W = HEX_R * Math.sqrt(3);
-const ROW_H = HEX_R * 1.5;
-const SVG_NS = "http://www.w3.org/2000/svg";
+/* Timing (absolutos em segundos — convertidos pra fracao do pulseDur) */
+const HOLD_LIT_SEC = 8;
+const FADE_OUT_SEC = 2.5;
+const RAMP_IN_SEC = 0.2;
 
-interface Cell {
-  col: number;
-  row: number;
-}
-interface Pt {
-  x: number;
-  y: number;
-}
+/* -------------------- PRNG deterministico (Mulberry32) ------------------- */
 
-function cellCenter(col: number, row: number) {
-  const parity = ((row % 2) + 2) % 2;
-  return {
-    cx: col * HEX_W + (parity ? HEX_W / 2 : 0),
-    cy: row * ROW_H,
+function mulberry32(seed: number) {
+  let s = seed | 0;
+  return function rng(): number {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
 
-function cornersOf(col: number, row: number): Pt[] {
-  const { cx, cy } = cellCenter(col, row);
-  const out: Pt[] = [];
-  for (let i = 0; i < 6; i++) {
-    const a = (Math.PI / 180) * (60 * i - 30);
-    out.push({ x: cx + HEX_R * Math.cos(a), y: cy + HEX_R * Math.sin(a) });
+/* -------------------- Density map (lido do DOM) -------------------------- */
+
+interface DensityBand {
+  yStart: number;
+  yEnd: number;
+  density: number;
+}
+
+function readDensityBands(): DensityBand[] {
+  const sections = document.querySelectorAll<HTMLElement>(
+    "[data-hex-density]"
+  );
+  const bands: DensityBand[] = [];
+  for (const sec of sections) {
+    const d = parseFloat(sec.getAttribute("data-hex-density") || "0");
+    if (!(d > 0)) continue;
+    const rect = sec.getBoundingClientRect();
+    const yStart = rect.top + window.scrollY;
+    const yEnd = yStart + rect.height;
+    bands.push({ yStart, yEnd, density: d });
+  }
+  bands.sort((a, b) => a.yStart - b.yStart);
+  return bands;
+}
+
+function makeDensityAt(bands: DensityBand[]) {
+  return (y: number): number => {
+    for (const b of bands) {
+      if (y >= b.yStart && y < b.yEnd) return b.density;
+    }
+    return 0;
+  };
+}
+
+/* -------------------- Zonas de texto protegidas ------------------------- */
+
+interface Rect {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+}
+
+/* Seletor abrangente de elementos que contem texto legivel. Coletamos seus
+   bounding rects pra evitar que hexes dourados acendam em cima. Nao pega
+   qualquer <span> (muito amplo e captura elementos decorativos) — foca em
+   headings, paragrafos, links, botoes, inputs e classes de destaque do
+   design system (eyebrow, wordmark, tagline, hl-*, citation). */
+const TEXT_SELECTOR =
+  "h1, h2, h3, h4, h5, h6, p, a, button, label, input, textarea, " +
+  ".eyebrow, .tagline, .wordmark, .citation, " +
+  "[class*='hl-']";
+
+/* Padding ao redor do texto onde shades sao filtrados. ~1 raio de hex garante
+   respiro visual minimo antes do dourado comecar. */
+const TEXT_PADDING = HEX_R;
+
+function readTextRects(): Rect[] {
+  const els = document.querySelectorAll<HTMLElement>(TEXT_SELECTOR);
+  const rects: Rect[] = [];
+  const scrollX = window.scrollX;
+  const scrollY = window.scrollY;
+  for (const el of els) {
+    const r = el.getBoundingClientRect();
+    if (r.width <= 0 || r.height <= 0) continue;
+    rects.push({
+      left: r.left + scrollX - TEXT_PADDING,
+      top: r.top + scrollY - TEXT_PADDING,
+      right: r.right + scrollX + TEXT_PADDING,
+      bottom: r.bottom + scrollY + TEXT_PADDING,
+    });
+  }
+  return rects;
+}
+
+function pointOverText(cx: number, cy: number, rects: Rect[]): boolean {
+  for (const r of rects) {
+    if (cx >= r.left && cx <= r.right && cy >= r.top && cy <= r.bottom) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/* -------------------- Clusters ao acender -------------------------------- */
+
+/* 6 vizinhos hexagonais dependem da paridade da row (offset horizontal). */
+function hexNeighbors(cell: Cell): Cell[] {
+  const odd = (((cell.row % 2) + 2) % 2) === 1;
+  const dirs: [number, number][] = [
+    [1, 0],
+    [-1, 0],
+    [odd ? 1 : 0, -1],
+    [odd ? 0 : -1, -1],
+    [odd ? 1 : 0, 1],
+    [odd ? 0 : -1, 1],
+  ];
+  return dirs.map(([dc, dr]) => ({ col: cell.col + dc, row: cell.row + dr }));
+}
+
+/* Decide cluster size com bias pra singles (majoria das vezes 1 hex). De
+   vez em quando acende 2, 3 ou 4 hexes conectados — quebra a monotonia
+   de unidades isoladas. Vizinhos adicionados nao podem cair sobre texto. */
+function pickClusterCells(
+  primary: Cell,
+  cols: number,
+  rowMax: number,
+  textRects: Rect[],
+  rng: () => number
+): Cell[] {
+  const roll = rng();
+  let targetSize: number;
+  if (roll < 0.7) targetSize = 1;
+  else if (roll < 0.88) targetSize = 2;
+  else if (roll < 0.97) targetSize = 3;
+  else targetSize = 4;
+
+  const cluster: Cell[] = [primary];
+  const used = new Set<string>([`${primary.col}_${primary.row}`]);
+
+  while (cluster.length < targetSize) {
+    /* Expande a partir de um membro aleatorio do cluster (nao so do primary)
+       — permite crescer em formato L ou Y, nao so estrela */
+    const from = cluster[Math.floor(rng() * cluster.length)];
+    const nbrs = hexNeighbors(from);
+    for (let i = nbrs.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1));
+      [nbrs[i], nbrs[j]] = [nbrs[j], nbrs[i]];
+    }
+    let added = false;
+    for (const nb of nbrs) {
+      if (nb.col < 1 || nb.col > cols - 2) continue;
+      if (nb.row < 1 || nb.row > rowMax - 1) continue;
+      const k = `${nb.col}_${nb.row}`;
+      if (used.has(k)) continue;
+      const { cx } = cellCenter(nb.col, nb.row);
+      const cy = nb.row * ROW_H;
+      if (pointOverText(cx, cy, textRects)) continue;
+      cluster.push(nb);
+      used.add(k);
+      added = true;
+      break;
+    }
+    if (!added) break;
+  }
+  return cluster;
+}
+
+/* -------------------- Coleta de shades + ordenacao serpente ------------- */
+
+/* Coleta os .hx-shade do mesh (cellHash < density) que NAO caem sobre texto.
+   O polygon dourado sobreposto so aparece quando o pulso chega — entao basta
+   nao animar em cima de texto pra garantir que o texto nunca seja obscurecido. */
+function collectShadeCells(
+  cols: number,
+  rowMax: number,
+  densityAt: (y: number) => number,
+  textRects: Rect[]
+): Cell[] {
+  const out: Cell[] = [];
+  for (let r = 1; r < rowMax; r++) {
+    const y = r * ROW_H;
+    const d = densityAt(y);
+    if (d <= 0) continue;
+    for (let c = 1; c < cols - 1; c++) {
+      if (cellHash(c, r) >= d) continue;
+      const { cx } = cellCenter(c, r);
+      if (pointOverText(cx, y, textRects)) continue;
+      out.push({ col: c, row: r });
+    }
   }
   return out;
 }
 
-function hexPoints(cx: number, cy: number, r = HEX_R): string {
-  const pts: string[] = [];
-  for (let i = 0; i < 6; i++) {
-    const a = (Math.PI / 180) * (60 * i - 30);
-    pts.push(
-      `${(cx + r * Math.cos(a)).toFixed(2)},${(cy + r * Math.sin(a)).toFixed(2)}`
-    );
+/* Descida com amostragem: agrupa shades em bandas verticais e PEGA SOMENTE
+   ALGUNS de cada banda (1-3 aleatoriamente). Assim o pulso nao precisa
+   visitar todos os shades de uma faixa antes de descer — visita 1-3, cai
+   pra proxima banda, visita mais 1-3, e por ai vai. O feature se distribui
+   pela pagina inteira ao inves de saturar o topo. Cada reload sorteia um
+   subset diferente, variando o visual entre sessoes.
+
+   Bandas com muitos shades contribuem na mesma proporcao que bandas ralas
+   — o que importa eh a DESCIDA continua, nao a cobertura completa. */
+function orderShadesWandering(shades: Cell[], rng: () => number): Cell[] {
+  const BAND_ROWS = 4;
+  const byBand = new Map<number, Cell[]>();
+  for (const c of shades) {
+    const band = Math.floor(c.row / BAND_ROWS);
+    const arr = byBand.get(band) || [];
+    arr.push(c);
+    byBand.set(band, arr);
   }
-  return pts.join(" ");
+  const bands = Array.from(byBand.keys()).sort((a, b) => a - b);
+  const out: Cell[] = [];
+  for (const band of bands) {
+    const pool = byBand.get(band)!;
+    /* Fisher-Yates dentro da banda */
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    /* Pega entre 2 e 4 shades da banda (ou todos se tiver menos) */
+    const takeCount = Math.min(pool.length, 2 + Math.floor(rng() * 3));
+    out.push(...pool.slice(0, takeCount));
+  }
+  return out;
 }
 
-function cornerKey(x: number, y: number): string {
-  return `${Math.round(x * 10)}|${Math.round(y * 10)}`;
-}
-
-function cellCornerKey(cell: Cell, idx: number): string {
-  const { cx, cy } = cellCenter(cell.col, cell.row);
-  const a = (Math.PI / 180) * (60 * idx - 30);
-  return cornerKey(cx + HEX_R * Math.cos(a), cy + HEX_R * Math.sin(a));
-}
+/* -------------------- Grafo de corners (arestas do grid hexagonal) ------ */
 
 interface CornerNode {
   x: number;
   y: number;
   neighbors: Set<string>;
 }
+
 interface Bounds {
   colMin: number;
   colMax: number;
@@ -73,6 +267,10 @@ interface Bounds {
   rowMax: number;
 }
 
+/* Constroi o grafo de corners do grid hexagonal no bounds dado. Cada hex
+   contribui com 6 corners; arestas do hex conectam pares adjacentes de
+   corners bidirecionalmente. Corners compartilhados entre hexes vizinhos
+   sao unificados via cornerKey(x,y) (tolerancia 0.1px). */
 function buildCornerGraph(bounds: Bounds): Map<string, CornerNode> {
   const g = new Map<string, CornerNode>();
   for (let r = bounds.rowMin; r <= bounds.rowMax; r++) {
@@ -101,7 +299,8 @@ function buildCornerGraph(bounds: Bounds): Map<string, CornerNode> {
   return g;
 }
 
-/* Qual corner da celula aponta mais na direcao do alvo */
+/* Qual dos 6 corners da celula aponta mais na direcao do alvo (dot product
+   do vetor do corner contra o vetor em direcao ao alvo). */
 function anchorCornerIndex(from: Cell, toward: Cell): number {
   const s = cellCenter(from.col, from.row);
   const t = cellCenter(toward.col, toward.row);
@@ -111,8 +310,8 @@ function anchorCornerIndex(from: Cell, toward: Cell): number {
   let bestIdx = 0;
   for (let i = 0; i < 6; i++) {
     const a = (Math.PI / 180) * (60 * i - 30);
-    const ox = HEX_R * Math.cos(a);
-    const oy = HEX_R * Math.sin(a);
+    const ox = Math.cos(a);
+    const oy = Math.sin(a);
     const dot = ox * dx + oy * dy;
     if (dot > bestDot) {
       bestDot = dot;
@@ -122,30 +321,14 @@ function anchorCornerIndex(from: Cell, toward: Cell): number {
   return bestIdx;
 }
 
-/* Arco ao longo da boundary da celula, do entryIdx ao exitIdx (menor caminho) */
-function anchorArc(cell: Cell, entryIdx: number, exitIdx: number): Pt[] {
-  const corners = cornersOf(cell.col, cell.row);
-  const cwSteps = ((exitIdx - entryIdx) + 6) % 6;
-  const ccwSteps = ((entryIdx - exitIdx) + 6) % 6;
-  const out: Pt[] = [];
-  if (cwSteps === 0) {
-    out.push(corners[entryIdx]);
-    return out;
-  }
-  if (cwSteps <= ccwSteps) {
-    for (let k = 0; k <= cwSteps; k++) out.push(corners[(entryIdx + k) % 6]);
-  } else {
-    for (let k = 0; k <= ccwSteps; k++) out.push(corners[(entryIdx - k + 6) % 6]);
-  }
-  return out;
-}
-
-/* BFS no grafo de corners. Sempre encontra caminho (se existir) sem detours.
-   Shuffle dos vizinhos gera paths diferentes a cada build pra variedade. */
+/* BFS entre dois corners no grafo. Retorna sequencia de Pt ao longo de
+   arestas conectadas. Shuffle dos vizinhos usa rng pra variedade
+   deterministica por seed. */
 function cornerWalk(
   startKey: string,
   endKey: string,
-  graph: Map<string, CornerNode>
+  graph: Map<string, CornerNode>,
+  rng: () => number
 ): Pt[] {
   if (!graph.has(startKey) || !graph.has(endKey)) return [];
   if (startKey === endKey) {
@@ -169,7 +352,7 @@ function cornerWalk(
       if (!parent.has(nk)) nbrs.push(nk);
     }
     for (let i = nbrs.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
+      const j = Math.floor(rng() * (i + 1));
       [nbrs[i], nbrs[j]] = [nbrs[j], nbrs[i]];
     }
     for (const nk of nbrs) {
@@ -192,452 +375,345 @@ function cornerWalk(
   });
 }
 
-/* Ancoras aleatorias em bandas verticais */
-function pickAnchors(cols: number, rowMax: number): Cell[] {
-  const targetSpacingPx = 320;
-  const n = Math.max(6, Math.round((rowMax * ROW_H) / targetSpacingPx));
-  const band = rowMax / n;
-  const out: Cell[] = [];
-  for (let i = 0; i < n; i++) {
-    const col = 2 + Math.floor(Math.random() * Math.max(1, cols - 5));
-    const row = Math.round(i * band + band * (0.25 + Math.random() * 0.5));
-    out.push({
-      col: Math.max(1, Math.min(cols - 2, col)),
-      row: Math.max(1, Math.min(rowMax - 1, row)),
-    });
-  }
-  return out;
+/* -------------------- Render helpers ------------------------------------- */
+
+interface LitVisuals {
+  isDark: boolean;
+  stroke: string;
+  strokeWidth: string;
 }
 
-/* Cluster de 1-3 hexes adjacentes ao redor do primary */
-function buildCluster(
-  primary: Cell,
-  cols: number,
-  rowMax: number,
-  used: Set<string>
-): Cell[] {
-  const roll = Math.random();
-  const targetSize = roll < 0.45 ? 1 : roll < 0.8 ? 2 : 3;
-  const cells: Cell[] = [primary];
-  used.add(`${primary.col}_${primary.row}`);
-
-  while (cells.length < targetSize) {
-    const last = cells[Math.floor(Math.random() * cells.length)];
-    const odd = (((last.row % 2) + 2) % 2) === 1;
-    const dirs: [number, number][] = [
-      [1, 0],
-      [-1, 0],
-      [odd ? 1 : 0, -1],
-      [-(odd ? 0 : 1), -1],
-      [odd ? 1 : 0, 1],
-      [-(odd ? 0 : 1), 1],
-    ];
-    for (let i = dirs.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [dirs[i], dirs[j]] = [dirs[j], dirs[i]];
-    }
-    let added = false;
-    for (const [dc, dr] of dirs) {
-      const nc = last.col + dc;
-      const nr = last.row + dr;
-      if (nc < 1 || nc > cols - 2 || nr < 1 || nr > rowMax - 1) continue;
-      const k = `${nc}_${nr}`;
-      if (used.has(k)) continue;
-      cells.push({ col: nc, row: nr });
-      used.add(k);
-      added = true;
-      break;
-    }
-    if (!added) break;
-  }
-  return cells;
+function readLitVisuals(): LitVisuals {
+  const isDark = document.documentElement.dataset.theme === "dark";
+  return {
+    isDark,
+    stroke: isDark
+      ? "rgba(224, 176, 58, 0.95)"
+      : "rgba(224, 176, 58, 0.75)",
+    strokeWidth: isDark ? "1.2" : "0.8",
+  };
 }
 
-function segLength(path: Pt[]): number {
-  let L = 0;
-  for (let i = 1; i < path.length; i++) {
-    L += Math.hypot(path[i].x - path[i - 1].x, path[i].y - path[i - 1].y);
-  }
-  return L;
+/* Hex aceso estatico (sem anim). Attrs diretos pra driblar o CSS .hx-lit
+   que cappa fill-opacity em 0.45. */
+function appendStaticLit(svg: SVGSVGElement, cell: Cell, v: LitVisuals) {
+  const { cx, cy } = cellCenter(cell.col, cell.row);
+
+  const glow = document.createElementNS(SVG_NS, "polygon");
+  glow.setAttribute("points", hexPoints(cx, cy, HEX_R * 1.6));
+  glow.setAttribute("fill", "rgba(224, 176, 58, 0.55)");
+  glow.setAttribute("stroke", "none");
+  glow.setAttribute("filter", "url(#hex-anchor-glow)");
+  glow.setAttribute("opacity", "0.75");
+  svg.appendChild(glow);
+
+  const lit = document.createElementNS(SVG_NS, "polygon");
+  lit.setAttribute("points", hexPoints(cx, cy, HEX_R * 0.95));
+  lit.setAttribute("fill", "#E0B03A");
+  lit.setAttribute("stroke", v.stroke);
+  lit.setAttribute("stroke-width", v.strokeWidth);
+  lit.setAttribute("fill-opacity", "0.9");
+  svg.appendChild(lit);
 }
 
-/* Subgrafo restrito aos corners das celulas do cluster — BFS interno fica
-   contido na area do cluster, podendo passar pelas arestas compartilhadas. */
-function buildClusterGraph(cluster: Cell[]): Map<string, CornerNode> {
-  const g = new Map<string, CornerNode>();
-  for (const cell of cluster) {
-    const cs = cornersOf(cell.col, cell.row);
-    for (let i = 0; i < 6; i++) {
-      const a = cs[i];
-      const b = cs[(i + 1) % 6];
-      const ka = cornerKey(a.x, a.y);
-      const kb = cornerKey(b.x, b.y);
-      let na = g.get(ka);
-      if (!na) {
-        na = { x: a.x, y: a.y, neighbors: new Set() };
-        g.set(ka, na);
-      }
-      let nb = g.get(kb);
-      if (!nb) {
-        nb = { x: b.x, y: b.y, neighbors: new Set() };
-        g.set(kb, nb);
-      }
-      na.neighbors.add(kb);
-      nb.neighbors.add(ka);
-    }
-  }
-  return g;
+function appendAnchorGlowFilter(defs: SVGDefsElement) {
+  const f = document.createElementNS(SVG_NS, "filter");
+  f.setAttribute("id", "hex-anchor-glow");
+  f.setAttribute("x", "-150%");
+  f.setAttribute("y", "-150%");
+  f.setAttribute("width", "400%");
+  f.setAttribute("height", "400%");
+  const tight = document.createElementNS(SVG_NS, "feGaussianBlur");
+  tight.setAttribute("in", "SourceGraphic");
+  tight.setAttribute("stdDeviation", "4");
+  tight.setAttribute("result", "tight");
+  f.appendChild(tight);
+  const wide = document.createElementNS(SVG_NS, "feGaussianBlur");
+  wide.setAttribute("in", "SourceGraphic");
+  wide.setAttribute("stdDeviation", "14");
+  wide.setAttribute("result", "wide");
+  f.appendChild(wide);
+  const merge = document.createElementNS(SVG_NS, "feMerge");
+  const mw = document.createElementNS(SVG_NS, "feMergeNode");
+  mw.setAttribute("in", "wide");
+  merge.appendChild(mw);
+  const mt = document.createElementNS(SVG_NS, "feMergeNode");
+  mt.setAttribute("in", "tight");
+  merge.appendChild(mt);
+  f.appendChild(merge);
+  defs.appendChild(f);
 }
 
-/* Celula do cluster mais proxima de um alvo */
-function closestInCluster(cluster: Cell[], target: Cell): Cell {
-  const tc = cellCenter(target.col, target.row);
-  let best = cluster[0];
-  let bestD = Infinity;
-  for (const c of cluster) {
-    const p = cellCenter(c.col, c.row);
-    const d = Math.hypot(p.cx - tc.cx, p.cy - tc.cy);
-    if (d < bestD) {
-      bestD = d;
-      best = c;
-    }
-  }
-  return best;
+function appendPulseGlowFilter(defs: SVGDefsElement) {
+  const f = document.createElementNS(SVG_NS, "filter");
+  f.setAttribute("id", "hex-pulse-glow");
+  f.setAttribute("x", "-100%");
+  f.setAttribute("y", "-100%");
+  f.setAttribute("width", "300%");
+  f.setAttribute("height", "300%");
+  const blur = document.createElementNS(SVG_NS, "feGaussianBlur");
+  blur.setAttribute("in", "SourceGraphic");
+  blur.setAttribute("stdDeviation", "8");
+  f.appendChild(blur);
+  defs.appendChild(f);
 }
+
+/* -------------------- Build SVG ----------------------------------------- */
 
 interface BuildResult {
   svg: SVGSVGElement;
   pulseDur: number;
 }
 
-function buildPathSVG(
-  docW: number,
-  docH: number,
-  reducedMotion: boolean
-): BuildResult | null {
+interface BuildOpts {
+  docW: number;
+  docH: number;
+  reducedMotion: boolean;
+  seed: number;
+}
+
+function buildPathSVG(opts: BuildOpts): BuildResult | null {
+  const { docW, docH, reducedMotion, seed } = opts;
   if (!docW || !docH) return null;
 
+  const rng = mulberry32(seed);
   const cols = Math.ceil(docW / HEX_W) + 2;
   const rowMax = Math.ceil(docH / ROW_H) + 1;
-  const bounds: Bounds = { colMin: 0, colMax: cols - 1, rowMin: 0, rowMax };
 
-  const anchors = pickAnchors(cols, rowMax);
-  if (anchors.length < 2) return null;
-
-  const usedCells = new Set<string>();
-  const clusters: Cell[][] = anchors.map((a) =>
-    buildCluster(a, cols, rowMax, usedCells)
-  );
-
-  const graph = buildCornerGraph(bounds);
-
-  /* Pra cada ancora: celula/corner de entrada (vindo da anterior) e saida (rumo a seguinte).
-     Em clusters multi-celula, entry/exit podem cair em celulas diferentes — dai a linha
-     "passa no meio" cruzando as arestas compartilhadas entre os hexes dourados. */
-  interface Port {
-    cell: Cell;
-    idx: number;
-  }
-  const entry: Port[] = [];
-  const exit: Port[] = [];
-
-  for (let i = 0; i < anchors.length; i++) {
-    const cluster = clusters[i];
-    if (i < anchors.length - 1) {
-      const next = anchors[i + 1];
-      const cell = closestInCluster(cluster, next);
-      exit.push({ cell, idx: anchorCornerIndex(cell, next) });
-    } else {
-      exit.push({ cell: cluster[0], idx: 0 });
-    }
-    if (i > 0) {
-      const prev = anchors[i - 1];
-      const cell = closestInCluster(cluster, prev);
-      entry.push({ cell, idx: anchorCornerIndex(cell, prev) });
-    } else {
-      entry.push({ cell: exit[0].cell, idx: (exit[0].idx + 3) % 6 });
-    }
-  }
-  /* Ultimo ancora: exit oposto ao entry (path termina la) */
-  const lastI = anchors.length - 1;
-  exit[lastI] = { cell: entry[lastI].cell, idx: (entry[lastI].idx + 3) % 6 };
-
-  const fullPath: Pt[] = [];
-  const arrivalLen: number[] = [];
-
-  /* Traversal interno na ancora 0: entry -> exit via subgrafo do cluster */
-  const firstInternal = cornerWalk(
-    cellCornerKey(entry[0].cell, entry[0].idx),
-    cellCornerKey(exit[0].cell, exit[0].idx),
-    buildClusterGraph(clusters[0])
-  );
-  fullPath.push(...firstInternal);
-  arrivalLen.push(0);
-
-  for (let i = 0; i < anchors.length - 1; i++) {
-    /* Segmento externo: exit de [i] -> entry de [i+1] (grafo global) */
-    const seg = cornerWalk(
-      cellCornerKey(exit[i].cell, exit[i].idx),
-      cellCornerKey(entry[i + 1].cell, entry[i + 1].idx),
-      graph
-    );
-    if (seg.length < 2) {
-      arrivalLen.push(arrivalLen[arrivalLen.length - 1]);
-      continue;
-    }
-    fullPath.push(...seg.slice(1));
-    arrivalLen.push(segLength(fullPath));
-
-    /* Traversal interno do cluster [i+1]: pode cruzar arestas compartilhadas */
-    const internal = cornerWalk(
-      cellCornerKey(entry[i + 1].cell, entry[i + 1].idx),
-      cellCornerKey(exit[i + 1].cell, exit[i + 1].idx),
-      buildClusterGraph(clusters[i + 1])
-    );
-    if (internal.length > 1) fullPath.push(...internal.slice(1));
-  }
-
-  if (fullPath.length < 2) return null;
+  const bands = readDensityBands();
+  const densityAt = makeDensityAt(bands);
+  const textRects = readTextRects();
+  const allShades = collectShadeCells(cols, rowMax, densityAt, textRects);
 
   const svg = document.createElementNS(SVG_NS, "svg");
   svg.setAttribute("viewBox", `0 0 ${docW} ${docH}`);
   svg.setAttribute("preserveAspectRatio", "xMinYMin slice");
   svg.setAttribute("aria-hidden", "true");
 
-  const pathD =
-    "M " + fullPath.map((p) => `${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" L ");
-  const totalLength = segLength(fullPath);
-
-  /* Pra cada cluster, identifica em qual trecho do path o pulso esta "dentro" dele.
-     Usa corners das celulas do cluster como marcadores. */
-  const clusterCornerKeys: Set<string>[] = clusters.map((cluster) => {
-    const keys = new Set<string>();
-    for (const cell of cluster) {
-      for (const c of cornersOf(cell.col, cell.row)) {
-        keys.add(cornerKey(c.x, c.y));
-      }
-    }
-    return keys;
-  });
-  const clusterSpans: { entryLen: number; exitLen: number }[] = clusters.map(
-    () => ({ entryLen: -1, exitLen: -1 })
-  );
-  {
-    let cum = 0;
-    for (let i = 0; i < fullPath.length; i++) {
-      if (i > 0) {
-        cum += Math.hypot(
-          fullPath[i].x - fullPath[i - 1].x,
-          fullPath[i].y - fullPath[i - 1].y
-        );
-      }
-      const key = cornerKey(fullPath[i].x, fullPath[i].y);
-      for (let j = 0; j < clusters.length; j++) {
-        if (clusterCornerKeys[j].has(key)) {
-          if (clusterSpans[j].entryLen < 0) clusterSpans[j].entryLen = cum;
-          clusterSpans[j].exitLen = cum;
-        }
-      }
-    }
-  }
-
-  /* Mask: path fica invisivel nas regioes dos hexes dourados.
-     Branco = visivel, preto = invisivel. Hexes das ancoras desenhados em preto
-     criam "buracos" que apagam a linha dentro deles. */
   const defs = document.createElementNS(SVG_NS, "defs");
-  const mask = document.createElementNS(SVG_NS, "mask");
-  mask.setAttribute("id", "hex-path-mask");
-  mask.setAttribute("maskUnits", "userSpaceOnUse");
-  mask.setAttribute("x", "0");
-  mask.setAttribute("y", "0");
-  mask.setAttribute("width", String(docW));
-  mask.setAttribute("height", String(docH));
-  const maskBg = document.createElementNS(SVG_NS, "rect");
-  maskBg.setAttribute("width", String(docW));
-  maskBg.setAttribute("height", String(docH));
-  maskBg.setAttribute("fill", "white");
-  mask.appendChild(maskBg);
-  for (const cluster of clusters) {
-    for (const cell of cluster) {
-      const { cx, cy } = cellCenter(cell.col, cell.row);
-      const hole = document.createElementNS(SVG_NS, "polygon");
-      hole.setAttribute("fill", "black");
-      /* Buraco menor que o hex visual: esconde interior mas deixa arestas/shared-edges
-         (no raio ~0.87R) visiveis, pra linha "atravessar" o cluster entre hexes */
-      hole.setAttribute("points", hexPoints(cx, cy, HEX_R * 0.65));
-      mask.appendChild(hole);
-    }
-  }
-  defs.appendChild(mask);
-
-  /* Filter bloom duplo pra ancoras: tight glow + wide halo = efeito constelacao */
-  const anchorGlowFilter = document.createElementNS(SVG_NS, "filter");
-  anchorGlowFilter.setAttribute("id", "hex-anchor-glow");
-  anchorGlowFilter.setAttribute("x", "-150%");
-  anchorGlowFilter.setAttribute("y", "-150%");
-  anchorGlowFilter.setAttribute("width", "400%");
-  anchorGlowFilter.setAttribute("height", "400%");
-  /* Camada 1: glow tight (nucleo brilhante) */
-  const tightBlur = document.createElementNS(SVG_NS, "feGaussianBlur");
-  tightBlur.setAttribute("in", "SourceGraphic");
-  tightBlur.setAttribute("stdDeviation", "4");
-  tightBlur.setAttribute("result", "tight");
-  anchorGlowFilter.appendChild(tightBlur);
-  /* Camada 2: halo wide (bloom que sangra pra fora) */
-  const wideBlur = document.createElementNS(SVG_NS, "feGaussianBlur");
-  wideBlur.setAttribute("in", "SourceGraphic");
-  wideBlur.setAttribute("stdDeviation", "14");
-  wideBlur.setAttribute("result", "wide");
-  anchorGlowFilter.appendChild(wideBlur);
-  /* Merge: tight + wide compostos juntos */
-  const merge = document.createElementNS(SVG_NS, "feMerge");
-  const mergeWide = document.createElementNS(SVG_NS, "feMergeNode");
-  mergeWide.setAttribute("in", "wide");
-  merge.appendChild(mergeWide);
-  const mergeTight = document.createElementNS(SVG_NS, "feMergeNode");
-  mergeTight.setAttribute("in", "tight");
-  merge.appendChild(mergeTight);
-  anchorGlowFilter.appendChild(merge);
-  defs.appendChild(anchorGlowFilter);
-
+  appendAnchorGlowFilter(defs);
   svg.appendChild(defs);
 
-  /* Grupo mascarado: tudo aqui dentro "some" nas areas dos hexes dourados */
-  const masked = document.createElementNS(SVG_NS, "g");
-  masked.setAttribute("mask", "url(#hex-path-mask)");
-  svg.appendChild(masked);
-
-  const conn = document.createElementNS(SVG_NS, "path");
-  conn.setAttribute("d", pathD);
-  conn.setAttribute("class", "conn");
-  masked.appendChild(conn);
-
-  const pulseDur = Math.max(14, totalLength / 220);
-
-  if (!reducedMotion) {
-    const pulseLen = 100;
-    const gap = Math.max(totalLength - pulseLen, pulseLen);
-
-    const filter = document.createElementNS(SVG_NS, "filter");
-    filter.setAttribute("id", "hex-pulse-glow");
-    filter.setAttribute("x", "-100%");
-    filter.setAttribute("y", "-100%");
-    filter.setAttribute("width", "300%");
-    filter.setAttribute("height", "300%");
-    const blur = document.createElementNS(SVG_NS, "feGaussianBlur");
-    blur.setAttribute("in", "SourceGraphic");
-    blur.setAttribute("stdDeviation", "6");
-    filter.appendChild(blur);
-    defs.appendChild(filter);
-
-    const glow = document.createElementNS(SVG_NS, "path");
-    glow.setAttribute("d", pathD);
-    glow.setAttribute("fill", "none");
-    glow.setAttribute("stroke", "rgba(224, 176, 58, 0.55)");
-    glow.setAttribute("stroke-width", "8");
-    glow.setAttribute("stroke-linecap", "round");
-    glow.setAttribute("stroke-linejoin", "round");
-    glow.setAttribute("stroke-dasharray", `${pulseLen} ${gap}`);
-    glow.setAttribute("filter", "url(#hex-pulse-glow)");
-    const glowAnim = document.createElementNS(SVG_NS, "animate");
-    glowAnim.setAttribute("attributeName", "stroke-dashoffset");
-    glowAnim.setAttribute("values", `0;${-totalLength}`);
-    glowAnim.setAttribute("dur", pulseDur.toFixed(2) + "s");
-    glowAnim.setAttribute("repeatCount", "indefinite");
-    glow.appendChild(glowAnim);
-    masked.appendChild(glow);
-
-    const core = document.createElementNS(SVG_NS, "path");
-    core.setAttribute("d", pathD);
-    core.setAttribute("fill", "none");
-    core.setAttribute("stroke", "#E0B03A");
-    core.setAttribute("stroke-width", "2");
-    core.setAttribute("stroke-linecap", "round");
-    core.setAttribute("stroke-linejoin", "round");
-    core.setAttribute("stroke-dasharray", `${pulseLen} ${gap}`);
-    const coreAnim = document.createElementNS(SVG_NS, "animate");
-    coreAnim.setAttribute("attributeName", "stroke-dashoffset");
-    coreAnim.setAttribute("values", `0;${-totalLength}`);
-    coreAnim.setAttribute("dur", pulseDur.toFixed(2) + "s");
-    coreAnim.setAttribute("repeatCount", "indefinite");
-    core.appendChild(coreAnim);
-    masked.appendChild(core);
+  /* reduced-motion: sem pulso, renderiza todos acesos estaticos */
+  if (reducedMotion) {
+    const v = readLitVisuals();
+    for (const c of allShades) appendStaticLit(svg, c, v);
+    return { svg, pulseDur: 0 };
   }
 
-  /* Brightness variavel por anchor: cria variacao de profundidade (uns brilham mais
-     que outros). Bias pro centro vertical da pagina pra efeito de concentracao organica. */
-  const anchorBrightness: number[] = anchors.map((a) => {
-    const centerFrac = 1 - Math.abs((a.row * ROW_H) / docH - 0.5) * 2;
-    const base = 0.4 + Math.random() * 0.6;
-    return Math.min(1, base * (0.5 + centerFrac * 0.5));
+  if (allShades.length < 2) {
+    return { svg, pulseDur: 0 };
+  }
+
+  const ordered = orderShadesWandering(allShades, rng);
+
+  /* Path: pulso caminha SO por arestas do grid (corner a corner via BFS).
+     Cada shade em "ordered" tem um anchor corner escolhido na direcao do
+     proximo shade (ou pra baixo no ultimo). Entre anchors consecutivos, o
+     BFS acha o caminho mais curto de arestas — o resultado eh zigzag
+     natural nos angulos de 60/120 do grid. */
+  const bounds: Bounds = {
+    colMin: 0,
+    colMax: cols - 1,
+    rowMin: 0,
+    rowMax,
+  };
+  const graph = buildCornerGraph(bounds);
+
+  /* Anchor corner de cada shade: o corner mais alinhado com o proximo.
+     Pro ultimo, usa um alvo fake pra baixo pra que o anchor final "aponte"
+     pra o off-screen de baixo (continuidade visual). */
+  const anchorKeys: string[] = ordered.map((cell, i) => {
+    const next =
+      ordered[i + 1] || { col: cell.col, row: cell.row + 3 };
+    return cellCornerKey(cell, anchorCornerIndex(cell, next));
   });
 
-  /* Ancoras renderizadas POR ULTIMO. Cada cluster recebe animacao sincronizada
-     a janela em que o pulso o atravessa: fill-opacity sobe e glow acende, depois volta. */
-  for (let i = 0; i < anchors.length; i++) {
-    const span = clusterSpans[i];
-    const hasSpan = span.entryLen >= 0 && span.exitLen >= 0;
-    let entryFrac = hasSpan ? span.entryLen / totalLength : 0;
-    let exitFrac = hasSpan ? span.exitLen / totalLength : 1;
-    entryFrac = Math.max(0.001, Math.min(0.999, entryFrac));
-    exitFrac = Math.max(entryFrac + 0.003, Math.min(0.999, exitFrac));
-    const rampIn = 0.006;
-    const rampOut = 0.02;
-    const t0 = Math.max(0, entryFrac - rampIn);
-    const t1 = entryFrac;
-    const t2 = exitFrac;
-    const t3 = Math.min(0.9999, exitFrac + rampOut);
+  /* Monta waypoints + anchorIndices. Inicio/fim sao retas verticais off-
+     screen (os unicos segmentos que nao seguem arestas do grid — mas estao
+     fora da tela, entao invisiveis). */
+  const firstAnchor = graph.get(anchorKeys[0]);
+  const lastAnchor = graph.get(anchorKeys[anchorKeys.length - 1]);
+  if (!firstAnchor || !lastAnchor) {
+    return { svg, pulseDur: 0 };
+  }
+
+  const waypoints: Pt[] = [];
+  const anchorIndices: number[] = [];
+
+  waypoints.push({ x: firstAnchor.x, y: -240 });
+  waypoints.push({ x: firstAnchor.x, y: firstAnchor.y });
+  anchorIndices.push(waypoints.length - 1);
+
+  for (let i = 0; i < anchorKeys.length - 1; i++) {
+    const walk = cornerWalk(anchorKeys[i], anchorKeys[i + 1], graph, rng);
+    if (walk.length < 2) {
+      /* BFS falhou (anchor fora do grafo?) — pula, mas registra anchor
+         anterior como "alcancado" pra o shade ainda acender. */
+      anchorIndices.push(waypoints.length - 1);
+      continue;
+    }
+    /* walk[0] eh o anchor anterior (ja no waypoints), entao pulamos */
+    for (let k = 1; k < walk.length; k++) waypoints.push(walk[k]);
+    anchorIndices.push(waypoints.length - 1);
+  }
+
+  waypoints.push({ x: lastAnchor.x, y: docH + 240 });
+
+  /* pathD = polyline reto entre waypoints (cada segmento entre corners
+     adjacentes do grid eh uma aresta reta de comprimento HEX_R=24). */
+  const pathD =
+    "M " +
+    waypoints.map((p) => `${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" L ");
+
+  /* Comprimentos cumulativos ate cada waypoint */
+  const cumLens: number[] = new Array(waypoints.length).fill(0);
+  let totalLength = 0;
+  for (let i = 1; i < waypoints.length; i++) {
+    totalLength += Math.hypot(
+      waypoints[i].x - waypoints[i - 1].x,
+      waypoints[i].y - waypoints[i - 1].y
+    );
+    cumLens[i] = totalLength;
+  }
+
+  /* shadeFracs[i] = fracao do path em que o pulso chega no anchor do shade i */
+  const shadeFracs: number[] = anchorIndices.map(
+    (idx) => cumLens[idx] / totalLength
+  );
+
+  /* Pulso ciclico (indefinite). Velocidade ~18 px/s — levemente mais agil
+     que os 15 px/s anteriores, mas ainda contemplativo. */
+  const pulseDur = Math.max(210, Math.min(540, totalLength / 18));
+
+  /* Cauda: stroke-dashed longo e difuso que arrasta atras da cabeca.
+     Cabeca: um <circle> sem blur seguindo o path via animateMotion, nitido
+     na ponta. DOIS meteoros concorrentes desfasados por pulseDur/2: quando
+     um esta na metade inferior da pagina, o outro ja esta aparecendo no topo.
+     Evita o hiato visual quando o unico pulso estava off-screen. */
+  const tailLen = 140;
+  const tailGap = Math.max(totalLength - tailLen, tailLen);
+  const headLead = (tailLen / totalLength) * pulseDur;
+
+  appendPulseGlowFilter(defs);
+
+  /* Adiciona um par cauda+cabeca (meteoro completo) com offset temporal. */
+  function addMeteor(beginOffsetSec: number) {
+    const beginAttr = beginOffsetSec.toFixed(2) + "s";
+
+    /* Cauda longa e difusa */
+    const tail = document.createElementNS(SVG_NS, "path");
+    tail.setAttribute("d", pathD);
+    tail.setAttribute("fill", "none");
+    tail.setAttribute("stroke", "rgba(224, 176, 58, 0.55)");
+    tail.setAttribute("stroke-width", "10");
+    tail.setAttribute("stroke-linecap", "round");
+    tail.setAttribute("stroke-linejoin", "round");
+    tail.setAttribute("stroke-dasharray", `${tailLen} ${tailGap}`);
+    tail.setAttribute("filter", "url(#hex-pulse-glow)");
+    const tailAnim = document.createElementNS(SVG_NS, "animate");
+    tailAnim.setAttribute("attributeName", "stroke-dashoffset");
+    tailAnim.setAttribute("values", `0;${-totalLength}`);
+    tailAnim.setAttribute("dur", pulseDur.toFixed(2) + "s");
+    tailAnim.setAttribute("repeatCount", "indefinite");
+    tailAnim.setAttribute("begin", beginAttr);
+    tail.appendChild(tailAnim);
+    svg.appendChild(tail);
+
+    /* Cabeca = bolinha redonda nitida */
+    const head = document.createElementNS(SVG_NS, "circle");
+    head.setAttribute("r", "3.5");
+    head.setAttribute("fill", "#E0B03A");
+    head.setAttribute("cx", "0");
+    head.setAttribute("cy", "0");
+    const headMotion = document.createElementNS(SVG_NS, "animateMotion");
+    headMotion.setAttribute("dur", pulseDur.toFixed(2) + "s");
+    headMotion.setAttribute("repeatCount", "indefinite");
+    headMotion.setAttribute("path", pathD);
+    /* Combina adiantamento da cabeca (pra alinhar com a ponta da cauda) com
+       o offset temporal do meteoro. */
+    headMotion.setAttribute(
+      "begin",
+      (beginOffsetSec - headLead).toFixed(2) + "s"
+    );
+    head.appendChild(headMotion);
+    svg.appendChild(head);
+  }
+
+  addMeteor(0);
+  addMeteor(-pulseDur / 2);
+
+  /* Cada shade: halo + hex com animate ciclico. Acende quando o pulso chega,
+     segura HOLD_LIT_SEC, faz fade out em FADE_OUT_SEC, volta ao cinza.
+     O ciclo tem dur=pulseDur (sync com o pulso) e repeatCount=indefinite
+     — toda volta do pulso traz a mesma sequencia.
+     Attrs diretos (sem class .hx-lit) pra evitar conflito CSS. */
+  const visuals = readLitVisuals();
+  const peakBoost = visuals.isDark ? 1.1 : 1.0;
+
+  const rampInFrac = RAMP_IN_SEC / pulseDur;
+  const holdFrac = HOLD_LIT_SEC / pulseDur;
+  const fadeOutFrac = FADE_OUT_SEC / pulseDur;
+
+  for (let i = 0; i < ordered.length; i++) {
+    const primary = ordered[i];
+
+    const entryFrac = Math.max(0.01, Math.min(0.98, shadeFracs[i]));
+    /* 5 keyframes: t0=inicio-rampIn (cinza), t1=peak, t2=fim-hold, t3=fim-fade.
+       Clamp pra nao passar de 0.995 — keyTimes estritamente crescentes e <=1. */
+    const t0 = Math.max(0.001, entryFrac - rampInFrac);
+    const t1 = Math.max(t0 + 0.001, entryFrac);
+    const t2 = Math.min(0.985, t1 + holdFrac);
+    const t3 = Math.min(0.995, t2 + fadeOutFrac);
     const keyTimes = `0;${t0.toFixed(4)};${t1.toFixed(4)};${t2.toFixed(4)};${t3.toFixed(4)};1`;
 
-    const bright = anchorBrightness[i];
-    /* Opacidades escaladas pelo brightness do anchor */
-    const glowBaseOp = (0.25 + bright * 0.35).toFixed(2);
-    const litBaseFill = (0.3 + bright * 0.35).toFixed(2);
-    const litPeakFill = (0.5 + bright * 0.5).toFixed(2);
+    const bright = 0.7 + rng() * 0.3;
+    const peakFill = Math.min(0.95, (0.6 + bright * 0.35) * peakBoost).toFixed(2);
 
-    for (const cell of clusters[i]) {
+    /* Expande o anchor em um cluster de 1-4 hexes adjacentes (geralmente 1,
+       as vezes 2-3, raro 4). Todos compartilham o mesmo timing — acendem
+       juntos quando o pulso chega no primary. */
+    const cluster = pickClusterCells(primary, cols, rowMax, textRects, rng);
+
+    for (const cell of cluster) {
       const { cx, cy } = cellCenter(cell.col, cell.row);
 
-      /* Glow atras: raio 1.6x = halo amplo, bloom duplo borra pra criar constelacao */
-      if (!reducedMotion && hasSpan) {
-        const glowLit = document.createElementNS(SVG_NS, "polygon");
-        glowLit.setAttribute("points", hexPoints(cx, cy, HEX_R * 1.6));
-        glowLit.setAttribute("fill", `rgba(224, 176, 58, ${glowBaseOp})`);
-        glowLit.setAttribute("stroke", "none");
-        glowLit.setAttribute("filter", "url(#hex-anchor-glow)");
-        glowLit.setAttribute("opacity", "0");
-        const gAnim = document.createElementNS(SVG_NS, "animate");
-        gAnim.setAttribute("attributeName", "opacity");
-        gAnim.setAttribute("values", `0;0;${bright.toFixed(2)};${bright.toFixed(2)};0;0`);
-        gAnim.setAttribute("keyTimes", keyTimes);
-        gAnim.setAttribute("dur", pulseDur.toFixed(2) + "s");
-        gAnim.setAttribute("repeatCount", "indefinite");
-        glowLit.appendChild(gAnim);
-        svg.appendChild(glowLit);
-      }
-
-      /* Hex solido: fill-opacity escalado pelo brightness deste anchor */
-      const lit = document.createElementNS(SVG_NS, "polygon");
-      lit.setAttribute("class", "hx-lit");
-      lit.setAttribute("points", hexPoints(cx, cy, HEX_R * 0.95));
-      if (!reducedMotion && hasSpan) {
+      /* Pra cada meteoro (2 deles, desfasados por pulseDur/2), um polygon
+         proprio com animacao independente. Dois polygons sobrepostos no
+         mesmo lugar, cada um acende quando seu meteoro passa — evita conflito
+         de <animate> concorrentes no mesmo attribute. */
+      for (const beginOffsetSec of [0, -pulseDur / 2]) {
+        const lit = document.createElementNS(SVG_NS, "polygon");
+        lit.setAttribute("points", hexPoints(cx, cy, HEX_R * 0.95));
+        lit.setAttribute("fill", "#E0B03A");
+        lit.setAttribute("fill-opacity", peakFill);
+        lit.setAttribute("stroke", visuals.stroke);
+        lit.setAttribute("stroke-width", visuals.strokeWidth);
+        lit.setAttribute("opacity", "0");
         const anim = document.createElementNS(SVG_NS, "animate");
-        anim.setAttribute("attributeName", "fill-opacity");
-        anim.setAttribute("values", `${litBaseFill};${litBaseFill};${litPeakFill};${litPeakFill};${litBaseFill};${litBaseFill}`);
+        anim.setAttribute("attributeName", "opacity");
+        anim.setAttribute(
+          "values",
+          `0;0;${bright.toFixed(2)};${bright.toFixed(2)};0;0`
+        );
         anim.setAttribute("keyTimes", keyTimes);
         anim.setAttribute("dur", pulseDur.toFixed(2) + "s");
         anim.setAttribute("repeatCount", "indefinite");
+        anim.setAttribute("begin", beginOffsetSec.toFixed(2) + "s");
         lit.appendChild(anim);
+        svg.appendChild(lit);
       }
-      svg.appendChild(lit);
     }
   }
 
   return { svg, pulseDur };
 }
 
+/* -------------------- React component ----------------------------------- */
+
 export default function HexPath() {
   const wrapRef = useRef<HTMLDivElement>(null);
+  const seedRef = useRef<number>(0);
 
   const build = useCallback(() => {
     const wrap = wrapRef.current;
@@ -653,16 +729,23 @@ export default function HexPath() {
       "(prefers-reduced-motion: reduce)"
     ).matches;
 
-    const result = buildPathSVG(docW, docH, reducedMotion);
+    const result = buildPathSVG({
+      docW,
+      docH,
+      reducedMotion,
+      seed: seedRef.current,
+    });
     wrap.innerHTML = "";
     wrap.style.height = docH + "px";
     if (result) wrap.appendChild(result.svg);
   }, []);
 
   useEffect(() => {
+    seedRef.current = (Date.now() & 0x7fffffff) || 1;
+
+    let raf2 = 0;
     const raf1 = requestAnimationFrame(() => {
-      const raf2 = requestAnimationFrame(build);
-      (build as unknown as { _raf2: number })._raf2 = raf2;
+      raf2 = requestAnimationFrame(build);
     });
 
     let resizeTimer: ReturnType<typeof setTimeout>;
@@ -680,9 +763,7 @@ export default function HexPath() {
 
     return () => {
       cancelAnimationFrame(raf1);
-      cancelAnimationFrame(
-        (build as unknown as { _raf2?: number })._raf2 ?? 0
-      );
+      cancelAnimationFrame(raf2);
       clearTimeout(resizeTimer);
       window.removeEventListener("resize", onResize);
       ro.disconnect();

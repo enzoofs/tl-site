@@ -193,6 +193,9 @@ div:hover > .sec-mesh { opacity: 1; }
   stroke: currentColor; stroke-width: 0.5;
   transition: fill 0.35s ease, fill-opacity 0.35s ease;
 }
+/* .hx-shade cria o gradiente de cinzas do mesh E eh o conjunto que o pulso
+   acende. Stroke dourado do polygon sobreposto nao marca porque o polygon
+   animado comeca com opacity=0 (so aparece quando o pulso chega). */
 .sec-mesh .hx-shade {
   stroke: currentColor; stroke-width: 0.5;
   fill: currentColor; fill-opacity: 0.35;

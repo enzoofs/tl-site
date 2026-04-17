@@ -11,6 +11,7 @@ export function Hero() {
   return (
     <section
       id="hero"
+      data-hex-density="0.12"
       style={{
         position: "relative",
         isolation: "isolate",
@@ -59,15 +60,15 @@ export function Hero() {
               ı
               <svg
                 className="wordmark-hex"
-                width="0.22em"
-                height="0.22em"
+                width="0.18em"
+                height="0.18em"
                 viewBox="0 0 20 20"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
                 aria-hidden="true"
               >
                 <polygon
-                  points="10,0 20,10 10,20 0,10"
+                  points="10,0 18.66,5 18.66,15 10,20 1.34,15 1.34,5"
                   fill="var(--mercury)"
                 />
               </svg>
@@ -159,7 +160,7 @@ export function Hero() {
         }
         .wordmark-hex {
           position: absolute;
-          top: 0.05em;
+          top: 0.1em;
           left: 50%;
           transform: translateX(-50%);
         }

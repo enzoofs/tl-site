@@ -20,7 +20,7 @@ const cards = [
 
 export function Problema() {
   return (
-    <SectionReveal as="section" className="problema-section">
+    <SectionReveal as="section" className="problema-section" data-hex-density="0.06">
       <div
         id="problema"
         style={{

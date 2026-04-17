@@ -1,39 +1,21 @@
 "use client";
 
 import { useEffect, useRef, useCallback } from "react";
+import {
+  HEX_W,
+  ROW_H,
+  SVG_NS,
+  cellCenter,
+  cellHash,
+  hexPoints,
+} from "./hex-grid";
 
 /* ==========================================================================
    HEX MESH — base (hx + hx-shade) em coords globais pra tilar continuamente
    entre seccoes. Path + pulso migraram pro overlay global (hex-path.tsx).
+   Cada polygon ganha data-col/data-row pra permitir lookup cross-component
+   (HexPath usa esses dados pra alinhar clusters ao grid real).
    ========================================================================== */
-
-const HEX_R = 24;
-const HEX_W = HEX_R * Math.sqrt(3);
-const ROW_H = HEX_R * 1.5;
-const SVG_NS = "http://www.w3.org/2000/svg";
-
-function hexPoints(cx: number, cy: number, r = HEX_R): string {
-  const pts: string[] = [];
-  for (let i = 0; i < 6; i++) {
-    const a = (Math.PI / 180) * (60 * i - 30);
-    pts.push(
-      `${(cx + r * Math.cos(a)).toFixed(2)},${(cy + r * Math.sin(a)).toFixed(2)}`
-    );
-  }
-  return pts.join(" ");
-}
-
-function cellCx(col: number, row: number): number {
-  const parity = ((row % 2) + 2) % 2;
-  return col * HEX_W + (parity ? HEX_W / 2 : 0);
-}
-
-/* Hash deterministico (col,row) globais -> [0,1) pra shade consistente */
-function cellHash(col: number, row: number): number {
-  let h = (col * 73856093) ^ (row * 19349663);
-  h = Math.imul(h ^ (h >>> 13), 1274126177);
-  return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
-}
 
 function buildMeshSVG(
   w: number,
@@ -54,8 +36,9 @@ function buildMeshSVG(
   const meshG = document.createElementNS(SVG_NS, "g");
   for (let r = rowStart; r <= rowEnd; r++) {
     for (let c = -1; c <= cols; c++) {
-      const cx = cellCx(c, r);
+      const { cx: cxGlobal } = cellCenter(c, r);
       const cyGlobal = r * ROW_H;
+      const cx = cxGlobal;
       const cy = cyGlobal - docY;
       const shaded = cellHash(c, r) < density;
       const p = document.createElementNS(SVG_NS, "polygon");
@@ -63,6 +46,8 @@ function buildMeshSVG(
       p.setAttribute("points", hexPoints(cx, cy));
       p.setAttribute("data-cx", cx.toFixed(1));
       p.setAttribute("data-cy", cy.toFixed(1));
+      p.setAttribute("data-col", String(c));
+      p.setAttribute("data-row", String(r));
       meshG.appendChild(p);
     }
   }

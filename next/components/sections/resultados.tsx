@@ -27,7 +27,7 @@ const kpis = [
 
 export function Resultados() {
   return (
-    <SectionReveal as="section">
+    <SectionReveal as="section" data-hex-density="0.06">
       <div
         id="resultados"
         style={{
