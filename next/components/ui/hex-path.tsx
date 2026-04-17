@@ -447,13 +447,19 @@ function appendAnchorGlowFilter(defs: SVGDefsElement) {
 function appendPulseGlowFilter(defs: SVGDefsElement) {
   const f = document.createElementNS(SVG_NS, "filter");
   f.setAttribute("id", "hex-pulse-glow");
-  f.setAttribute("x", "-100%");
-  f.setAttribute("y", "-100%");
-  f.setAttribute("width", "300%");
-  f.setAttribute("height", "300%");
+  /* filterUnits=objectBoundingBox com area de bleed moderada (nao 300%)
+     reduz o tamanho do buffer intermediario que o browser precisa renderizar
+     a cada frame — principal causa do FPS baixo do trail. */
+  f.setAttribute("x", "-50%");
+  f.setAttribute("y", "-50%");
+  f.setAttribute("width", "200%");
+  f.setAttribute("height", "200%");
   const blur = document.createElementNS(SVG_NS, "feGaussianBlur");
   blur.setAttribute("in", "SourceGraphic");
-  blur.setAttribute("stdDeviation", "8");
+  /* stdDeviation=4 (era 8) corta o custo do blur pela metade, mantendo
+     sensacao de rastro suave. Combinado com stroke-width menor (6 em vez
+     de 10), o trail fica mais barato de rasterizar a cada frame. */
+  blur.setAttribute("stdDeviation", "4");
   f.appendChild(blur);
   defs.appendChild(f);
 }
@@ -590,8 +596,12 @@ function buildPathSVG(opts: BuildOpts): BuildResult | null {
      Cabeca: um <circle> sem blur seguindo o path via animateMotion, nitido
      na ponta. DOIS meteoros concorrentes desfasados por pulseDur/2: quando
      um esta na metade inferior da pagina, o outro ja esta aparecendo no topo.
-     Evita o hiato visual quando o unico pulso estava off-screen. */
-  const tailLen = 140;
+     Evita o hiato visual quando o unico pulso estava off-screen.
+
+     Stroke mais fino (6 em vez de 10) + blur menor (stdDev 4 em vez de 8)
+     + tailLen menor (110) reduzem drasticamente o custo por frame, que
+     estava causando drops de FPS em monitores grandes. */
+  const tailLen = 110;
   const tailGap = Math.max(totalLength - tailLen, tailLen);
   const headLead = (tailLen / totalLength) * pulseDur;
 
@@ -601,12 +611,12 @@ function buildPathSVG(opts: BuildOpts): BuildResult | null {
   function addMeteor(beginOffsetSec: number) {
     const beginAttr = beginOffsetSec.toFixed(2) + "s";
 
-    /* Cauda longa e difusa */
+    /* Cauda difusa — mais fina que antes pra nao pesar o blur */
     const tail = document.createElementNS(SVG_NS, "path");
     tail.setAttribute("d", pathD);
     tail.setAttribute("fill", "none");
-    tail.setAttribute("stroke", "rgba(224, 176, 58, 0.55)");
-    tail.setAttribute("stroke-width", "10");
+    tail.setAttribute("stroke", "rgba(224, 176, 58, 0.65)");
+    tail.setAttribute("stroke-width", "6");
     tail.setAttribute("stroke-linecap", "round");
     tail.setAttribute("stroke-linejoin", "round");
     tail.setAttribute("stroke-dasharray", `${tailLen} ${tailGap}`);
