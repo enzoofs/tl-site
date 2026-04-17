@@ -685,6 +685,22 @@ function buildPathSVG(opts: BuildOpts): BuildResult | null {
        juntos quando o pulso chega no primary. */
     const cluster = pickClusterCells(primary, cols, rowMax, textRects, rng);
 
+    /* Keyframes extras pra respiracao do halo: 3 oscilacoes durante o HOLD */
+    const holdSpan = t2 - t1;
+    const b1 = t1 + holdSpan * 0.25;
+    const b2 = t1 + holdSpan * 0.5;
+    const b3 = t1 + holdSpan * 0.75;
+    const haloKeyTimes =
+      `0;${t0.toFixed(4)};${t1.toFixed(4)};` +
+      `${b1.toFixed(4)};${b2.toFixed(4)};${b3.toFixed(4)};` +
+      `${t2.toFixed(4)};${t3.toFixed(4)};1`;
+    const breathDip = (bright * 0.7).toFixed(2);
+    const brightStr = bright.toFixed(2);
+    const haloValues =
+      `0;0;${brightStr};` +
+      `${breathDip};${brightStr};${breathDip};` +
+      `${brightStr};0;0`;
+
     for (const cell of cluster) {
       const { cx, cy } = cellCenter(cell.col, cell.row);
 
@@ -692,12 +708,14 @@ function buildPathSVG(opts: BuildOpts): BuildResult | null {
          halo+hex proprio com animacao independente. Halo eh um polygon 1.4x
          maior com fill dourado transparente SEM filter blur — o degrade
          visual vem do overlay de dois polygons concentricos com alphas
-         diferentes, nao de feGaussianBlur (que era o gargalo de FPS). */
+         diferentes, nao de feGaussianBlur (que era o gargalo de FPS).
+         O HALO respira durante o hold (3 oscilacoes bright -> 0.7*bright)
+         enquanto o CORE permanece estavel — brilho ganha vida organica. */
       for (const beginOffsetSec of [0, -pulseDur / 2]) {
         const beginAttr = beginOffsetSec.toFixed(2) + "s";
-        const valuesAttr = `0;0;${bright.toFixed(2)};${bright.toFixed(2)};0;0`;
+        const coreValues = `0;0;${brightStr};${brightStr};0;0`;
 
-        /* Halo — polygon maior, sem stroke, fill dourado semi-transparente */
+        /* Halo com respiração */
         const halo = document.createElementNS(SVG_NS, "polygon");
         halo.setAttribute("points", hexPoints(cx, cy, HEX_R * 1.4));
         halo.setAttribute("fill", "#E0B03A");
@@ -706,15 +724,21 @@ function buildPathSVG(opts: BuildOpts): BuildResult | null {
         halo.setAttribute("opacity", "0");
         const haloAnim = document.createElementNS(SVG_NS, "animate");
         haloAnim.setAttribute("attributeName", "opacity");
-        haloAnim.setAttribute("values", valuesAttr);
-        haloAnim.setAttribute("keyTimes", keyTimes);
+        haloAnim.setAttribute("values", haloValues);
+        haloAnim.setAttribute("keyTimes", haloKeyTimes);
         haloAnim.setAttribute("dur", pulseDur.toFixed(2) + "s");
         haloAnim.setAttribute("repeatCount", "indefinite");
         haloAnim.setAttribute("begin", beginAttr);
+        haloAnim.setAttribute("calcMode", "spline");
+        /* Splines suaves pra cada transicao (9 keyTimes = 8 segmentos) */
+        haloAnim.setAttribute(
+          "keySplines",
+          "0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1;0.4 0 0.6 1"
+        );
         halo.appendChild(haloAnim);
         svg.appendChild(halo);
 
-        /* Hex core — nitido, sobre o halo */
+        /* Hex core — nitido, sobre o halo, timing simples sem respiracao */
         const lit = document.createElementNS(SVG_NS, "polygon");
         lit.setAttribute("points", hexPoints(cx, cy, HEX_R * 0.95));
         lit.setAttribute("fill", "#E0B03A");
@@ -724,7 +748,7 @@ function buildPathSVG(opts: BuildOpts): BuildResult | null {
         lit.setAttribute("opacity", "0");
         const anim = document.createElementNS(SVG_NS, "animate");
         anim.setAttribute("attributeName", "opacity");
-        anim.setAttribute("values", valuesAttr);
+        anim.setAttribute("values", coreValues);
         anim.setAttribute("keyTimes", keyTimes);
         anim.setAttribute("dur", pulseDur.toFixed(2) + "s");
         anim.setAttribute("repeatCount", "indefinite");
