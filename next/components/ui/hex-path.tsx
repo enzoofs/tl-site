@@ -688,11 +688,33 @@ function buildPathSVG(opts: BuildOpts): BuildResult | null {
     for (const cell of cluster) {
       const { cx, cy } = cellCenter(cell.col, cell.row);
 
-      /* Pra cada meteoro (2 deles, desfasados por pulseDur/2), um polygon
-         proprio com animacao independente. Dois polygons sobrepostos no
-         mesmo lugar, cada um acende quando seu meteoro passa — evita conflito
-         de <animate> concorrentes no mesmo attribute. */
+      /* Pra cada meteoro (2 deles, desfasados por pulseDur/2), um par
+         halo+hex proprio com animacao independente. Halo eh um polygon 1.4x
+         maior com fill dourado transparente SEM filter blur — o degrade
+         visual vem do overlay de dois polygons concentricos com alphas
+         diferentes, nao de feGaussianBlur (que era o gargalo de FPS). */
       for (const beginOffsetSec of [0, -pulseDur / 2]) {
+        const beginAttr = beginOffsetSec.toFixed(2) + "s";
+        const valuesAttr = `0;0;${bright.toFixed(2)};${bright.toFixed(2)};0;0`;
+
+        /* Halo — polygon maior, sem stroke, fill dourado semi-transparente */
+        const halo = document.createElementNS(SVG_NS, "polygon");
+        halo.setAttribute("points", hexPoints(cx, cy, HEX_R * 1.4));
+        halo.setAttribute("fill", "#E0B03A");
+        halo.setAttribute("fill-opacity", "0.28");
+        halo.setAttribute("stroke", "none");
+        halo.setAttribute("opacity", "0");
+        const haloAnim = document.createElementNS(SVG_NS, "animate");
+        haloAnim.setAttribute("attributeName", "opacity");
+        haloAnim.setAttribute("values", valuesAttr);
+        haloAnim.setAttribute("keyTimes", keyTimes);
+        haloAnim.setAttribute("dur", pulseDur.toFixed(2) + "s");
+        haloAnim.setAttribute("repeatCount", "indefinite");
+        haloAnim.setAttribute("begin", beginAttr);
+        halo.appendChild(haloAnim);
+        svg.appendChild(halo);
+
+        /* Hex core — nitido, sobre o halo */
         const lit = document.createElementNS(SVG_NS, "polygon");
         lit.setAttribute("points", hexPoints(cx, cy, HEX_R * 0.95));
         lit.setAttribute("fill", "#E0B03A");
@@ -702,14 +724,11 @@ function buildPathSVG(opts: BuildOpts): BuildResult | null {
         lit.setAttribute("opacity", "0");
         const anim = document.createElementNS(SVG_NS, "animate");
         anim.setAttribute("attributeName", "opacity");
-        anim.setAttribute(
-          "values",
-          `0;0;${bright.toFixed(2)};${bright.toFixed(2)};0;0`
-        );
+        anim.setAttribute("values", valuesAttr);
         anim.setAttribute("keyTimes", keyTimes);
         anim.setAttribute("dur", pulseDur.toFixed(2) + "s");
         anim.setAttribute("repeatCount", "indefinite");
-        anim.setAttribute("begin", beginOffsetSec.toFixed(2) + "s");
+        anim.setAttribute("begin", beginAttr);
         lit.appendChild(anim);
         svg.appendChild(lit);
       }

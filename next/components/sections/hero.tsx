@@ -126,23 +126,29 @@ export function Hero() {
         }}
         className="hero-right"
       >
-        <motion.img
-          src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/assets/selo-hero.svg`}
-          alt="Selo TimeLabs — hexágono dourado com logotipo"
-          initial={{ opacity: 0, scale: 0.92 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{
-            duration: 1.2,
-            delay: 0.4,
-            ease: [0.22, 0.61, 0.36, 1],
-          }}
-          className="hero-selo"
-          style={{
-            maxWidth: 440,
-            width: "100%",
-            height: "auto",
-          }}
-        />
+        {/* Wrapper com rotacao lenta contínua (CSS). Framer cuida do fade
+            in do img interno — transformacoes nao conflitam pq estao em
+            elementos diferentes. */}
+        <div className="hero-selo-spin">
+          <motion.img
+            src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/assets/selo-hero.svg`}
+            alt="Selo TimeLabs — hexágono dourado com logotipo"
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{
+              duration: 1.2,
+              delay: 0.4,
+              ease: [0.22, 0.61, 0.36, 1],
+            }}
+            className="hero-selo"
+            style={{
+              maxWidth: 440,
+              width: "100%",
+              height: "auto",
+              display: "block",
+            }}
+          />
+        </div>
       </div>
 
       <style>{`
@@ -163,6 +169,19 @@ export function Hero() {
           top: 0.1em;
           left: 50%;
           transform: translateX(-50%);
+        }
+        @keyframes hero-selo-rotate {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .hero-selo-spin {
+          display: inline-block;
+          animation: hero-selo-rotate 120s linear infinite;
+          transform-origin: center;
+          will-change: transform;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .hero-selo-spin { animation: none; }
         }
         .hero-grid {
           grid-template-columns: 58fr 42fr;
