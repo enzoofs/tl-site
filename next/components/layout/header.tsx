@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import Link from "next/link";
 import ThemeToggle from "@/components/ui/theme-toggle";
 
 type NavLink = {
@@ -11,12 +12,22 @@ type NavLink = {
 };
 
 const NAV_LINKS: NavLink[] = [
-  { label: "Problema", href: "#problema" },
-  { label: "O que fazemos", href: "#operacoes" },
-  { label: "Como trabalhamos", href: "#metodo" },
-  { label: "Resultados", href: "#resultados" },
-  { label: "Agendar", href: "#agendar", accent: true },
+  { label: "Problema", href: "/#problema" },
+  { label: "O que fazemos", href: "/#operacoes" },
+  { label: "Como trabalhamos", href: "/#metodo" },
+  { label: "Padrões", href: "/#padroes" },
+  { label: "Sobre", href: "/sobre" },
+  { label: "Agendar", href: "/#agendar", accent: true },
 ];
+
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
+function isHomePath(pathname: string): boolean {
+  if (BASE_PATH) {
+    return pathname === BASE_PATH || pathname === `${BASE_PATH}/`;
+  }
+  return pathname === "/" || pathname === "";
+}
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -39,10 +50,21 @@ export function Header() {
 
   const handleNavClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-      e.preventDefault();
       setMenuOpen(false);
-      const target = document.querySelector(href);
-      target?.scrollIntoView({ behavior: "smooth" });
+
+      const hashIndex = href.indexOf("#");
+      if (hashIndex === -1) return; // Page navigation — let Link handle it.
+
+      const targetHash = href.slice(hashIndex);
+      const isHomeAnchor = href.startsWith("/#") || href.startsWith("#");
+
+      // Only intercept for smooth-scroll when the anchor's target lives on the current page.
+      if (isHomeAnchor && isHomePath(window.location.pathname)) {
+        e.preventDefault();
+        document
+          .querySelector(targetHash)
+          ?.scrollIntoView({ behavior: "smooth" });
+      }
     },
     [],
   );
@@ -71,9 +93,9 @@ export function Header() {
       }}
     >
       {/* Logo */}
-      <a
-        href="#"
-        aria-label="TimeLabs — voltar ao topo"
+      <Link
+        href="/"
+        aria-label="TimeLabs — voltar ao início"
         style={{
           fontFamily: "var(--font-mono)",
           fontWeight: 700,
@@ -84,7 +106,7 @@ export function Header() {
         }}
       >
         TIMELABS
-      </a>
+      </Link>
 
       {/* Desktop nav */}
       <nav
@@ -97,7 +119,7 @@ export function Header() {
         className="header-desktop-nav"
       >
         {NAV_LINKS.map((link) => (
-          <a
+          <Link
             key={link.href}
             href={link.href}
             onClick={(e) => handleNavClick(e, link.href)}
@@ -125,7 +147,7 @@ export function Header() {
             }}
           >
             {link.label}
-          </a>
+          </Link>
         ))}
       </nav>
 
@@ -212,10 +234,8 @@ export function Header() {
             }}
           >
             {NAV_LINKS.map((link, i) => (
-              <motion.a
+              <motion.div
                 key={link.href}
-                href={link.href}
-                onClick={(e) => handleNavClick(e, link.href)}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
@@ -224,15 +244,20 @@ export function Header() {
                   delay: i * 0.06,
                   ease: [0.22, 0.61, 0.36, 1],
                 }}
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: "clamp(32px, 6vw, 48px)",
-                  textDecoration: "none",
-                  color: link.accent ? "var(--mercury)" : "var(--paper)",
-                }}
               >
-                {link.label}
-              </motion.a>
+                <Link
+                  href={link.href}
+                  onClick={(e) => handleNavClick(e, link.href)}
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    fontSize: "clamp(32px, 6vw, 48px)",
+                    textDecoration: "none",
+                    color: link.accent ? "var(--mercury)" : "var(--paper)",
+                  }}
+                >
+                  {link.label}
+                </Link>
+              </motion.div>
             ))}
           </motion.nav>
         )}

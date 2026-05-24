@@ -4,24 +4,24 @@ import AnimatedCounter from "@/components/ui/animated-counter";
 import SectionReveal from "@/components/ui/section-reveal";
 import HexMesh from "@/components/ui/hex-mesh";
 
-const kpis = [
+const padroes = [
   {
-    value: 412,
-    suffix: "h",
-    label: "horas devolvidas por mês",
-    sub: "POR CLIENTE MÉDIO",
-  },
-  {
-    value: 37,
-    suffix: undefined,
-    label: "automações em produção",
-    sub: "SOMANDO TODOS OS CLIENTES",
+    value: 7,
+    suffix: "dias",
+    label: "do briefing ao diagnóstico assinado",
+    sub: "DIAGNÓSTICO",
   },
   {
     value: 2,
-    suffix: "sem",
-    label: "para entrar em operação",
-    sub: "PRAZO MÉDIO DO PRIMEIRO ENTREGÁVEL",
+    suffix: "semanas",
+    label: "da assinatura ao primeiro sistema rodando",
+    sub: "EXECUÇÃO",
+  },
+  {
+    value: 0,
+    suffix: "lock-in",
+    label: "todo o código é seu, em todo ponto do contrato",
+    sub: "PROPRIEDADE",
   },
 ] as const;
 
@@ -29,7 +29,7 @@ export function Resultados() {
   return (
     <SectionReveal as="section" data-hex-density="0.06">
       <div
-        id="resultados"
+        id="padroes"
         style={{
           position: "relative",
           isolation: "isolate",
@@ -39,8 +39,8 @@ export function Resultados() {
       >
         <HexMesh variant="light" density={0.06} showPath={false} showPulse={false} />
         <div style={{ position: "relative", zIndex: 1, maxWidth: 1280, margin: "0 auto" }}>
-          <p className="eyebrow">Resultados</p>
-          <h2 className="hl-gloock hl-mid">Números de clientes reais.</h2>
+          <p className="eyebrow">Padrões</p>
+          <h2 className="hl-gloock hl-mid">Compromissos com quem nos contrata.</h2>
           <p
             style={{
               fontFamily: "var(--font-body)",
@@ -50,11 +50,11 @@ export function Resultados() {
               maxWidth: 520,
             }}
           >
-            Média dos nossos clientes em operação desde 2025.
+            Três promessas. Por escrito, em todo contrato.
           </p>
 
-          <div className="resultados-grid">
-            {kpis.map((kpi, i) => (
+          <div className="padroes-grid">
+            {padroes.map((p, i) => (
               <div
                 key={i}
                 style={{
@@ -70,8 +70,8 @@ export function Resultados() {
                   }}
                 >
                   <AnimatedCounter
-                    value={kpi.value}
-                    suffix={kpi.suffix}
+                    value={p.value}
+                    suffix={p.suffix}
                     duration={2200}
                   />
                 </div>
@@ -84,7 +84,7 @@ export function Resultados() {
                     margin: "0 0 var(--sp-1)",
                   }}
                 >
-                  {kpi.label}
+                  {p.label}
                 </p>
                 <p
                   style={{
@@ -96,7 +96,7 @@ export function Resultados() {
                     margin: 0,
                   }}
                 >
-                  {kpi.sub}
+                  {p.sub}
                 </p>
               </div>
             ))}
@@ -105,18 +105,18 @@ export function Resultados() {
       </div>
 
       <style>{`
-        .resultados-grid {
+        .padroes-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
           gap: var(--sp-5);
         }
         @media (max-width: 1024px) {
-          .resultados-grid {
+          .padroes-grid {
             grid-template-columns: 1fr;
           }
         }
         @media (max-width: 639px) {
-          .resultados-grid {
+          .padroes-grid {
             gap: var(--sp-3);
           }
         }

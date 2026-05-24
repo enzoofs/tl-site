@@ -293,6 +293,52 @@ html.mouse-active .hex-halo { opacity: 1; }
 }
 
 /* ==========================================================================
+   ATMOSPHERIC LAYERS · paper grain + corner vignette
+   Both are non-interactive overlays, fixed to the viewport.
+   z-index sits above sections (~0) and below header (100) / mobile menu (99).
+   ========================================================================== */
+
+/* Paper grain — subtle fiber texture via SVG fractalNoise.
+   Overlay blend keeps it neutral on any background (light/dark sections). */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 90;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.07;
+}
+
+[data-theme="dark"] body::before {
+  opacity: 0.09;
+}
+
+/* Vignette — soft ink fade at the corners. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 89;
+  background: radial-gradient(
+    ellipse 115% 105% at center,
+    transparent 25%,
+    rgba(0, 0, 0, 0.18) 65%,
+    rgba(0, 0, 0, 0.45) 100%
+  );
+}
+
+[data-theme="dark"] body::after {
+  background: radial-gradient(
+    ellipse 115% 105% at center,
+    transparent 25%,
+    rgba(0, 0, 0, 0.30) 65%,
+    rgba(0, 0, 0, 0.60) 100%
+  );
+}
+
+/* ==========================================================================
    UTILITY: screen reader only
    ========================================================================== */
 
@@ -350,7 +396,7 @@ html.mouse-active .hex-halo { opacity: 1; }
   #problema,
   #operacoes,
   #metodo,
-  #resultados,
+  #padroes,
   #agendar {
     padding: var(--sp-4) var(--sp-2) !important;
   }

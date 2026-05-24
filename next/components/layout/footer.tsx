@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const headingStyle: React.CSSProperties = {
   fontFamily: "var(--font-mono)",
   fontSize: 11,
@@ -14,12 +16,23 @@ function FooterLink({
   href: string;
   children: React.ReactNode;
 }) {
-  const isExternal = href.startsWith("http") || href.startsWith("mailto:") || href.startsWith("tel:");
+  const isAbsoluteExternal = href.startsWith("http");
+  const isProtocol = href.startsWith("mailto:") || href.startsWith("tel:");
+
+  // Internal route → Next.js Link (auto-prefixes basePath in production)
+  if (!isAbsoluteExternal && !isProtocol) {
+    return (
+      <Link href={href} className="footer-link">
+        {children}
+      </Link>
+    );
+  }
+
   return (
     <a
       href={href}
       className="footer-link"
-      {...(isExternal && href.startsWith("http")
+      {...(isAbsoluteExternal
         ? { target: "_blank", rel: "noopener noreferrer" }
         : {})}
     >
@@ -78,18 +91,21 @@ export function Footer() {
         {/* Col 2: Contato */}
         <div>
           <p style={headingStyle}>CONTATO</p>
-          <FooterLink href="mailto:contato@timelabsbr.com">
-            contato@timelabsbr.com
+          <FooterLink href="mailto:contato@timelabs.com.br">
+            contato@timelabs.com.br
+          </FooterLink>
+          <FooterLink href="https://wa.me/5531995970472">
+            WhatsApp · (31) 99597-0472
           </FooterLink>
         </div>
 
         {/* Col 3: Redes */}
         <div>
           <p style={headingStyle}>REDES</p>
-          <FooterLink href="https://linkedin.com/company/timelabs">
+          <FooterLink href="https://www.linkedin.com/company/timelabs-automa%C3%A7%C3%A3o-de-processos/">
             LinkedIn
           </FooterLink>
-          <FooterLink href="https://instagram.com/timelabs">
+          <FooterLink href="https://instagram.com/timelabsbr">
             Instagram
           </FooterLink>
         </div>
@@ -125,7 +141,7 @@ export function Footer() {
             margin: 0,
           }}
         >
-          &copy; 2026 TimeLabs &middot; São Paulo, Brasil
+          &copy; 2026 TimeLabs &middot; Belo Horizonte, Brasil
         </p>
       </div>
 

@@ -5,16 +5,44 @@ import { motion } from "framer-motion";
 import Button from "@/components/ui/button";
 import HexMesh from "@/components/ui/hex-mesh";
 
+type Status = "idle" | "loading" | "success" | "error";
+
+const FALLBACK_EMAIL = "contato@timelabs.com.br";
+
 export function CtaFinal() {
   const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [honeypot, setHoneypot] = useState("");
+  const [status, setStatus] = useState<Status>("idle");
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) return;
-    /* In production this would POST to an API. For now, show success. */
-    setSubmitted(true);
+    if (!email.trim() || status === "loading") return;
+
+    setStatus("loading");
+
+    try {
+      const apiPath = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/api/contact`;
+      const res = await fetch(apiPath, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), honeypot }),
+      });
+
+      if (res.ok) {
+        setStatus("success");
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
   };
+
+  const mailtoHref = `mailto:${FALLBACK_EMAIL}?subject=${encodeURIComponent(
+    "Quero conversar com a TimeLabs",
+  )}&body=${encodeURIComponent(
+    email.trim() ? `Olá, meu e-mail é ${email.trim()}.\n\n` : "",
+  )}`;
 
   return (
     <section
@@ -80,7 +108,50 @@ export function CtaFinal() {
           indicamos quem consegue.
         </p>
 
-        {!submitted ? (
+        {status === "success" ? (
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.22, 0.61, 0.36, 1] }}
+            style={{
+              fontFamily: "var(--font-italic)",
+              fontStyle: "italic",
+              fontSize: 20,
+              color: "var(--mercury)",
+            }}
+          >
+            Recebido. Respondemos em até um dia útil.
+          </motion.p>
+        ) : status === "error" ? (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 0.61, 0.36, 1] }}
+            style={{
+              fontFamily: "var(--font-body)",
+              fontSize: 17,
+              lineHeight: 1.55,
+              color: "var(--paper)",
+            }}
+          >
+            <p style={{ margin: "0 0 var(--sp-2)" }}>
+              Não conseguimos receber agora — escreva direto pra gente?
+            </p>
+            <a
+              href={mailtoHref}
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: 14,
+                letterSpacing: 1.5,
+                color: "var(--mercury)",
+                textDecoration: "underline",
+                textUnderlineOffset: 4,
+              }}
+            >
+              {FALLBACK_EMAIL}
+            </a>
+          </motion.div>
+        ) : (
           <form
             onSubmit={handleSubmit}
             style={{
@@ -98,9 +169,11 @@ export function CtaFinal() {
               id="cta-email"
               type="email"
               required
+              autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="seu@email.com"
+              disabled={status === "loading"}
               style={{
                 flex: "1 1 280px",
                 maxWidth: 400,
@@ -121,24 +194,32 @@ export function CtaFinal() {
                 e.currentTarget.style.borderBottomColor = "var(--paper)";
               }}
             />
-            <Button variant="mercury" type="submit">
-              Agendar conversa
+            {/* Honeypot — invisible to humans, magnet for bots. */}
+            <input
+              type="text"
+              name="company"
+              tabIndex={-1}
+              autoComplete="off"
+              value={honeypot}
+              onChange={(e) => setHoneypot(e.target.value)}
+              aria-hidden="true"
+              style={{
+                position: "absolute",
+                left: "-9999px",
+                width: 1,
+                height: 1,
+                opacity: 0,
+                pointerEvents: "none",
+              }}
+            />
+            <Button
+              variant="mercury"
+              type="submit"
+              disabled={status === "loading"}
+            >
+              {status === "loading" ? "Enviando…" : "Agendar conversa"}
             </Button>
           </form>
-        ) : (
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.22, 0.61, 0.36, 1] }}
-            style={{
-              fontFamily: "var(--font-italic)",
-              fontStyle: "italic",
-              fontSize: 20,
-              color: "var(--mercury)",
-            }}
-          >
-            Recebido. Respondemos em até um dia útil.
-          </motion.p>
         )}
       </div>
 

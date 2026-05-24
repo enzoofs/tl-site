@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   title: "TimeLabs — automação empresarial que devolve tempo",
   description:
     "TimeLabs — automação empresarial. Devolvemos tempo ao seu negócio automatizando processos, integrando sistemas e transformando dados em decisão.",
-  metadataBase: new URL("https://timelabsbr.com"),
+  metadataBase: new URL("https://timelabs.com.br"),
   alternates: {
     canonical: "/",
   },
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     title: "TimeLabs — automação empresarial que devolve tempo",
     description:
       "Devolvemos tempo ao seu negócio automatizando processos, integrando sistemas e transformando dados em decisão.",
-    url: "https://timelabsbr.com",
+    url: "https://timelabs.com.br",
     siteName: "TimeLabs",
     locale: "pt_BR",
     type: "website",
@@ -104,24 +104,26 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Organization",
               name: "TimeLabs",
-              url: "https://timelabsbr.com",
-              logo: "https://timelabsbr.com/assets/selo.svg",
+              url: "https://timelabs.com.br",
+              logo: "https://timelabs.com.br/assets/selo.svg",
               description:
                 "Automação empresarial. Devolvemos tempo ao seu negócio automatizando processos, integrando sistemas e transformando dados em decisão.",
               address: {
                 "@type": "PostalAddress",
-                addressLocality: "São Paulo",
+                addressLocality: "Belo Horizonte",
+                addressRegion: "MG",
                 addressCountry: "BR",
               },
               contactPoint: {
                 "@type": "ContactPoint",
-                email: "contato@timelabsbr.com",
+                email: "contato@timelabs.com.br",
+                telephone: "+55-31-99597-0472",
                 contactType: "customer service",
                 availableLanguage: "Portuguese",
               },
               sameAs: [
-                "https://linkedin.com/company/timelabs",
-                "https://instagram.com/timelabs",
+                "https://www.linkedin.com/company/timelabs-automa%C3%A7%C3%A3o-de-processos/",
+                "https://instagram.com/timelabsbr",
               ],
             }),
           }}
