@@ -20,12 +20,7 @@ const NAV_LINKS: NavLink[] = [
   { label: "Agendar", href: "/#agendar", accent: true },
 ];
 
-const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-
 function isHomePath(pathname: string): boolean {
-  if (BASE_PATH) {
-    return pathname === BASE_PATH || pathname === `${BASE_PATH}/`;
-  }
   return pathname === "/" || pathname === "";
 }
 

@@ -1,39 +1,44 @@
-/**
- * Lead capture route — Resend integration.
- *
- * DISABLED while the site is deployed via GitHub Pages (`output: "export"` in
- * next.config.ts). POST handlers are incompatible with static export, and
- * keeping the export active prevents Next.js from emitting the `out/` folder.
- *
- * TO RE-ENABLE after migrating to Vercel:
- *   1. In next.config.ts, remove `output: "export"`, `basePath`, `assetPrefix`.
- *   2. Uncomment the block below.
- *   3. Set RESEND_API_KEY on Vercel (Settings → Environment Variables).
- *   4. Verify `timelabs.com.br` on resend.com (DKIM + SPF on GoDaddy).
- *
- * Until then the contact form falls back gracefully to a mailto link.
- */
-
-export const dynamic = "force-static";
-
-export async function GET() {
-  return Response.json({ error: "not_configured" }, { status: 503 });
-}
-
-/*
 import { Resend } from "resend";
 import { NextResponse } from "next/server";
 
 const TO_EMAIL = "contato@timelabs.com.br";
 const FROM_EMAIL = "TimeLabs <noreply@timelabs.com.br>";
 
+/* Rate-limit in-memory por IP. Best-effort — vive enquanto o container Vercel
+   estiver quente. Em produção séria trocar por Vercel KV ou Upstash. */
+const RATE_WINDOW_MS = 60_000;
+const RATE_MAX = 5;
+const hits = new Map<string, number[]>();
+
 function isValidEmail(value: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
-export async function POST(request: Request) {
-  let body: { email?: string; honeypot?: string };
+function getClientIp(request: Request): string {
+  const fwd = request.headers.get("x-forwarded-for");
+  if (fwd) return fwd.split(",")[0].trim();
+  return request.headers.get("x-real-ip") ?? "unknown";
+}
 
+function rateLimited(ip: string): boolean {
+  const now = Date.now();
+  const arr = (hits.get(ip) ?? []).filter((t) => now - t < RATE_WINDOW_MS);
+  if (arr.length >= RATE_MAX) {
+    hits.set(ip, arr);
+    return true;
+  }
+  arr.push(now);
+  hits.set(ip, arr);
+  return false;
+}
+
+export async function POST(request: Request) {
+  const ip = getClientIp(request);
+  if (rateLimited(ip)) {
+    return NextResponse.json({ error: "rate_limited" }, { status: 429 });
+  }
+
+  let body: { email?: string; honeypot?: string };
   try {
     body = await request.json();
   } catch {
@@ -42,6 +47,7 @@ export async function POST(request: Request) {
 
   const { email, honeypot } = body;
 
+  /* Honeypot: se preenchido, devolver ok silenciosamente — bot pensa que passou */
   if (honeypot && honeypot.trim()) {
     return NextResponse.json({ ok: true });
   }
@@ -84,4 +90,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "server_error" }, { status: 500 });
   }
 }
-*/

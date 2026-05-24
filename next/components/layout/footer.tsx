@@ -19,7 +19,6 @@ function FooterLink({
   const isAbsoluteExternal = href.startsWith("http");
   const isProtocol = href.startsWith("mailto:") || href.startsWith("tel:");
 
-  // Internal route → Next.js Link (auto-prefixes basePath in production)
   if (!isAbsoluteExternal && !isProtocol) {
     return (
       <Link href={href} className="footer-link">

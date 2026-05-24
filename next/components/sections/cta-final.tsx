@@ -21,8 +21,7 @@ export function CtaFinal() {
     setStatus("loading");
 
     try {
-      const apiPath = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/api/contact`;
-      const res = await fetch(apiPath, {
+      const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim(), honeypot }),

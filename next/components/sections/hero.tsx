@@ -131,8 +131,11 @@ export function Hero() {
             elementos diferentes. */}
         <div className="hero-selo-spin">
           <motion.img
-            src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/assets/selo-hero.svg`}
+            src="/assets/selo-hero.svg"
             alt="Selo TimeLabs — hexágono dourado com logotipo"
+            width={600}
+            height={600}
+            fetchPriority="high"
             initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{

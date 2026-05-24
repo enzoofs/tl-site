@@ -26,7 +26,8 @@ const founders: Founder[] = [
     initials: "EF",
     name: "Enzo Ferraz",
     role: "Founder",
-    bio: "Cinco anos em logística ferroviária na VLI Logística. Passou por transporte rodoviário na Internacional Logística Integrada e desembaraço aduaneiro na Cia Aduaneira. Hoje, importações industriais em Belo Horizonte — vive todo dia a operação que a TimeLabs existe para automatizar.",
+    bio: "Bio em breve.",
+    bioPlaceholder: true,
   },
   {
     initials: "FF",
