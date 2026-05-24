@@ -58,7 +58,7 @@ export function Problema() {
                   style={{
                     fontFamily: "var(--font-mono)",
                     fontSize: 12,
-                    color: "var(--mercury)",
+                    color: "var(--gold-text)",
                     margin: "0 0 var(--sp-2)",
                   }}
                 >

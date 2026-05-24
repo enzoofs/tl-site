@@ -12,6 +12,13 @@
   --ink-soft:     #6B6258;
   --mercury:      #E0B03A;
   --mercury-soft: #E8C872;
+  --mercury-deep: #8A5F0A;
+
+  /* Token semantico: dourado pra TEXTO. Trocado por --mercury no dark mode
+     porque la o fundo eh ink (escuro) e o dourado claro contrasta bem.
+     Em light mode o fundo eh paper (claro) e precisa do tom mais profundo
+     pra alcancar contraste WCAG AA (4.5:1). */
+  --gold-text: var(--mercury-deep);
 
   --bg:      var(--paper);
   --bg-alt:  var(--paper-alt);
@@ -39,6 +46,8 @@
   --bg-alt:  #332c25;
   --fg:      var(--paper);
   --fg-soft: #a39987;
+  /* No dark mode o fundo eh ink — o dourado claro original tem contraste alto */
+  --gold-text: var(--mercury);
 }
 
 @theme inline {
@@ -396,15 +405,15 @@ body::after {
   #problema,
   #operacoes,
   #metodo,
-  #padroes,
+  #compromissos,
   #agendar {
     padding: var(--sp-4) var(--sp-2) !important;
   }
 
   /* Eyebrow */
   .eyebrow {
-    letter-spacing: 3px !important;
-    font-size: 9px !important;
+    letter-spacing: 1.5px !important;
+    font-size: 11px !important;
     margin-bottom: var(--sp-2) !important;
   }
 
@@ -447,5 +456,30 @@ body::after {
   /* Hex mesh: lower opacity on mobile for readability */
   .sec-mesh {
     opacity: 0.4 !important;
+  }
+
+  /* ---- PERFORMANCE: alivio mobile (desktop continua intacto) ----
+     Halo segue cursor — touch nao tem cursor; remove de vez.
+     Backdrop-filter eh caro em iOS Safari; opacity simples segura o look.
+     Selo girando 360 graus em loop drena bateria; pausa.
+     Vinheta mais leve evita banding em telas OLED. */
+  .hex-halo {
+    display: none !important;
+  }
+  .hex-frost::after {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    opacity: 0.85;
+  }
+  .hero-selo-spin {
+    animation: none !important;
+  }
+  body::after {
+    background: radial-gradient(
+      ellipse 115% 105% at center,
+      transparent 35%,
+      rgba(0, 0, 0, 0.10) 80%,
+      rgba(0, 0, 0, 0.25) 100%
+    );
   }
 }

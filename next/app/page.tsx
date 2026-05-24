@@ -12,7 +12,7 @@ import Halo from "@/components/ui/halo";
 export default function Home() {
   return (
     <>
-      <a href="#hero" className="skip-link">
+      <a href="#main-content" className="skip-link">
         Pular para o conteúdo
       </a>
       <Halo />

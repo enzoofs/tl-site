@@ -152,6 +152,10 @@ export default function HexMesh({
     ).matches;
     if (reducedMotion) return;
 
+    /* Touch devices nao tem cursor — listener seria puro overhead */
+    const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+    if (coarsePointer) return;
+
     const onMouseMove = (e: MouseEvent) => {
       cancelAnimationFrame(rafRef.current);
       rafRef.current = requestAnimationFrame(() => {

@@ -404,7 +404,7 @@ export default function SobrePage() {
           font-size: 11px;
           letter-spacing: 2.5px;
           text-transform: uppercase;
-          color: var(--mercury);
+          color: var(--gold-text);
           margin: 0 0 var(--sp-2);
         }
         .founder-bio {

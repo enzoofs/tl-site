@@ -18,10 +18,10 @@ const padroes = [
     sub: "EXECUÇÃO",
   },
   {
-    value: 0,
-    suffix: "lock-in",
-    label: "todo o código é seu, em todo ponto do contrato",
-    sub: "PROPRIEDADE",
+    value: 6,
+    suffix: "meses",
+    label: "de manutenção contínua inclusos após o go-live",
+    sub: "EVOLUÇÃO",
   },
 ] as const;
 
@@ -29,7 +29,7 @@ export function Resultados() {
   return (
     <SectionReveal as="section" data-hex-density="0.06">
       <div
-        id="padroes"
+        id="compromissos"
         style={{
           position: "relative",
           isolation: "isolate",
@@ -39,7 +39,7 @@ export function Resultados() {
       >
         <HexMesh variant="light" density={0.06} showPath={false} showPulse={false} />
         <div style={{ position: "relative", zIndex: 1, maxWidth: 1280, margin: "0 auto" }}>
-          <p className="eyebrow">Padrões</p>
+          <p className="eyebrow">Compromissos</p>
           <h2 className="hl-gloock hl-mid">Compromissos com quem nos contrata.</h2>
           <p
             style={{

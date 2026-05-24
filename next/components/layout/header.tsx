@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import ThemeToggle from "@/components/ui/theme-toggle";
 
 type NavLink = {
@@ -15,7 +16,7 @@ const NAV_LINKS: NavLink[] = [
   { label: "Problema", href: "/#problema" },
   { label: "O que fazemos", href: "/#operacoes" },
   { label: "Como trabalhamos", href: "/#metodo" },
-  { label: "Padrões", href: "/#padroes" },
+  { label: "Compromissos", href: "/#compromissos" },
   { label: "Sobre", href: "/sobre" },
   { label: "Agendar", href: "/#agendar", accent: true },
 ];
@@ -27,6 +28,11 @@ function isHomePath(pathname: string): boolean {
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
+
+  /* Aria-current marca a página ativa. Links com hash são âncoras da home,
+     não páginas próprias — não recebem aria-current. */
+  const isActivePage = (href: string) => !href.includes("#") && href === pathname;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -118,6 +124,7 @@ export function Header() {
             key={link.href}
             href={link.href}
             onClick={(e) => handleNavClick(e, link.href)}
+            aria-current={isActivePage(link.href) ? "page" : undefined}
             style={{
               fontFamily: "var(--font-mono)",
               fontSize: 11,
@@ -243,6 +250,7 @@ export function Header() {
                 <Link
                   href={link.href}
                   onClick={(e) => handleNavClick(e, link.href)}
+                  aria-current={isActivePage(link.href) ? "page" : undefined}
                   style={{
                     fontFamily: "var(--font-display)",
                     fontSize: "clamp(32px, 6vw, 48px)",

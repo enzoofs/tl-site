@@ -230,7 +230,7 @@ export default function TermosPage() {
           margin-bottom: 6px;
         }
         .legal-body a {
-          color: var(--mercury);
+          color: var(--gold-text);
           text-decoration: underline;
           text-underline-offset: 3px;
           text-decoration-thickness: 1px;
