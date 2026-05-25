@@ -8,6 +8,9 @@
   --paper:        #EFE9DA;
   --paper-alt:    #FAF8F2;
   --paper-dim:    #DFDACB;
+  /* Texto secundario sobre fundo escuro. Substitui opacity 0.82/0.85
+     em Operacoes/CTA pra preservar contraste WCAG (>4.5:1 em ink). */
+  --paper-soft:   #c9c3b5;
   --ink:          #2B2520;
   --ink-soft:     #6B6258;
   --mercury:      #E0B03A;
@@ -54,6 +57,7 @@
   --color-paper: var(--paper);
   --color-paper-alt: var(--paper-alt);
   --color-paper-dim: var(--paper-dim);
+  --color-paper-soft: var(--paper-soft);
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
   --color-mercury: var(--mercury);
@@ -392,8 +396,8 @@ body::after {
 
 /* ==========================================================================
    SECTION RESPONSIVE PADDING
-   Desktop: var(--sp-8) vertical, var(--sp-5) horizontal
-   Mobile (<640px): var(--sp-6) vertical, var(--sp-3) horizontal
+   Desktop: var(--sp-7) vertical, var(--sp-5) horizontal
+   Mobile (<640px): var(--sp-3)–var(--sp-4) vertical, var(--sp-2) horizontal
    ========================================================================== */
 
 @media (max-width: 639px) {

@@ -4,6 +4,38 @@
 
 **Goal:** Fix all design issues identified in the expert review — broken links, wordmark accessibility, motion excess, conversion UX, typography, spacing, and mobile polish.
 
+---
+
+## Status — atualizado 2026-05-25
+
+| # | Task | Status |
+|---|------|--------|
+| 1 | Footer links + placeholder | ✅ Done — refactor pra single-row com email/whatsapp visíveis (2026-05-25) |
+| 2 | Wordmark SVG → HTML/CSS | ✅ Done — `.wordmark` com spans + hex inline |
+| 3 | Tame hero seal animation | ✅ Done — giro lento intencional; spin desligado em touch |
+| 4 | Reduce hex-mesh usage | ❌ **Rejeitado** — direção oposta tomada: hex mesh adicionado em todas seções de /sobre (commit d48ef16) |
+| 5 | CTA copy "Agendar conversa" → "Enviar" | ✅ Done (2026-05-25) — manteve "Agendar conversa" (intent correto com Resend); adicionada linha de reassurance mono "Respondemos em até um dia útil pra marcar" abaixo do form |
+| 6 | Padding vertical sp-8 → sp-7 | ✅ Done (2026-05-25) — 6 seções; mobile já estava mais agressivo (sp-3/sp-4), só atualizei comentário |
+| 7 | Counter font-display (Gloock) | ✅ Done — commit "upgrade counter with spring physics" |
+| 8 | Token `--paper-soft` | ✅ Done (2026-05-25) — `--paper-soft: #c9c3b5` em `:root`; opacity 0.82/0.85 substituído em operacoes + cta-final |
+| 9 | Improve Integrações | ✅ Done (2026-05-25) — marquee mantido, conteúdo reformulado: linha 1=ferramentas BR familiares, linha 2=verbos do que TimeLabs faz |
+| 10 | Header touch targets 50→56px | ✅ Done (2026-05-25) — header 56px, page.tsx + sobre/privacidade/termos pt-[56px], overlay top:56, hero calcs ajustados. Hambúrguer já tinha padding 14 (44px touch). |
+
+**Mudanças não-commitadas (working tree, 2026-05-25, agrupar em UM commit):**
+- `app/opengraph-image.tsx` — OG image agora usa hex-mesh de fundo (em vez de hexágono solto)
+- `app/globals.css` — `--paper-soft` token + comentário de padding atualizado
+- `app/page.tsx` + 3 páginas (sobre/privacidade/termos) — pt-[50px] → pt-[56px]
+- `components/layout/header.tsx` — height 50→56, overlay top 50→56
+- `components/layout/footer.tsx` — single-row + email/whatsapp visíveis
+- `components/sections/integracoes.tsx` — duas listas distintas (tools + actions)
+- `components/sections/hero.tsx` — calcs 50→56, padding sp-8→sp-7
+- `components/sections/{problema,operacoes,metodo,resultados,cta-final}.tsx` — padding sp-8→sp-7; operacoes + cta-final tb usam paper-soft
+- `components/sections/cta-final.tsx` — reassurance line abaixo do form
+
+**Teste Resend (Task 5):** Route validado localmente com curl — honeypot ok, validação de email ok, JSON inválido ok (todos retornam status code esperado). Não testado fim-a-fim porque `RESEND_API_KEY` só existe em env Vercel. **Próxima ação:** submeter form no preview de produção pra validar envio real.
+
+---
+
 **Architecture:** All changes are in-place edits to existing components under `components/` and `app/globals.css`. No new files needed except potentially a Calendly embed. Changes grouped by priority (P0 → P3) and by blast radius.
 
 **Tech Stack:** Next.js 16, React, Framer Motion, CSS custom properties, Tailwind v4

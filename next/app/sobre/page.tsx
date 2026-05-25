@@ -146,7 +146,7 @@ export default function SobrePage() {
         Pular para o conteúdo
       </a>
       <Header />
-      <main id="main-content" className="pt-[50px]">
+      <main id="main-content" className="pt-[56px]">
         {/* HERO */}
         <SectionReveal as="section" data-hex-density="0.06">
           <div

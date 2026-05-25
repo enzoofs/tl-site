@@ -50,7 +50,7 @@ export function CtaFinal() {
       style={{
         background: "var(--ink)",
         color: "var(--paper)",
-        padding: "var(--sp-8) var(--sp-5)",
+        padding: "var(--sp-7) var(--sp-5)",
         position: "relative",
         isolation: "isolate",
         overflow: "hidden",
@@ -95,8 +95,7 @@ export function CtaFinal() {
             fontFamily: "var(--font-body)",
             fontSize: 18,
             lineHeight: 1.65,
-            color: "var(--paper)",
-            opacity: 0.85,
+            color: "var(--paper-soft)",
             margin: "0 0 var(--sp-5)",
             maxWidth: 560,
             marginLeft: "auto",
@@ -220,6 +219,21 @@ export function CtaFinal() {
             </Button>
           </form>
         )}
+
+        {status === "idle" || status === "loading" ? (
+          <p
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: 12,
+              letterSpacing: 1.5,
+              color: "var(--paper-soft)",
+              marginTop: "var(--sp-2)",
+              opacity: 0.85,
+            }}
+          >
+            Respondemos em até um dia útil pra marcar.
+          </p>
+        ) : null}
       </div>
 
       <style>{`

@@ -15,8 +15,8 @@ export function Hero() {
       style={{
         position: "relative",
         isolation: "isolate",
-        minHeight: "calc(100svh - 50px)",
-        padding: "var(--sp-8) var(--sp-5)",
+        minHeight: "calc(100svh - 56px)",
+        padding: "var(--sp-7) var(--sp-5)",
       }}
     >
       <HexMesh variant="light" />
@@ -29,7 +29,7 @@ export function Hero() {
           maxWidth: 1280,
           margin: "0 auto",
           gap: "var(--sp-5)",
-          minHeight: "calc(100svh - 50px - var(--sp-8) * 2)",
+          minHeight: "calc(100svh - 56px - var(--sp-7) * 2)",
         }}
         className="hero-grid"
       >
@@ -206,7 +206,7 @@ export function Hero() {
           }
           .hero-grid {
             gap: var(--sp-3) !important;
-            min-height: calc(100svh - 50px - var(--sp-3) * 2) !important;
+            min-height: calc(100svh - 56px - var(--sp-3) * 2) !important;
             align-content: center !important;
           }
           .hero-selo {

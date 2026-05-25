@@ -77,7 +77,7 @@ export function Header() {
         top: 0,
         left: 0,
         right: 0,
-        height: 50,
+        height: 56,
         zIndex: 100,
         display: "flex",
         alignItems: "center",
@@ -225,7 +225,7 @@ export function Header() {
             style={{
               position: "fixed",
               inset: 0,
-              top: 50,
+              top: 56,
               background: "var(--ink)",
               zIndex: 99,
               display: "flex",

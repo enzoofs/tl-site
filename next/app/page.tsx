@@ -17,7 +17,7 @@ export default function Home() {
       </a>
       <Halo />
       <Header />
-      <main id="main-content" className="pt-[50px]">
+      <main id="main-content" className="pt-[56px]">
         <Hero />
         <Problema />
         <Operacoes />

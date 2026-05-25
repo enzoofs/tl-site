@@ -8,9 +8,48 @@ export const alt = "TimeLabs — automação empresarial que devolve tempo";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-/* OG image dinamica. Carrega a Gloock do filesystem pra que o wordmark
-   tenha a tipografia da marca. Sem fonte custom o Satori cai pra
-   sans-serif default e a identidade vai pro lixo. */
+const PAPER = "#EFE9DA";
+const INK = "#2B2520";
+const MERCURY = "#E0B03A";
+
+/* Mesma logica do hex-mesh do site: grade pointy-top, alguns hexes
+   "shaded" sutilmente. Hash deterministico pra build reproduzivel.
+   Densidade baixa (12%) pra nao competir com o texto. */
+const HEX_R = 38;
+const HEX_W = Math.sqrt(3) * HEX_R;
+const ROW_H = HEX_R * 1.5;
+const SHADE_DENSITY = 0.12;
+
+function hexPoints(cx: number, cy: number, r: number): string {
+  const pts: string[] = [];
+  for (let i = 0; i < 6; i++) {
+    const angle = (Math.PI / 3) * i + Math.PI / 6;
+    pts.push(`${(cx + r * Math.cos(angle)).toFixed(1)},${(cy + r * Math.sin(angle)).toFixed(1)}`);
+  }
+  return pts.join(" ");
+}
+
+function cellHash(c: number, r: number): number {
+  const h = ((c * 73856093) ^ (r * 19349663)) >>> 0;
+  return (h % 1000) / 1000;
+}
+
+function buildHexes() {
+  const cols = Math.ceil(size.width / HEX_W) + 1;
+  const rows = Math.ceil(size.height / ROW_H) + 1;
+  const nodes: { points: string; shaded: boolean; key: string }[] = [];
+  for (let row = -1; row <= rows; row++) {
+    for (let col = -1; col <= cols; col++) {
+      const xOffset = row % 2 === 0 ? 0 : HEX_W / 2;
+      const cx = col * HEX_W + xOffset;
+      const cy = row * ROW_H;
+      const shaded = cellHash(col, row) < SHADE_DENSITY;
+      nodes.push({ points: hexPoints(cx, cy, HEX_R), shaded, key: `${col}-${row}` });
+    }
+  }
+  return nodes;
+}
+
 export default async function Image() {
   const fontsDir = join(process.cwd(), "fonts");
   const [fontData, italicData] = await Promise.all([
@@ -18,9 +57,7 @@ export default async function Image() {
     readFile(join(fontsDir, "InstrumentSerif-Italic.ttf")),
   ]);
 
-  const PAPER = "#EFE9DA";
-  const INK = "#2B2520";
-  const MERCURY = "#E0B03A";
+  const hexes = buildHexes();
 
   return new ImageResponse(
     (
@@ -37,25 +74,32 @@ export default async function Image() {
           position: "relative",
         }}
       >
-        {/* Hexagono decorativo no canto superior direito */}
+        {/* Hex mesh de fundo — sutil, mesma estetica do site */}
         <svg
-          width="180"
-          height="208"
-          viewBox="0 0 180 208"
-          style={{ position: "absolute", top: 64, right: 80 }}
+          width={size.width}
+          height={size.height}
+          viewBox={`0 0 ${size.width} ${size.height}`}
+          style={{ position: "absolute", top: 0, left: 0 }}
         >
-          <polygon
-            points="90,4 176,54 176,154 90,204 4,154 4,54"
-            fill="none"
-            stroke={MERCURY}
-            strokeWidth="2"
-            opacity="0.4"
-          />
-          <polygon
-            points="90,32 152,68 152,140 90,176 28,140 28,68"
-            fill={MERCURY}
-            opacity="0.85"
-          />
+          {hexes.map((h) =>
+            h.shaded ? (
+              <polygon
+                key={h.key}
+                points={h.points}
+                fill="rgba(239,233,218,0.09)"
+                stroke="rgba(239,233,218,0.10)"
+                strokeWidth={0.5}
+              />
+            ) : (
+              <polygon
+                key={h.key}
+                points={h.points}
+                fill="none"
+                stroke="rgba(239,233,218,0.06)"
+                strokeWidth={0.5}
+              />
+            ),
+          )}
         </svg>
 
         {/* Eyebrow */}
@@ -68,6 +112,7 @@ export default async function Image() {
             opacity: 0.6,
             marginBottom: 32,
             fontFamily: "sans-serif",
+            position: "relative",
           }}
         >
           Automação empresarial
@@ -83,6 +128,7 @@ export default async function Image() {
             letterSpacing: "-0.02em",
             display: "flex",
             alignItems: "baseline",
+            position: "relative",
           }}
         >
           t
@@ -112,6 +158,7 @@ export default async function Image() {
             fontStyle: "italic",
             marginTop: 32,
             lineHeight: 1.2,
+            position: "relative",
           }}
         >
           Devolvemos tempo ao seu negócio.

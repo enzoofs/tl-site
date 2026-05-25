@@ -160,8 +160,7 @@ function OpCard({
           fontFamily: "var(--font-body)",
           fontSize: 15,
           lineHeight: 1.6,
-          color: "var(--paper)",
-          opacity: 0.82,
+          color: "var(--paper-soft)",
           margin: 0,
         }}
       >
@@ -185,7 +184,7 @@ export function Operacoes() {
         isolation: "isolate",
         background: "var(--ink)",
         color: "var(--paper)",
-        padding: "var(--sp-8) var(--sp-5)",
+        padding: "var(--sp-7) var(--sp-5)",
       }}
     >
       <HexMesh variant="dark" />

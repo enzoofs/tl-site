@@ -1,16 +1,37 @@
 import InfiniteSlider from "@/components/ui/infinite-slider";
 
+/* Linha 1: ferramentas que o cliente reconhece da rotina dele
+   (mensageria, planilhas, ERP/financeiro BR, CRM, e-commerce, fiscal). */
 const tools = [
-  "Zapier",
-  "Make",
-  "n8n",
-  "WhatsApp API",
-  "Salesforce",
-  "HubSpot",
-  "Google Sheets",
-  "Slack",
-  "Power BI",
-  "SAP",
+  "WhatsApp",
+  "Gmail",
+  "Excel",
+  "Drive",
+  "Bling",
+  "Omie",
+  "Conta Azul",
+  "Mercado Livre",
+  "Pipedrive",
+  "RD Station",
+  "NFe",
+  "Instagram",
+] as const;
+
+/* Linha 2: o que a TimeLabs faz com essas ferramentas.
+   Verbos curtos, concretos — cada pill descreve uma automacao real. */
+const actions = [
+  "lê PDF de nota",
+  "responde mensagem",
+  "atualiza planilha",
+  "extrai dados",
+  "gera relatório",
+  "agenda follow-up",
+  "concilia pagamento",
+  "avisa o time",
+  "emite cobrança",
+  "consolida pedidos",
+  "transcreve áudio",
+  "separa anexo",
 ] as const;
 
 function Pill({ label }: { label: string }) {
@@ -57,7 +78,7 @@ export function Integracoes() {
           </h2>
         </div>
 
-        {/* Row 1: left */}
+        {/* Row 1 — onde: ferramentas que o cliente ja usa */}
         <InfiniteSlider speed="50s" direction="left">
           {tools.map((t) => (
             <Pill key={t} label={t} />
@@ -66,10 +87,10 @@ export function Integracoes() {
 
         <div style={{ height: "var(--sp-2)" }} />
 
-        {/* Row 2: right (reversed) */}
+        {/* Row 2 — o que: verbos do que a TimeLabs faz com elas */}
         <InfiniteSlider speed="55s" direction="right">
-          {[...tools].reverse().map((t) => (
-            <Pill key={t} label={t} />
+          {actions.map((a) => (
+            <Pill key={a} label={a} />
           ))}
         </InfiniteSlider>
       </div>

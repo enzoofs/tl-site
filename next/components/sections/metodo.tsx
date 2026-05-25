@@ -98,7 +98,7 @@ export function Metodo() {
         position: "relative",
         isolation: "isolate",
         background: "var(--bg)",
-        padding: "var(--sp-8) var(--sp-5)",
+        padding: "var(--sp-7) var(--sp-5)",
       }}
     >
       <HexMesh variant="light" density={0.06} showPath={false} showPulse={false} />

@@ -144,7 +144,7 @@ export default function TermosPage() {
         Pular para o conteúdo
       </a>
       <Header />
-      <main id="main-content" className="pt-[50px]">
+      <main id="main-content" className="pt-[56px]">
         <article className="legal-page">
           <p className="eyebrow">Documento legal</p>
           <h1 className="hl-gloock">Termos de Uso</h1>
