@@ -122,17 +122,55 @@ export default function HexMesh({
   }, [density]);
 
   useEffect(() => {
-    const raf = requestAnimationFrame(build);
+    const wrap = wrapRef.current;
+    if (!wrap) return;
+    const parent = wrap.parentElement;
+    if (!parent) return;
 
+    let built = false;
+    let raf = 0;
+    let idleHandle: number | undefined;
     let resizeTimer: ReturnType<typeof setTimeout>;
+
+    const runBuild = () => {
+      if (built) return;
+      built = true;
+      build();
+    };
+
+    /* Lazy build: so monta o mesh quando a secao se aproxima do viewport.
+       Section above-the-fold ja entra no observer com isIntersecting=true,
+       entao o hero ainda monta no first paint. Sections abaixo esperam
+       o usuario chegar perto — evita empilhar ~22k DOM ops no frame inicial. */
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          observer.disconnect();
+          /* requestIdleCallback nao existe no Safari → fallback rAF */
+          const schedule =
+            "requestIdleCallback" in window
+              ? (window as Window).requestIdleCallback!
+              : (cb: () => void) => requestAnimationFrame(cb);
+          idleHandle = schedule(runBuild) as number;
+        }
+      },
+      { rootMargin: "300px 0px" }
+    );
+    observer.observe(parent);
+
     const onResize = () => {
+      if (!built) return;
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(build, 300);
     };
     window.addEventListener("resize", onResize);
 
     return () => {
+      observer.disconnect();
       cancelAnimationFrame(raf);
+      if (idleHandle !== undefined && "cancelIdleCallback" in window) {
+        (window as Window).cancelIdleCallback!(idleHandle);
+      }
       clearTimeout(resizeTimer);
       window.removeEventListener("resize", onResize);
     };

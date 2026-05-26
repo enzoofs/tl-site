@@ -12,6 +12,15 @@ interface SectionRevealProps extends DataAttrs {
   as?: "section" | "div" | "article" | "aside";
 }
 
+/* motion.create() é caro e cria um component novo a cada call. Caching por
+   tag name evita refazer o factory toda re-render do pai. */
+const motionCache = {
+  section: motion.create("section"),
+  div: motion.create("div"),
+  article: motion.create("article"),
+  aside: motion.create("aside"),
+} as const;
+
 export default function SectionReveal({
   children,
   className,
@@ -22,7 +31,7 @@ export default function SectionReveal({
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, amount: 0.15 });
 
-  const Component = motion.create(as);
+  const Component = motionCache[as];
 
   return (
     <Component

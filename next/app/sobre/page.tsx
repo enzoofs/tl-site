@@ -61,15 +61,19 @@ const principios = [
 ];
 
 /* Pointy-top regular hexagon, inscribed in a 173×200 viewBox.
-   Two concentric polygons → editorial double-frame look. */
+   Perimeter ≈ 600 units (6 edges × ~100). The animated "cometa" uses
+   stroke-dasharray to draw a short bright segment and stroke-dashoffset
+   to chase it around the polygon. */
 function FounderHex({
   initials,
   photoUrl,
   name,
+  index = 0,
 }: {
   initials: string;
   photoUrl?: string;
   name: string;
+  index?: number;
 }) {
   const clipId = `hex-clip-${initials.toLowerCase()}`;
   const outerPoints = "86.5,0 173,50 173,150 86.5,200 0,150 0,50";
@@ -78,7 +82,7 @@ function FounderHex({
   return (
     <div className="founder-hex-wrap">
       <svg
-        viewBox="0 0 173 200"
+        viewBox="-3 -3 179 206"
         xmlns="http://www.w3.org/2000/svg"
         role="img"
         aria-label={`Imagem de ${name}`}
@@ -115,12 +119,24 @@ function FounderHex({
           strokeWidth="1"
         />
 
-        {/* Outer gold frame */}
+        {/* Faint base hex outline — keeps the shape readable between sweeps */}
         <polygon
           points={outerPoints}
           fill="none"
           stroke="var(--mercury)"
-          strokeWidth="1.5"
+          strokeWidth="1"
+          strokeOpacity="0.22"
+        />
+
+        {/* Animated gold comet — short dash chases the perimeter */}
+        <polygon
+          points={outerPoints}
+          fill="none"
+          stroke="var(--mercury)"
+          strokeWidth="2"
+          strokeLinecap="round"
+          className="founder-hex-trail"
+          style={{ animationDelay: `${index * -1.7}s` }}
         />
 
         {!photoUrl && (
@@ -206,12 +222,13 @@ export default function SobrePage() {
             >
               <p className="eyebrow">Fundadores</p>
               <div className="founders-grid">
-                {founders.map((f) => (
+                {founders.map((f, i) => (
                   <article key={f.name} className="founder-card">
                     <FounderHex
                       initials={f.initials}
                       photoUrl={f.photoUrl}
                       name={f.name}
+                      index={i}
                     />
                     <h2 className="founder-name">{f.name}</h2>
                     <p className="founder-role">{f.role}</p>
@@ -374,15 +391,38 @@ export default function SobrePage() {
           width: 100%;
           max-width: 220px;
           margin: 0 0 var(--sp-3);
+          /* Depth shadow movida pro wrapper — composita uma vez, nao
+             interfere com a animacao do trail dentro do SVG. */
+          filter: drop-shadow(0 8px 24px rgba(43, 37, 32, 0.08));
+        }
+        [data-theme="dark"] .founder-hex-wrap {
+          filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.35));
         }
         .founder-hex {
           width: 100%;
           height: auto;
           display: block;
-          filter: drop-shadow(0 8px 24px rgba(43, 37, 32, 0.08));
+          overflow: visible;
         }
-        [data-theme="dark"] .founder-hex {
-          filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.35));
+        /* Cometa dourado correndo o perimetro do hexagono.
+           Perimetro ≈ 600 unidades no viewBox → trail ~ 78u + gap ~ 522u.
+           will-change isola em layer GPU pra o filter nao forcar repaint
+           do SVG inteiro a cada frame. */
+        .founder-hex-trail {
+          stroke-dasharray: 78 522;
+          stroke-dashoffset: 0;
+          animation: founder-hex-trail-spin 5.2s linear infinite;
+          will-change: stroke-dashoffset;
+        }
+        @keyframes founder-hex-trail-spin {
+          to { stroke-dashoffset: -600; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .founder-hex-trail {
+            animation: none;
+            stroke-dasharray: none;
+            stroke-opacity: 0.9;
+          }
         }
         .founder-initials {
           font-family: var(--font-display);
