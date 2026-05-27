@@ -26,9 +26,10 @@ export function CtaFinal() {
 
   useEffect(() => {
     let cancelled = false;
+    let settled = false;
     const watchdog = window.setTimeout(() => {
-      if (!cancelled && embedState === "loading") setEmbedState("error");
-    }, 8000);
+      if (!cancelled && !settled) setEmbedState("error");
+    }, 12000);
 
     (async () => {
       try {
@@ -39,7 +40,6 @@ export function CtaFinal() {
           hideEventTypeDetails: false,
           layout: "month_view",
           theme: "dark",
-          styles: { branding: { brandColor: "#E0B03A" } },
           cssVarsPerTheme: {
             light: {
               "cal-bg": "#2B2520",
@@ -57,7 +57,18 @@ export function CtaFinal() {
         cal("on", {
           action: "linkReady",
           callback: () => {
+            settled = true;
+            window.clearTimeout(watchdog);
             if (!cancelled) setEmbedState("ready");
+          },
+        });
+
+        cal("on", {
+          action: "linkFailed",
+          callback: () => {
+            settled = true;
+            window.clearTimeout(watchdog);
+            if (!cancelled) setEmbedState("error");
           },
         });
 
@@ -68,6 +79,8 @@ export function CtaFinal() {
           },
         });
       } catch {
+        settled = true;
+        window.clearTimeout(watchdog);
         if (!cancelled) setEmbedState("error");
       }
     })();
@@ -76,7 +89,6 @@ export function CtaFinal() {
       cancelled = true;
       window.clearTimeout(watchdog);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
