@@ -6,11 +6,12 @@ import type { NextConfig } from "next";
    middleware quando quiser remover 'unsafe-inline'. */
 const csp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
+  "script-src 'self' 'unsafe-inline' https://plausible.io https://app.cal.com",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob:",
+  "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
-  "connect-src 'self'",
+  "connect-src 'self' https://plausible.io https://app.cal.com https://api.cal.com",
+  "frame-src 'self' https://app.cal.com https://cal.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",
