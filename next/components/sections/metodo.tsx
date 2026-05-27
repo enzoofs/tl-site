@@ -13,23 +13,23 @@ const ease = [0.22, 0.61, 0.36, 1] as const;
 const phases = [
   {
     num: "01",
-    title: "Diagnóstico",
-    desc: "Mapeamos seus processos atuais em reuniões com a equipe. Identificamos gargalos, repetições e oportunidades concretas.",
+    title: "Diagnosticamos",
+    desc: "Sentamos com a equipe e mapeamos o processo como ele acontece (não como ele deveria acontecer). Saímos com gargalo nomeado e oportunidade estimada.",
   },
   {
     num: "02",
-    title: "Desenho",
-    desc: "Projetamos a solução com você. Validamos cada passo antes de escrever uma linha de código.",
+    title: "Desenhamos",
+    desc: "Projetamos a solução com você na sala. Cada passo validado antes de escrever uma linha de código.",
   },
   {
     num: "03",
-    title: "Implementação",
-    desc: "Construímos, integramos e testamos em ambiente real, sem interromper sua operação no dia a dia.",
+    title: "Implementamos",
+    desc: "Construímos, integramos e testamos em ambiente real, sem parar a operação no dia a dia.",
   },
   {
     num: "04",
-    title: "Acompanhamento",
-    desc: "Monitoramos resultados e ajustamos conforme sua equipe cresce e o negócio muda.",
+    title: "Acompanhamos",
+    desc: "Monitoramos resultado e ajustamos conforme a equipe e o negócio mudam.",
   },
 ] as const;
 

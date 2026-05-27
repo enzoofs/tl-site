@@ -6,15 +6,18 @@ import HexMesh from "@/components/ui/hex-mesh";
 const cards = [
   {
     num: "01",
-    text: "Tarefas repetitivas consomem o tempo de quem deveria estar decidindo.",
+    title: "Hora cara em trabalho barato.",
+    body: "Quem decide passa o dia digitando o que máquina faria.",
   },
   {
     num: "02",
-    text: "Sistemas que não se comunicam geram retrabalho e erros de digitação.",
+    title: "Um sistema não conversa com o outro — quem conversa é a sua equipe.",
+    body: "E cada cópia entre eles é uma chance de erro.",
   },
   {
     num: "03",
-    text: "Dados espalhados em planilhas escondem as decisões que importam.",
+    title: "O número que importa está escondido.",
+    body: "Tantas planilhas que os números importantes desaparecem.",
   },
 ] as const;
 
@@ -66,21 +69,32 @@ export function Problema() {
                 </p>
                 <p
                   style={{
-                    fontFamily: "var(--font-body)",
-                    fontSize: 19,
-                    lineHeight: 1.55,
+                    fontFamily: "var(--font-display)",
+                    fontSize: 22,
+                    lineHeight: 1.25,
                     color: "var(--fg)",
+                    margin: "0 0 var(--sp-2)",
+                  }}
+                >
+                  {card.title}
+                </p>
+                <p
+                  style={{
+                    fontFamily: "var(--font-body)",
+                    fontSize: 16,
+                    lineHeight: 1.55,
+                    color: "var(--fg-soft)",
                     margin: 0,
                   }}
                 >
-                  {card.text}
+                  {card.body}
                 </p>
               </div>
             ))}
           </div>
 
           <p className="citation" style={{ marginTop: "var(--sp-6)" }}>
-            Automação bem feita devolve esse tempo.
+            Não é falta de gente. É falta de método.
           </p>
         </div>
       </div>

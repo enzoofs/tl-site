@@ -8,19 +8,22 @@ const padroes = [
   {
     value: 7,
     suffix: "dias",
-    label: "do briefing ao diagnóstico assinado",
+    label: "do briefing ao diagnóstico assinado.",
+    consequence: "Diagnóstico assinado no sétimo dia. Não no oitavo.",
     sub: "DIAGNÓSTICO",
   },
   {
     value: 2,
     suffix: "semanas",
-    label: "da assinatura ao primeiro sistema rodando",
+    label: "da assinatura ao primeiro sistema rodando.",
+    consequence: "Primeiro sistema rodando em 14 dias. Você marca a data.",
     sub: "EXECUÇÃO",
   },
   {
     value: 6,
     suffix: "meses",
-    label: "de manutenção contínua inclusos após o go-live",
+    label: "de manutenção contínua inclusos no go-live.",
+    consequence: "Manutenção contínua, sem cobrança para correção de bugs.",
     sub: "EVOLUÇÃO",
   },
 ] as const;
@@ -81,10 +84,22 @@ export function Resultados() {
                     fontSize: 17,
                     lineHeight: 1.45,
                     color: "var(--fg)",
-                    margin: "0 0 var(--sp-1)",
+                    margin: "0 0 var(--sp-2)",
                   }}
                 >
                   {p.label}
+                </p>
+                <p
+                  style={{
+                    fontFamily: "var(--font-italic)",
+                    fontStyle: "italic",
+                    fontSize: 15,
+                    lineHeight: 1.5,
+                    color: "var(--fg)",
+                    margin: "0 0 var(--sp-2)",
+                  }}
+                >
+                  {p.consequence}
                 </p>
                 <p
                   style={{
@@ -92,7 +107,7 @@ export function Resultados() {
                     fontSize: 11,
                     letterSpacing: 2,
                     textTransform: "uppercase",
-                    color: "var(--fg-soft)",
+                    color: "var(--fg)",
                     margin: 0,
                   }}
                 >

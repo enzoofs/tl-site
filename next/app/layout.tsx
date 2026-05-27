@@ -95,6 +95,18 @@ export default function RootLayout({
             `,
           }}
         />
+        {/* Plausible Analytics — privacy-friendly. Em <head> direto pra
+           aparecer no HTML server-rendered (verificador do Plausible faz
+           scrape do HTML cru). */}
+        <script
+          defer
+          src="https://plausible.io/js/pa-3AkKd21G_1Ttevrpb1PnD.js"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()`,
+          }}
+        />
       </head>
       <body>
         <script

@@ -337,8 +337,8 @@ body::after {
   background: radial-gradient(
     ellipse 115% 105% at center,
     transparent 25%,
-    rgba(0, 0, 0, 0.18) 65%,
-    rgba(0, 0, 0, 0.45) 100%
+    rgba(0, 0, 0, 0.10) 65%,
+    rgba(0, 0, 0, 0.28) 100%
   );
 }
 
@@ -346,8 +346,8 @@ body::after {
   background: radial-gradient(
     ellipse 115% 105% at center,
     transparent 25%,
-    rgba(0, 0, 0, 0.30) 65%,
-    rgba(0, 0, 0, 0.60) 100%
+    rgba(0, 0, 0, 0.18) 65%,
+    rgba(0, 0, 0, 0.40) 100%
   );
 }
 
@@ -381,7 +381,7 @@ body::after {
   white-space: nowrap;
   transition: top 0.15s var(--ease);
 }
-.skip-link:focus {
+.skip-link:focus-visible {
   top: 8px;
 }
 

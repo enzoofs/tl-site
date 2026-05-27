@@ -1,20 +1,22 @@
 import InfiniteSlider from "@/components/ui/infinite-slider";
 
-/* Linha 1: ferramentas que o cliente reconhece da rotina dele
-   (mensageria, planilhas, ERP/financeiro BR, CRM, e-commerce, fiscal). */
+/* Linha 1: ferramentas que o cliente reconhece da rotina dele.
+   Mix deliberado: SMB-BR (WhatsApp, Excel, Mercado Livre), enterprise
+   moderno (Notion, Slack, HubSpot, Pipedrive, LinkedIn), e infra BR
+   (NFe). Sinaliza que conversamos com qualquer stack. */
 const tools = [
   "WhatsApp",
   "Gmail",
   "Excel",
-  "Drive",
-  "Bling",
-  "Omie",
-  "Conta Azul",
-  "Mercado Livre",
+  "Google Drive",
+  "Notion",
+  "Slack",
+  "HubSpot",
   "Pipedrive",
-  "RD Station",
-  "NFe",
+  "Mercado Livre",
   "Instagram",
+  "LinkedIn",
+  "NFe",
 ] as const;
 
 /* Linha 2: o que a TimeLabs faz com essas ferramentas.

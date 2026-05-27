@@ -46,7 +46,7 @@ export function Footer() {
           {/* Brand: wordmark + tagline */}
           <div className="footer-brand">
             <span className="footer-wordmark">timelabs</span>
-            <span className="footer-tagline">Automação empresarial.</span>
+            <span className="footer-tagline">Devolvemos tempo. Por escrito.</span>
           </div>
 
           {/* Contato visivel + nav inline. Email/telefone ficam legiveis

@@ -16,26 +16,24 @@ export function Hero() {
         position: "relative",
         isolation: "isolate",
         minHeight: "calc(100svh - 56px)",
-        padding: "var(--sp-7) var(--sp-5)",
+        padding: "var(--sp-6) var(--sp-5) var(--sp-5)",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
       }}
     >
       <HexMesh variant="light" />
+
       <div
         style={{
           position: "relative",
           zIndex: 1,
-          display: "grid",
-          alignItems: "center",
-          maxWidth: 1280,
+          maxWidth: 920,
           margin: "0 auto",
-          gap: "var(--sp-5)",
-          minHeight: "calc(100svh - 56px - var(--sp-7) * 2)",
+          width: "100%",
         }}
-        className="hero-grid"
+        className="hero-text"
       >
-      {/* Left column */}
-      <div style={{ maxWidth: 640 }} className="hero-left">
-        {/* Eyebrow */}
         <motion.p
           className="eyebrow"
           initial={{ opacity: 0 }}
@@ -45,16 +43,12 @@ export function Hero() {
           Automação empresarial
         </motion.p>
 
-        {/* Wordmark */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, ease }}
         >
-          <h1
-            aria-label="TimeLabs"
-            className="wordmark"
-          >
+          <h1 aria-label="TimeLabs" className="wordmark">
             t
             <span className="wordmark-i">
               ı
@@ -77,87 +71,40 @@ export function Hero() {
           </h1>
         </motion.div>
 
-        {/* Tagline — cinematic blur reveal por caractere */}
         <TextReveal as="p" className="tagline">
-          Devolvemos tempo ao seu negócio.
+          Em 30 minutos achamos onde sua operação perde tempo.
         </TextReveal>
 
-        {/* Lede */}
         <motion.p
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.5, ease }}
-          style={{
-            fontFamily: "var(--font-body)",
-            fontSize: "clamp(16px, 2.5vw, 22px)",
-            lineHeight: 1.6,
-            color: "var(--fg)",
-            margin: "0 0 var(--sp-4)",
-          }}
+          className="hero-lede"
         >
-          Automatizamos processos repetitivos, integramos os sistemas que
-          você já usa e transformamos dados em decisão. Sua equipe volta a
-          focar no que importa.
+          Você conta como o trabalho acontece hoje. Saímos da conversa com
+          três frentes concretas pra automatizar — ou com a indicação de
+          quem resolve.
         </motion.p>
 
-        {/* CTA row */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.65, ease }}
           className="hero-cta-row"
-          style={{ display: "flex", flexWrap: "wrap", gap: "var(--sp-2)" }}
         >
           <Button variant="primary" href="#agendar">
-            Agendar conversa
+            Agendar diagnóstico
           </Button>
-          <Button variant="secondary" href="#operacoes">
-            Ver como funciona
+          <Button variant="secondary" href="#onde-entramos">
+            Ver onde a gente entra
           </Button>
         </motion.div>
-      </div>
-
-      {/* Right column */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-        className="hero-right"
-      >
-        {/* Wrapper com rotacao lenta contínua (CSS). Framer cuida do fade
-            in do img interno — transformacoes nao conflitam pq estao em
-            elementos diferentes. */}
-        <div className="hero-selo-spin">
-          <motion.img
-            src="/assets/selo-hero.svg"
-            alt="Selo TimeLabs — hexágono dourado com logotipo"
-            width={600}
-            height={600}
-            fetchPriority="high"
-            initial={{ opacity: 0, scale: 0.92 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{
-              duration: 1.2,
-              delay: 0.4,
-              ease: [0.22, 0.61, 0.36, 1],
-            }}
-            className="hero-selo"
-            style={{
-              maxWidth: 440,
-              width: "100%",
-              height: "auto",
-              display: "block",
-            }}
-          />
-        </div>
       </div>
 
       <style>{`
         .wordmark {
           font-family: var(--font-display);
-          font-size: clamp(52px, 8vw, 96px);
+          font-size: clamp(56px, 8.5vw, 112px);
           line-height: 1.02;
           letter-spacing: var(--track-display);
           margin: 0 0 var(--sp-2);
@@ -173,55 +120,28 @@ export function Hero() {
           left: 50%;
           transform: translateX(-50%);
         }
-        @keyframes hero-selo-rotate {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
+        .hero-text .tagline {
+          margin-top: var(--sp-2);
         }
-        .hero-selo-spin {
-          display: inline-block;
-          animation: hero-selo-rotate 120s linear infinite;
-          transform-origin: center;
-          will-change: transform;
+        .hero-lede {
+          font-family: var(--font-body);
+          font-size: clamp(17px, 1.8vw, 21px);
+          line-height: 1.6;
+          color: var(--fg);
+          margin: var(--sp-3) 0 var(--sp-4);
+          max-width: 720px;
         }
-        @media (prefers-reduced-motion: reduce) {
-          .hero-selo-spin { animation: none; }
-        }
-        .hero-grid {
-          grid-template-columns: 58fr 42fr;
-        }
-        @media (max-width: 1024px) {
-          .hero-grid {
-            grid-template-columns: 1fr;
-          }
-          .hero-right {
-            order: 2;
-          }
-          .hero-selo {
-            max-width: 280px !important;
-          }
+        .hero-cta-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: var(--sp-2);
         }
         @media (max-width: 639px) {
           .wordmark {
-            font-size: clamp(36px, 11vw, 52px);
+            font-size: clamp(44px, 13vw, 64px);
           }
-          .hero-grid {
-            gap: var(--sp-3) !important;
-            min-height: calc(100svh - 56px - var(--sp-3) * 2) !important;
-            align-content: center !important;
-          }
-          .hero-selo {
-            max-width: 120px !important;
-            margin: 0 auto;
-          }
-          .hero-left {
-            max-width: 100% !important;
-          }
-          .hero-right {
-            order: -1;
-            justify-content: center !important;
-          }
-          .hero-cta-row {
-            flex-direction: column !important;
+          .hero-lede {
+            font-size: 16px;
           }
           .hero-cta-row a,
           .hero-cta-row button {
@@ -231,7 +151,6 @@ export function Hero() {
           }
         }
       `}</style>
-      </div>
     </section>
   );
 }

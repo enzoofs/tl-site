@@ -111,8 +111,8 @@ export function LiquidGlassCard({
           inset: 0,
           zIndex: 1,
           background: hovered
-            ? "rgba(43, 37, 32, 0.55)"
-            : "rgba(43, 37, 32, 0.62)",
+            ? "rgba(43, 37, 32, 0.78)"
+            : "rgba(43, 37, 32, 0.85)",
           transition: "background 0.4s var(--ease)",
         }}
       />

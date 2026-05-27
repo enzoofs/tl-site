@@ -4,6 +4,7 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import HexMesh from "@/components/ui/hex-mesh";
 import SectionReveal from "@/components/ui/section-reveal";
+import { WhatsAppFloat } from "@/components/ui/whatsapp-float";
 
 export const metadata: Metadata = {
   title: "Sobre — TimeLabs",
@@ -47,12 +48,12 @@ const founders: Founder[] = [
 
 const principios = [
   {
-    title: "Outcome, não ferramenta.",
+    title: "Resultado, não ferramenta.",
     body: "Não vendemos plataforma. Vendemos horas de volta no calendário do seu time. As escolhas técnicas são meio — nunca a oferta.",
   },
   {
-    title: "Zero lock-in.",
-    body: "Todo o código é seu, em todo ponto do contrato. Você decide quem mantém. Não há refém técnico do nosso lado.",
+    title: "Manutenção é parte do produto.",
+    body: "Quando algo dá errado, a gente corrige. Quando o negócio muda, a gente adapta. Sem fatura surpresa, sem renegociação.",
   },
   {
     title: "Diagnóstico antes da proposta.",
@@ -277,23 +278,23 @@ export default function SobrePage() {
               <div className="narrative-body">
                 <p>
                   Mesmo assim, equipes inteiras gastam metade do dia
-                  atualizando planilhas, copiando dados de um sistema para o
-                  outro, respondendo o mesmo e-mail toda semana. O trabalho que
-                  importa fica para o fim do expediente — quando todo mundo já
-                  está cansado.
+                  atualizando planilha, copiando dado de um sistema pra outro,
+                  respondendo o mesmo e-mail toda semana. O trabalho que
+                  importa fica pro fim do expediente, quando ninguém mais
+                  aguenta pensar.
                 </p>
                 <p>
-                  A TimeLabs nasce dessa constatação: existe uma camada inteira
-                  de trabalho que máquinas podem fazer melhor — desde que
-                  alguém com método as ensine. Não é mágica, não é hype. É o
-                  resultado de olhar para um processo com os olhos de quem
-                  viveu a operação.
+                  A TimeLabs nasce dessa constatação. Existe uma camada
+                  inteira de trabalho que máquina faz melhor que gente —
+                  desde que alguém com método ensine. Não é mágica. Não é
+                  hype. É o resultado de olhar pra um processo com os olhos
+                  de quem já viveu a operação.
                 </p>
                 <p>
                   Não vendemos software. Não vendemos plataforma. Vendemos
-                  horas devolvidas ao calendário do seu time, e a
-                  tranquilidade de que processos críticos não dependem de uma
-                  única pessoa se lembrar de fazer.
+                  horas de volta no calendário do seu time, e a tranquilidade
+                  de que processo crítico não depende de alguém se lembrar
+                  de fazer.
                 </p>
               </div>
             </div>
@@ -374,6 +375,7 @@ export default function SobrePage() {
         </SectionReveal>
       </main>
       <Footer />
+      <WhatsAppFloat />
 
       <style>{`
         /* ---- FOUNDERS ---- */

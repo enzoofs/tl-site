@@ -1,8 +1,23 @@
 import type { NextConfig } from "next";
 
-/* Headers de segurança aplicados a todas as rotas.
-   CSP fica de fora por enquanto — requer nonce em todos inline scripts/styles
-   e o site usa <style>{...}</style> e o bootstrap de tema inline no <head>. */
+/* CSP permissivo o suficiente pra rodar inline scripts (bootstrap de tema,
+   JSON-LD) e Next.js hydration, mas bloqueia: script externo, eval em código
+   próprio, form-action externo, framing. Pode endurecer pra nonce-based via
+   middleware quando quiser remover 'unsafe-inline'. */
+const csp = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob:",
+  "font-src 'self' data:",
+  "connect-src 'self'",
+  "frame-ancestors 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "object-src 'none'",
+  "upgrade-insecure-requests",
+].join("; ");
+
 const securityHeaders = [
   {
     key: "Strict-Transport-Security",
@@ -15,6 +30,7 @@ const securityHeaders = [
     value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
   },
   { key: "X-Frame-Options", value: "DENY" },
+  { key: "Content-Security-Policy", value: csp },
 ];
 
 const nextConfig: NextConfig = {

@@ -13,10 +13,9 @@ type NavLink = {
 };
 
 const NAV_LINKS: NavLink[] = [
-  { label: "Problema", href: "/#problema" },
+  { label: "Onde entramos", href: "/#onde-entramos" },
   { label: "O que fazemos", href: "/#operacoes" },
-  { label: "Como trabalhamos", href: "/#metodo" },
-  { label: "Compromissos", href: "/#compromissos" },
+  { label: "Método", href: "/#metodo" },
   { label: "Sobre", href: "/sobre" },
   { label: "Agendar", href: "/#agendar", accent: true },
 ];
@@ -153,8 +152,20 @@ export function Header() {
         ))}
       </nav>
 
-      {/* Right side: ThemeToggle + Hamburger */}
+      {/* Right side: Mobile sticky CTA + ThemeToggle + Hamburger */}
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        {/* Sticky "Agendar" pill — mobile only, fades in on scroll.
+            Desktop nav already exposes the CTA in the nav row. */}
+        <Link
+          href="/#agendar"
+          onClick={(e) => handleNavClick(e, "/#agendar")}
+          className="header-mobile-cta"
+          data-visible={scrolled ? "true" : "false"}
+          aria-label="Agendar diagnóstico"
+        >
+          Agendar
+        </Link>
+
         <ThemeToggle />
 
         {/* Hamburger — mobile only */}
@@ -268,12 +279,47 @@ export function Header() {
 
       {/* Responsive styles */}
       <style>{`
+        .header-mobile-cta {
+          display: none;
+          font-family: var(--font-mono);
+          font-size: 11px;
+          letter-spacing: 1.5px;
+          text-transform: uppercase;
+          text-decoration: none;
+          background: var(--mercury);
+          color: var(--ink);
+          padding: 8px 14px;
+          border-radius: 999px;
+          opacity: 0;
+          pointer-events: none;
+          transform: scale(0.94);
+          transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
+        }
+        .header-mobile-cta[data-visible="true"] {
+          opacity: 1;
+          pointer-events: auto;
+          transform: scale(1);
+        }
         @media (max-width: 639px) {
           .header-desktop-nav {
             display: none !important;
           }
           .header-hamburger {
             display: block !important;
+          }
+          .header-mobile-cta {
+            display: inline-flex;
+            align-items: center;
+            min-height: 32px;
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .header-mobile-cta {
+            transition: opacity 0.01ms;
+            transform: none;
+          }
+          .header-mobile-cta[data-visible="true"] {
+            transform: none;
           }
         }
       `}</style>

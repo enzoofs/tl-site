@@ -21,7 +21,6 @@ function dash(hovered: boolean) {
   };
 }
 
-/* Gear/cog — universal automation symbol */
 function GlyphAutomatizar({ hovered }: { hovered: boolean }) {
   return (
     <svg width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true">
@@ -38,53 +37,24 @@ function GlyphAutomatizar({ hovered }: { hovered: boolean }) {
   );
 }
 
-/* Two interlocking chain links — connection/integration */
 function GlyphIntegrar({ hovered }: { hovered: boolean }) {
   return (
     <svg width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true">
-      <rect
-        x="6" y="20" width="22" height="16" rx="8"
-        stroke="var(--paper)"
-        strokeWidth="1.5"
-        fill="none"
-        style={dash(hovered)}
-      />
-      <rect
-        x="28" y="20" width="22" height="16" rx="8"
-        stroke="var(--mercury)"
-        strokeWidth="1.5"
-        fill="none"
-        style={dash(hovered)}
-      />
+      <rect x="6" y="20" width="22" height="16" rx="8" stroke="var(--paper)" strokeWidth="1.5" fill="none" style={dash(hovered)} />
+      <rect x="28" y="20" width="22" height="16" rx="8" stroke="var(--mercury)" strokeWidth="1.5" fill="none" style={dash(hovered)} />
     </svg>
   );
 }
 
-/* Upward diagonal arrow — improvement/optimization */
 function GlyphOtimizar({ hovered }: { hovered: boolean }) {
   return (
     <svg width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true">
-      <line
-        x1="14" y1="42" x2="42" y2="14"
-        stroke="var(--paper)"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        style={dash(hovered)}
-      />
-      <polyline
-        points="26,14 42,14 42,30"
-        stroke="var(--mercury)"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-        style={dash(hovered)}
-      />
+      <line x1="14" y1="42" x2="42" y2="14" stroke="var(--paper)" strokeWidth="1.5" strokeLinecap="round" style={dash(hovered)} />
+      <polyline points="26,14 42,14 42,30" stroke="var(--mercury)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" style={dash(hovered)} />
     </svg>
   );
 }
 
-/* Three ascending bars — chart/data analysis */
 function GlyphAnalisar({ hovered }: { hovered: boolean }) {
   return (
     <svg width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true">
@@ -99,29 +69,36 @@ function GlyphAnalisar({ hovered }: { hovered: boolean }) {
 /* Card data                                                          */
 /* ------------------------------------------------------------------ */
 
-const ops = [
+type Op = {
+  id: string;
+  title: string;
+  desc: string;
+  Glyph: ({ hovered }: { hovered: boolean }) => React.ReactElement;
+};
+
+const ops: readonly Op[] = [
   {
     id: "automatizar",
     title: "Automatizar",
-    desc: "Eliminamos tarefas manuais com fluxos inteligentes que rodam sozinhos, liberando sua equipe para o que importa.",
+    desc: "Trabalho com padrão repetitivo deve ser feito pela máquina.",
     Glyph: GlyphAutomatizar,
   },
   {
     id: "integrar",
     title: "Integrar",
-    desc: "Conectamos seus sistemas para que dados fluam sem retrabalho, sem copiar e colar, sem planilha intermediária.",
+    desc: "ERP, planilha, WhatsApp, e-mail, marketplace, ERP de novo. Sua equipe não precisa ser a ponte entre sistemas.",
     Glyph: GlyphIntegrar,
   },
   {
     id: "otimizar",
     title: "Otimizar",
-    desc: "Redesenhamos processos para reduzir etapas, eliminar gargalos e acelerar entregas.",
+    desc: "Antes de automatizar, avaliamos se o processo precisa existir como está. Às vezes três etapas viram uma, antes do código.",
     Glyph: GlyphOtimizar,
   },
   {
     id: "analisar",
     title: "Analisar",
-    desc: "Transformamos dados dispersos em dashboards claros que revelam o que precisa de atenção agora.",
+    desc: "Quando o dado está espalhado, decisão vira intuição. A gente junta, limpa e mostra num painel onde dá pra ver o que importa.",
     Glyph: GlyphAnalisar,
   },
 ] as const;
@@ -134,7 +111,7 @@ function OpCard({
   op,
   className,
 }: {
-  op: (typeof ops)[number];
+  op: Op;
   className?: string;
 }) {
   const [hovered, setHovered] = useState(false);
@@ -202,7 +179,7 @@ export function Operacoes() {
             maxWidth: 600,
           }}
         >
-          Combinadas ou separadas, conforme a sua necessidade.
+          Combinadas ou separadas, conforme o caso pede.
         </p>
 
         <div className="ops-bento">
