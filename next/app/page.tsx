@@ -1,7 +1,6 @@
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Hero } from "@/components/sections/hero";
-import { OndeEntramos } from "@/components/sections/onde-entramos";
 import { Problema } from "@/components/sections/problema";
 import { Operacoes } from "@/components/sections/operacoes";
 import { Metodo } from "@/components/sections/metodo";
@@ -21,7 +20,6 @@ export default function Home() {
       <Header />
       <main id="main-content" className="pt-[56px]">
         <Hero />
-        <OndeEntramos />
         <Problema />
         <Operacoes />
         <Metodo />

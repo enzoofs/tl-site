@@ -121,9 +121,9 @@ export function CtaFinal() {
             marginRight: "auto",
           }}
         >
-          Você conta como o trabalho acontece. A gente sai com três frentes
-          concretas pra automatizar — ou com a indicação de quem resolve
-          melhor.
+          Você conta como o trabalho acontece. A gente sai com um plano:
+          onde a IA resolve rápido, onde vale construir sistema sob medida
+          — e o retorno esperado de cada frente.
         </p>
 
         <div className="cal-shell">

@@ -40,7 +40,7 @@ export function Hero() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, ease }}
         >
-          Automação empresarial
+          IA & software sob encomenda
         </motion.p>
 
         <motion.div
@@ -72,7 +72,8 @@ export function Hero() {
         </motion.div>
 
         <TextReveal as="p" className="tagline">
-          Em 30 minutos achamos onde sua operação perde tempo.
+          Em 30 minutos achamos onde vale automatizar com IA — ou construir
+          do zero.
         </TextReveal>
 
         <motion.p
@@ -82,8 +83,8 @@ export function Hero() {
           className="hero-lede"
         >
           Você conta como o trabalho acontece hoje. Saímos da conversa com
-          três frentes concretas pra automatizar — ou com a indicação de
-          quem resolve.
+          um plano: o que dá pra resolver com IA, o que precisa de sistema
+          construído sob medida, e o retorno esperado de cada frente.
         </motion.p>
 
         <motion.div
@@ -95,8 +96,8 @@ export function Hero() {
           <Button variant="primary" href="#agendar">
             Agendar diagnóstico
           </Button>
-          <Button variant="secondary" href="#onde-entramos">
-            Ver onde a gente entra
+          <Button variant="secondary" href="#operacoes">
+            Ver como trabalhamos
           </Button>
         </motion.div>
       </div>

@@ -44,6 +44,19 @@ export function Problema() {
         >
           <p className="eyebrow">O problema</p>
           <h2 className="hl-gloock">Sua equipe perde horas todo dia.</h2>
+          <p
+            style={{
+              fontFamily: "var(--font-body)",
+              fontSize: 18,
+              lineHeight: 1.55,
+              color: "var(--fg-soft)",
+              margin: "var(--sp-3) 0 0",
+              maxWidth: 640,
+            }}
+          >
+            Não é falta de gente boa. É o mesmo padrão se repetindo em quase
+            toda operação que já vimos:
+          </p>
 
           <div className="problema-grid" style={{ marginTop: "var(--sp-5)" }}>
             {cards.map((card) => (
@@ -94,7 +107,8 @@ export function Problema() {
           </div>
 
           <p className="citation" style={{ marginTop: "var(--sp-6)" }}>
-            Não é falta de gente. É falta de método.
+            É falta de método — e, às vezes, de um sistema que ainda não
+            existe.
           </p>
         </div>
       </div>

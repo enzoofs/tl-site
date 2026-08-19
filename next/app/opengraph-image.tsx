@@ -4,7 +4,7 @@ import { join } from "node:path";
 
 export const runtime = "nodejs";
 
-export const alt = "TimeLabs — automação empresarial que devolve tempo";
+export const alt = "TimeLabs — consultoria de IA e software sob encomenda";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -115,7 +115,7 @@ export default async function Image() {
             position: "relative",
           }}
         >
-          Automação empresarial
+          IA & software sob encomenda
         </div>
 
         {/* Wordmark */}

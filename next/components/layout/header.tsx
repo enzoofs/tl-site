@@ -13,7 +13,6 @@ type NavLink = {
 };
 
 const NAV_LINKS: NavLink[] = [
-  { label: "Onde entramos", href: "/#onde-entramos" },
   { label: "O que fazemos", href: "/#operacoes" },
   { label: "Método", href: "/#metodo" },
   { label: "Sobre", href: "/sobre" },

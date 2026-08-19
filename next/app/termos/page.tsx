@@ -26,10 +26,10 @@ const sections = [
     title: "2. Sobre a TimeLabs",
     body: (
       <p>
-        A TimeLabs é uma empresa de automação empresarial sediada em Belo
-        Horizonte/MG, atuando no desenvolvimento de sistemas sob medida que
-        substituem o trabalho manual repetitivo em rotinas administrativas,
-        operacionais e analíticas.
+        A TimeLabs é uma empresa de consultoria de IA e desenvolvimento de
+        software sob encomenda sediada em Belo Horizonte/MG, atuando na
+        automação com IA e na construção de sistemas sob medida para
+        rotinas administrativas, operacionais e analíticas.
       </p>
     ),
   },

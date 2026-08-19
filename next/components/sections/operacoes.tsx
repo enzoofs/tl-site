@@ -46,25 +46,6 @@ function GlyphIntegrar({ hovered }: { hovered: boolean }) {
   );
 }
 
-function GlyphOtimizar({ hovered }: { hovered: boolean }) {
-  return (
-    <svg width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true">
-      <line x1="14" y1="42" x2="42" y2="14" stroke="var(--paper)" strokeWidth="1.5" strokeLinecap="round" style={dash(hovered)} />
-      <polyline points="26,14 42,14 42,30" stroke="var(--mercury)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" style={dash(hovered)} />
-    </svg>
-  );
-}
-
-function GlyphAnalisar({ hovered }: { hovered: boolean }) {
-  return (
-    <svg width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true">
-      <line x1="16" y1="44" x2="16" y2="32" stroke="var(--paper)" strokeWidth="3" strokeLinecap="round" style={dash(hovered)} />
-      <line x1="28" y1="44" x2="28" y2="24" stroke="var(--paper)" strokeWidth="3" strokeLinecap="round" style={dash(hovered)} />
-      <line x1="40" y1="44" x2="40" y2="16" stroke="var(--mercury)" strokeWidth="3" strokeLinecap="round" style={dash(hovered)} />
-    </svg>
-  );
-}
-
 /* ------------------------------------------------------------------ */
 /* Card data                                                          */
 /* ------------------------------------------------------------------ */
@@ -78,28 +59,16 @@ type Op = {
 
 const ops: readonly Op[] = [
   {
-    id: "automatizar",
-    title: "Automatizar",
-    desc: "Trabalho com padrão repetitivo deve ser feito pela máquina.",
+    id: "consultoria",
+    title: "Consultoria de IA",
+    desc: "Mapeamos onde IA resolve de verdade — não onde é hype. Agentes que leem, respondem, decidem e avisam, plugados nas ferramentas que sua equipe já usa. Você sai sabendo o que automatizar primeiro e o retorno esperado.",
     Glyph: GlyphAutomatizar,
   },
   {
-    id: "integrar",
-    title: "Integrar",
-    desc: "ERP, planilha, WhatsApp, e-mail, marketplace, ERP de novo. Sua equipe não precisa ser a ponte entre sistemas.",
+    id: "desenvolvimento",
+    title: "Desenvolvimento sob encomenda",
+    desc: "Quando não existe ferramenta pronta pro seu processo, construímos uma — pensada pro seu fluxo, não o contrário. Sistema próprio, sem mensalidade de plataforma genérica que resolve só metade do problema.",
     Glyph: GlyphIntegrar,
-  },
-  {
-    id: "otimizar",
-    title: "Otimizar",
-    desc: "Antes de automatizar, avaliamos se o processo precisa existir como está. Às vezes três etapas viram uma, antes do código.",
-    Glyph: GlyphOtimizar,
-  },
-  {
-    id: "analisar",
-    title: "Analisar",
-    desc: "Quando o dado está espalhado, decisão vira intuição. A gente junta, limpa e mostra num painel onde dá pra ver o que importa.",
-    Glyph: GlyphAnalisar,
   },
 ] as const;
 
@@ -168,7 +137,7 @@ export function Operacoes() {
       <LiquidGlassFilter />
       <div style={{ position: "relative", maxWidth: 1280, margin: "0 auto" }}>
         <p className="eyebrow eyebrow-gold">O que fazemos</p>
-        <h2 className="hl-gloock hl-paper">Quatro operações.</h2>
+        <h2 className="hl-gloock hl-paper">Duas frentes, um objetivo.</h2>
         <p
           style={{
             fontFamily: "var(--font-body)",
@@ -179,54 +148,23 @@ export function Operacoes() {
             maxWidth: 600,
           }}
         >
-          Combinadas ou separadas, conforme o caso pede.
+          Entramos pela consultoria, pelo desenvolvimento, ou pelas duas —
+          conforme o que a operação pede.
         </p>
 
         <div className="ops-bento">
-          <OpCard op={ops[0]} className="ops-card-auto" />
-          <OpCard op={ops[1]} className="ops-card-int" />
-          <OpCard op={ops[2]} className="ops-card-oti" />
-          <OpCard op={ops[3]} className="ops-card-ana" />
+          <OpCard op={ops[0]} className="ops-card-consultoria" />
+          <OpCard op={ops[1]} className="ops-card-dev" />
         </div>
       </div>
 
       <style>{`
         .ops-bento {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          grid-template-rows: auto auto;
+          grid-template-columns: repeat(2, 1fr);
           gap: var(--sp-3);
         }
-        .ops-card-auto {
-          grid-column: 1 / 3;
-          grid-row: 1;
-        }
-        .ops-card-int {
-          grid-column: 3;
-          grid-row: 1;
-        }
-        .ops-card-oti {
-          grid-column: 1;
-          grid-row: 2;
-        }
-        .ops-card-ana {
-          grid-column: 2 / 4;
-          grid-row: 2;
-        }
-        @media (max-width: 1024px) {
-          .ops-bento {
-            grid-template-columns: repeat(2, 1fr);
-            grid-template-rows: auto;
-          }
-          .ops-card-auto,
-          .ops-card-int,
-          .ops-card-oti,
-          .ops-card-ana {
-            grid-column: auto;
-            grid-row: auto;
-          }
-        }
-        @media (max-width: 639px) {
+        @media (max-width: 768px) {
           .ops-bento {
             grid-template-columns: 1fr;
           }

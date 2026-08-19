@@ -26,30 +26,30 @@ const founders: Founder[] = [
   {
     initials: "EF",
     name: "Enzo Ferraz",
-    role: "Founder",
-    bio: "Bio em breve.",
-    bioPlaceholder: true,
+    role: "Founder & CEO",
+    bio: "Analista com anos de vivência em logística nacional e internacional, começou a programar para resolver os gargalos da própria rotina. Descobriu que toda empresa carrega os mesmos nós — e que quase sempre dá para desatá-los.",
+    photoUrl: "/assets/founders/enzo.jpg",
   },
   {
     initials: "FF",
     name: "Francisco Fonseca",
-    role: "COO",
-    bio: "Bio em breve.",
-    bioPlaceholder: true,
+    role: "Co-fundador & COO",
+    bio: "Engenheiro mecânico apaixonado por automação. Implantou sistemas em ambiente multinacional, onde aprendeu que processo bem desenhado vale mais que ferramenta cara. Traz para a TimeLabs o rigor de quem automatiza chão de fábrica.",
+    photoUrl: "/assets/founders/francisco.jpg",
   },
   {
     initials: "MP",
     name: "Marcos Paes",
-    role: "CTO",
-    bio: "Bio em breve.",
-    bioPlaceholder: true,
+    role: "Co-fundador & CTO",
+    bio: "Especialista em TI com anos de estrada. Trabalha com organização de dados para o setor de saúde suplementar, lidando com volume e criticidade que não perdoam improviso. É quem garante a base técnica.",
+    photoUrl: "/assets/founders/marcos.jpg",
   },
 ];
 
 const principios = [
   {
-    title: "Resultado, não ferramenta.",
-    body: "Não vendemos plataforma. Vendemos horas de volta no calendário do seu time. As escolhas técnicas são meio — nunca a oferta.",
+    title: "Resultado, não ferramenta genérica.",
+    body: "Não empurramos plataforma pronta que serve qualquer empresa. Construímos ou configuramos exatamente o que resolve a sua operação — IA, sistema próprio, ou os dois. A escolha técnica é meio, nunca a oferta.",
   },
   {
     title: "Manutenção é parte do produto.",
@@ -291,10 +291,13 @@ export default function SobrePage() {
                   de quem já viveu a operação.
                 </p>
                 <p>
-                  Não vendemos software. Não vendemos plataforma. Vendemos
-                  horas de volta no calendário do seu time, e a tranquilidade
-                  de que processo crítico não depende de alguém se lembrar
-                  de fazer.
+                  Não vendemos hype de IA nem plataforma engessada que serve
+                  qualquer empresa. Vendemos duas coisas: o julgamento pra
+                  saber onde automação resolve rápido, e o software sob
+                  medida pra quando não existe atalho pronto. No fim, o que
+                  muda é o calendário do seu time — e a tranquilidade de que
+                  processo crítico não depende de alguém se lembrar de
+                  fazer.
                 </p>
               </div>
             </div>
