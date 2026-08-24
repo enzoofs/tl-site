@@ -90,6 +90,29 @@
   .reactor .core{ fill: var(--mercury); }
   .reactor .core-ring{ fill:none; stroke: var(--ink); }
 
+  /* ============================== HEX MESH (fundo) ==============================
+     Mesmo grid/hash do site principal (next/components/ui/hex-grid.ts),
+     portado pra JS vanilla - ver <script> no fim do arquivo. Opt-in via
+     classe .mesh nas secoes; conteudo precisa de z-index acima do mesh. */
+  .mesh{ position: relative; overflow: hidden; }
+  .mesh > .wrap{ position: relative; z-index: 1; }
+  .sec-mesh{
+    position: absolute; inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    color: rgba(43,37,32,0.13);
+  }
+  .sec-mesh.dark{ color: rgba(239,233,218,0.14); }
+  .sec-mesh svg{ width:100%; height:100%; display:block; }
+  .sec-mesh .hx{
+    fill: currentColor; fill-opacity: 0;
+    stroke: currentColor; stroke-width: 0.5;
+  }
+  .sec-mesh .hx-shade{
+    fill: currentColor; fill-opacity: 0.35;
+    stroke: currentColor; stroke-width: 0.5;
+  }
+
   /* ============================== HERO ============================== */
   .hero{
     padding: 84px 0 64px;
@@ -354,7 +377,8 @@
 
 <main>
 
-  <section class="hero" style="border-top:none; padding-bottom:0;">
+  <section class="hero mesh" style="border-top:none; padding-bottom:0;">
+    <div class="sec-mesh" aria-hidden="true" data-density="0.12"></div>
     <div class="wrap">
       <p class="kicker"><span class="dot"></span>Codex Operandi · Apresentação</p>
       <h1 class="font-display">Não é mágica.<br>É método.</h1>
@@ -380,7 +404,8 @@
     </div>
   </section>
 
-  <section>
+  <section class="mesh">
+    <div class="sec-mesh" aria-hidden="true" data-density="0.1"></div>
     <div class="wrap">
       <div class="head">
         <p class="kicker"><span class="dot"></span>O padrão</p>
@@ -418,7 +443,8 @@
     </div>
   </section>
 
-  <section>
+  <section class="mesh">
+    <div class="sec-mesh" aria-hidden="true" data-density="0.1"></div>
     <div class="wrap">
       <div class="head">
         <p class="kicker"><span class="dot"></span>Como trabalhamos</p>
@@ -458,7 +484,8 @@
     </div>
   </section>
 
-  <section class="cta">
+  <section class="cta mesh">
+    <div class="sec-mesh dark" aria-hidden="true" data-density="0.12"></div>
     <div class="wrap">
       <p class="kicker"><span class="dot"></span>Próximo passo</p>
       <h2 class="font-display">30 minutos pra mapear onde a operação perde tempo.</h2>
@@ -475,9 +502,84 @@
 <footer>
   <div class="wrap">
     <span>TimeLabs · Automação e IA · Belo Horizonte, MG</span>
-    <span><a href="https://timelabsbr.com">timelabsbr.com</a> · (31) 99597-0472</span>
+    <span><a href="https://timelabs.com.br">timelabs.com.br</a> · (31) 99597-0472</span>
   </div>
 </footer>
+
+<script>
+  /* Hex mesh de fundo - mesmo grid/hash de next/components/ui/hex-grid.ts
+     (grid hexagonal pointy-top, shading determinístico por hash), portado
+     pra JS vanilla porque esta página é HTML estático, sem React. */
+  (function () {
+    var HEX_R = 24, HEX_W = HEX_R * Math.sqrt(3), ROW_H = HEX_R * 1.5;
+    var NS = "http://www.w3.org/2000/svg";
+
+    function cellCenter(col, row) {
+      var parity = ((row % 2) + 2) % 2;
+      return { cx: col * HEX_W + (parity ? HEX_W / 2 : 0), cy: row * ROW_H };
+    }
+
+    function cellHash(col, row) {
+      var h = (col * 73856093) ^ (row * 19349663);
+      h = Math.imul(h ^ (h >>> 13), 1274126177);
+      return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+    }
+
+    function hexPoints(cx, cy) {
+      var pts = [];
+      for (var i = 0; i < 6; i++) {
+        var a = (Math.PI / 180) * (60 * i - 30);
+        pts.push((cx + HEX_R * Math.cos(a)).toFixed(2) + "," + (cy + HEX_R * Math.sin(a)).toFixed(2));
+      }
+      return pts.join(" ");
+    }
+
+    function buildMesh(container) {
+      var w = container.offsetWidth, h = container.offsetHeight;
+      if (!w || !h) return;
+      var density = parseFloat(container.getAttribute("data-density")) || 0.12;
+      var cols = Math.ceil(w / HEX_W) + 2;
+      var rowEnd = Math.ceil(h / ROW_H) + 1;
+
+      var svg = document.createElementNS(NS, "svg");
+      svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+      svg.setAttribute("preserveAspectRatio", "xMinYMin slice");
+
+      var g = document.createElementNS(NS, "g");
+      for (var r = -1; r <= rowEnd; r++) {
+        for (var c = -1; c <= cols; c++) {
+          var center = cellCenter(c, r);
+          var cy = r * ROW_H;
+          var shaded = cellHash(c, r) < density;
+          var p = document.createElementNS(NS, "polygon");
+          p.setAttribute("class", shaded ? "hx-shade" : "hx");
+          p.setAttribute("points", hexPoints(center.cx, cy));
+          g.appendChild(p);
+        }
+      }
+      svg.appendChild(g);
+      container.innerHTML = "";
+      container.appendChild(svg);
+    }
+
+    function init() {
+      var meshes = document.querySelectorAll(".sec-mesh");
+      for (var i = 0; i < meshes.length; i++) buildMesh(meshes[i]);
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+    } else {
+      init();
+    }
+
+    var resizeTimer;
+    window.addEventListener("resize", function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(init, 250);
+    });
+  })();
+</script>
 
 </body>
 </html>
