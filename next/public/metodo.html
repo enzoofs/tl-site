@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TimeLabs — Método</title>
+<meta name="description" content="Apresentação de uma página da TimeLabs — o que fazemos, como trabalhamos, e por que não importa o tamanho do seu negócio.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Serif:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --paper:      #EFE9DA;
+    --paper-alt:  #F8F4EA;
+    --ink:        #2B2520;
+    --ink-soft:   #6B6258;
+    --ink-faint:  rgba(43,37,32,0.55);
+    --mercury:    #E0B03A;
+    --mercury-dim:#B8902E;
+    --rule:       rgba(43,37,32,0.18);
+    --rule-light: rgba(43,37,32,0.10);
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+
+  html{ -webkit-text-size-adjust:100%; }
+
+  body{
+    background: var(--paper);
+    color: var(--ink);
+    font-family:'IBM Plex Serif', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  .font-display{ font-family:'Gloock', Georgia, serif; text-wrap: balance; }
+  .font-italic{ font-family:'Instrument Serif', Georgia, serif; font-style: italic; text-wrap: balance; }
+  .font-mono{ font-family:'IBM Plex Mono', 'Courier New', monospace; }
+
+  .wrap{
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  a{ color: inherit; }
+
+  /* ============================== HEADER ============================== */
+  header{
+    padding: 40px 0 28px;
+    border-bottom: 1px solid var(--rule);
+  }
+  header .wrap{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+  }
+  .brand .glyph{ width:14px; height:16px; flex:none; }
+  .brand .name{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+  header .tagline{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 1.5px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+  }
+
+  /* ============================== HEX MARK ============================== */
+  .reactor{ display:block; }
+  .reactor .hex{ fill:none; stroke: var(--ink); }
+  .reactor .core{ fill: var(--mercury); }
+  .reactor .core-ring{ fill:none; stroke: var(--ink); }
+
+  /* ============================== HERO ============================== */
+  .hero{
+    padding: 84px 0 64px;
+  }
+  .kicker{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--mercury-dim);
+    margin-bottom: 22px;
+    display:flex;
+    align-items:center;
+    gap: 10px;
+  }
+  .kicker .dot{
+    width:5px; height:5px; border-radius:50%;
+    background: var(--mercury);
+    flex:none;
+  }
+  .hero h1{
+    font-size: clamp(40px, 7vw, 64px);
+    line-height: 1.08;
+    font-weight: 400;
+    margin-bottom: 22px;
+  }
+  .hero .lede{
+    font-size: clamp(20px, 3vw, 25px);
+    line-height: 1.45;
+    max-width: 30ch;
+    margin-bottom: 30px;
+  }
+  .hero .lede em{ color: var(--mercury-dim); font-style: italic; }
+  .hero p.desc{
+    max-width: 56ch;
+    font-size: 16.5px;
+    color: var(--ink-faint);
+  }
+
+  /* ============================== SPECTRUM ============================== */
+  .spectrum{
+    padding: 8px 0 72px;
+  }
+  .spectrum .label-row{
+    display:flex;
+    justify-content:space-between;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+  }
+  .spectrum .track{
+    position: relative;
+    height: 26px;
+    background: var(--paper-alt);
+    border: 1px solid var(--ink);
+  }
+  .spectrum .fill{
+    position:absolute; inset:0;
+    background: var(--ink);
+    opacity: 0.06;
+  }
+  .spectrum .marker{
+    position:absolute;
+    top: -9px; bottom: -9px;
+    width: 2px;
+    background: var(--ink);
+  }
+  .spectrum .marker .flag{
+    position:absolute;
+    top: -34px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--mercury-dim);
+    font-weight: 600;
+  }
+  .spectrum .marker .dot{
+    position:absolute;
+    top: 50%; left: 50%;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--mercury);
+    border: 1px solid var(--ink);
+    transform: translate(-50%,-50%);
+  }
+  .spectrum .caption{
+    margin-top: 16px;
+    font-family:'Instrument Serif', Georgia, serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ink-soft);
+  }
+
+  /* ============================== SECTION SHELL ============================== */
+  section{ padding: 64px 0; border-top: 1px solid var(--rule); }
+  section > .wrap > .head{ margin-bottom: 40px; }
+  section h2{
+    font-family:'Gloock', Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(28px, 4vw, 36px);
+    text-wrap: balance;
+  }
+
+  /* ============================== PADRÕES (grid, sem numeração) ============================== */
+  .patterns{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+  .patterns .card{
+    background: var(--paper);
+    padding: 30px 26px;
+  }
+  .patterns .card .mark{ margin-bottom: 20px; }
+  .patterns .card h3{
+    font-family:'IBM Plex Serif', serif;
+    font-weight: 700;
+    font-size: 17px;
+    margin-bottom: 10px;
+  }
+  .patterns .card p{
+    font-size: 15px;
+    color: var(--ink-faint);
+    line-height: 1.6;
+  }
+
+  /* ============================== PROCESSO (sequência real → numerais) ============================== */
+  .process{ list-style:none; }
+  .process li{
+    display:grid;
+    grid-template-columns: 56px 1fr;
+    gap: 20px;
+    padding: 26px 0;
+    border-top: 1px solid var(--rule-light);
+  }
+  .process li:first-child{ border-top:none; }
+  .process .num{
+    font-family:'Gloock', Georgia, serif;
+    font-size: 26px;
+    color: var(--mercury-dim);
+  }
+  .process h3{
+    font-family:'IBM Plex Serif', serif;
+    font-weight: 700;
+    font-size: 17.5px;
+    margin-bottom: 6px;
+  }
+  .process p{
+    font-size: 15.5px;
+    color: var(--ink-faint);
+    max-width: 56ch;
+  }
+  .process .meta{
+    display:block;
+    margin-top: 8px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--mercury-dim);
+  }
+
+  /* ============================== CTA (negativo — dominância invertida de propósito) ============================== */
+  .cta{
+    background: var(--ink);
+    color: var(--paper);
+    border-top: none;
+  }
+  .cta .kicker{ color: var(--mercury); }
+  .cta h2{
+    font-family:'Gloock', Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(30px, 5vw, 42px);
+    margin-bottom: 18px;
+    text-wrap: balance;
+  }
+  .cta p{
+    max-width: 52ch;
+    font-size: 16.5px;
+    color: rgba(239,233,218,0.72);
+    margin-bottom: 34px;
+  }
+  .cta-row{
+    display:flex;
+    align-items:center;
+    gap: 22px;
+    flex-wrap: wrap;
+  }
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap: 10px;
+    background: var(--mercury);
+    color: var(--ink);
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 16px 30px;
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+  .btn:hover{ background:#EEC259; transform: translateY(-1px); }
+  .btn:focus-visible{ outline: 2px solid var(--paper); outline-offset: 3px; }
+  .cta .alt{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    color: rgba(239,233,218,0.6);
+  }
+
+  /* ============================== FOOTER ============================== */
+  footer{
+    padding: 34px 0 48px;
+    border-top: 1px solid rgba(239,233,218,0.14);
+    background: var(--ink);
+    color: rgba(239,233,218,0.55);
+  }
+  footer .wrap{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  footer a{ text-decoration:none; border-bottom: 1px solid rgba(239,233,218,0.3); }
+
+  @media (max-width: 680px){
+    .patterns{ grid-template-columns: 1fr; }
+    .process li{ grid-template-columns: 40px 1fr; }
+    .hero{ padding-top: 56px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brand">
+      <svg class="glyph" viewBox="0 0 14 16" aria-hidden="true">
+        <polygon points="7,0 14,4 14,12 7,16 0,12 0,4" fill="var(--ink)"/>
+      </svg>
+      <span class="name">TimeLabs</span>
+    </div>
+    <div class="tagline">Consultoria de IA &amp; software sob encomenda</div>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero" style="border-top:none; padding-bottom:0;">
+    <div class="wrap">
+      <p class="kicker"><span class="dot"></span>Codex Operandi · Apresentação</p>
+      <h1 class="font-display">Não é mágica.<br>É método.</h1>
+      <p class="lede">Devolvemos tempo pro seu negócio — <em>não importa o tamanho dele.</em></p>
+      <p class="desc">Automatizamos o que é repetitivo, integramos o que está espalhado e construímos sob medida o que falta. De quem toca o negócio sozinho a quem lidera um time de cinquenta, o método é o mesmo: entender a operação antes de propor qualquer ferramenta.</p>
+    </div>
+  </section>
+
+  <section class="spectrum" style="border-top:none;">
+    <div class="wrap">
+      <div class="label-row">
+        <span>Você, sozinho</span>
+        <span>Time de 50+</span>
+      </div>
+      <div class="track">
+        <div class="fill"></div>
+        <div class="marker" style="left:50%;">
+          <span class="flag">O método é o mesmo</span>
+          <span class="dot"></span>
+        </div>
+      </div>
+      <p class="caption">MEI, ME ou empresa média — atendemos pelo que a operação precisa, não pelo tamanho do CNPJ.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="head">
+        <p class="kicker"><span class="dot"></span>O padrão</p>
+        <h2>É quase sempre a mesma coisa que rouba o dia</h2>
+      </div>
+      <div class="patterns">
+        <div class="card">
+          <svg class="mark reactor" width="34" height="34" viewBox="-20 -20 40 40" aria-hidden="true">
+            <polygon class="hex" points="17,0 8.5,-14.7 -8.5,-14.7 -17,0 -8.5,14.7 8.5,14.7" stroke-width="1.4"/>
+            <circle class="core" r="5"/>
+            <circle class="core-ring" r="5" stroke-width="1"/>
+          </svg>
+          <h3>Planilha que devia ser sistema</h3>
+          <p>Controle de pedido, agenda ou estoque vivendo numa planilha que só uma pessoa sabe mexer direito.</p>
+        </div>
+        <div class="card">
+          <svg class="mark reactor" width="34" height="34" viewBox="-20 -20 40 40" aria-hidden="true">
+            <polygon class="hex" points="17,0 8.5,-14.7 -8.5,-14.7 -17,0 -8.5,14.7 8.5,14.7" stroke-width="1.4"/>
+            <circle class="core" r="5"/>
+            <circle class="core-ring" r="5" stroke-width="1"/>
+          </svg>
+          <h3>WhatsApp sem resposta automática</h3>
+          <p>Pergunta repetida, cliente esperando, e ninguém sobrando pra responder fora do horário.</p>
+        </div>
+        <div class="card">
+          <svg class="mark reactor" width="34" height="34" viewBox="-20 -20 40 40" aria-hidden="true">
+            <polygon class="hex" points="17,0 8.5,-14.7 -8.5,-14.7 -17,0 -8.5,14.7 8.5,14.7" stroke-width="1.4"/>
+            <circle class="core" r="5"/>
+            <circle class="core-ring" r="5" stroke-width="1"/>
+          </svg>
+          <h3>Dado espalhado, sem painel só</h3>
+          <p>Uma parte no caderno, outra no Instagram, outra na cabeça de quem toca o negócio.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="head">
+        <p class="kicker"><span class="dot"></span>Como trabalhamos</p>
+        <h2>Quatro passos, sem enrolação</h2>
+      </div>
+      <ol class="process">
+        <li>
+          <span class="num font-display">I</span>
+          <div>
+            <h3>Diagnóstico de 30 minutos</h3>
+            <p>Uma conversa pra entender a operação de verdade — sem apresentação de slide, sem venda.</p>
+          </div>
+        </li>
+        <li>
+          <span class="num font-display">II</span>
+          <div>
+            <h3>Plano do tamanho do seu negócio</h3>
+            <p>O que dá pra resolver com IA, o que vale construir sob medida, e o retorno esperado de cada frente.</p>
+            <span class="meta">Se não fizer sentido, a gente diz — e indica quem resolve melhor.</span>
+          </div>
+        </li>
+        <li>
+          <span class="num font-display">III</span>
+          <div>
+            <h3>Implementação</h3>
+            <p>Construímos e integramos direto no que você já usa — sem trocar sua operação por uma nova de cabeça pra baixo.</p>
+          </div>
+        </li>
+        <li>
+          <span class="num font-display">IV</span>
+          <div>
+            <h3>Acompanhamento</h3>
+            <p>Ajuste fino depois que está no ar. Automação que ninguém acompanha vira planilha de novo.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="wrap">
+      <p class="kicker"><span class="dot"></span>Próximo passo</p>
+      <h2 class="font-display">30 minutos pra mapear onde a operação perde tempo.</h2>
+      <p>Sem compromisso, sem proposta engessada. Se fizer sentido seguir, você sai da conversa com um plano — não com uma promessa.</p>
+      <div class="cta-row">
+        <a class="btn" href="https://cal.com/timelabs/30min">Agendar 30 minutos →</a>
+        <span class="alt">ou responda o e-mail que te trouxe aqui</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>TimeLabs · Automação e IA · Belo Horizonte, MG</span>
+    <span><a href="https://timelabsbr.com">timelabsbr.com</a> · (31) 99597-0472</span>
+  </div>
+</footer>
+
+</body>
+</html>
