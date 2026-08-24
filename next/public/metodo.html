@@ -5,12 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TimeLabs — Método</title>
 <meta name="description" content="Apresentação de uma página da TimeLabs — o que fazemos, como trabalhamos, e por que não importa o tamanho do seu negócio.">
+<meta name="color-scheme" content="light">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gloock&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Serif:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
   :root{
+    color-scheme: light;
     --paper:      #EFE9DA;
     --paper-alt:  #F8F4EA;
     --ink:        #2B2520;
@@ -107,10 +109,12 @@
   .sec-mesh .hx{
     fill: currentColor; fill-opacity: 0;
     stroke: currentColor; stroke-width: 0.5;
+    transition: fill 0.35s ease, fill-opacity 0.35s ease;
   }
   .sec-mesh .hx-shade{
     fill: currentColor; fill-opacity: 0.35;
     stroke: currentColor; stroke-width: 0.5;
+    transition: fill 0.35s ease, fill-opacity 0.35s ease;
   }
 
   /* ============================== HERO ============================== */
@@ -513,6 +517,11 @@
   (function () {
     var HEX_R = 24, HEX_W = HEX_R * Math.sqrt(3), ROW_H = HEX_R * 1.5;
     var NS = "http://www.w3.org/2000/svg";
+    var INTERACT_RADIUS = 140;
+    var INTERACT_RADIUS_SQ = INTERACT_RADIUS * INTERACT_RADIUS;
+    var INTERACT_BOOST = 0.14;
+    var FILL_LIGHT = "rgb(43, 37, 32)";
+    var FILL_DARK = "rgb(239, 233, 218)";
 
     function cellCenter(col, row) {
       var parity = ((row % 2) + 2) % 2;
@@ -546,6 +555,7 @@
       svg.setAttribute("preserveAspectRatio", "xMinYMin slice");
 
       var g = document.createElementNS(NS, "g");
+      var cellInfo = [];
       for (var r = -1; r <= rowEnd; r++) {
         for (var c = -1; c <= cols; c++) {
           var center = cellCenter(c, r);
@@ -555,16 +565,84 @@
           p.setAttribute("class", shaded ? "hx-shade" : "hx");
           p.setAttribute("points", hexPoints(center.cx, cy));
           g.appendChild(p);
+          cellInfo.push({ el: p, cx: center.cx, cy: cy });
         }
       }
       svg.appendChild(g);
       container.innerHTML = "";
       container.appendChild(svg);
+      container._cellInfo = cellInfo;
+    }
+
+    function attachInteraction(container) {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      if (window.matchMedia("(pointer: coarse)").matches) return;
+
+      var section = container.closest("section") || container.parentElement;
+      if (!section || section._meshInteractionAttached) return;
+      section._meshInteractionAttached = true;
+
+      var raf = 0;
+      var active = [];
+      var fillColor = container.classList.contains("dark") ? FILL_DARK : FILL_LIGHT;
+
+      function clearActive() {
+        for (var i = 0; i < active.length; i++) {
+          active[i].style.fill = "";
+          active[i].style.fillOpacity = "";
+        }
+        active = [];
+      }
+
+      section.addEventListener("mousemove", function (e) {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(function () {
+          var svg = container.querySelector("svg");
+          var cells = container._cellInfo;
+          if (!svg || !cells) return;
+
+          var pt = svg.createSVGPoint();
+          pt.x = e.clientX;
+          pt.y = e.clientY;
+          var ctm = svg.getScreenCTM();
+          if (!ctm) return;
+          var svgPt = pt.matrixTransform(ctm.inverse());
+
+          var newActive = [];
+          for (var i = 0; i < cells.length; i++) {
+            var cell = cells[i];
+            var dx = cell.cx - svgPt.x, dy = cell.cy - svgPt.y;
+            var distSq = dx * dx + dy * dy;
+            if (distSq < INTERACT_RADIUS_SQ) {
+              var t = Math.sqrt(distSq) / INTERACT_RADIUS;
+              var boost = INTERACT_BOOST * (1 - t) * (1 - t);
+              cell.el.style.fill = fillColor;
+              cell.el.style.fillOpacity = String(boost);
+              newActive.push(cell.el);
+            }
+          }
+          for (var j = 0; j < active.length; j++) {
+            if (newActive.indexOf(active[j]) === -1) {
+              active[j].style.fill = "";
+              active[j].style.fillOpacity = "";
+            }
+          }
+          active = newActive;
+        });
+      });
+
+      section.addEventListener("mouseleave", function () {
+        cancelAnimationFrame(raf);
+        clearActive();
+      });
     }
 
     function init() {
       var meshes = document.querySelectorAll(".sec-mesh");
-      for (var i = 0; i < meshes.length; i++) buildMesh(meshes[i]);
+      for (var i = 0; i < meshes.length; i++) {
+        buildMesh(meshes[i]);
+        attachInteraction(meshes[i]);
+      }
     }
 
     if (document.readyState === "loading") {
