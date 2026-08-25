@@ -58,7 +58,10 @@
   header{
     padding: 40px 0 28px;
     border-bottom: 1px solid var(--rule);
+    position: relative;
+    overflow: hidden;
   }
+  header .wrap, footer .wrap{ position: relative; z-index: 1; }
   header .wrap{
     display:flex;
     align-items:center;
@@ -80,17 +83,11 @@
   }
   header .tagline{
     font-family:'IBM Plex Mono', monospace;
-    font-size: 10.5px;
+    font-size: 11.5px;
     letter-spacing: 1.5px;
     color: var(--ink-soft);
     text-transform: uppercase;
   }
-
-  /* ============================== HEX MARK ============================== */
-  .reactor{ display:block; }
-  .reactor .hex{ fill:none; stroke: var(--ink); }
-  .reactor .core{ fill: var(--mercury); }
-  .reactor .core-ring{ fill:none; stroke: var(--ink); }
 
   /* ============================== HEX MESH (fundo) ==============================
      Mesmo grid/hash do site principal (next/components/ui/hex-grid.ts),
@@ -123,7 +120,7 @@
   }
   .kicker{
     font-family:'IBM Plex Mono', monospace;
-    font-size: 11px;
+    font-size: 12.5px;
     letter-spacing: 6px;
     text-transform: uppercase;
     color: var(--mercury-dim);
@@ -159,12 +156,15 @@
   /* ============================== SPECTRUM ============================== */
   .spectrum{
     padding: 8px 0 72px;
+    position: relative;
+    overflow: hidden;
   }
+  .spectrum > .wrap{ position: relative; z-index: 1; }
   .spectrum .label-row{
     display:flex;
     justify-content:space-between;
     font-family:'IBM Plex Mono', monospace;
-    font-size: 10.5px;
+    font-size: 12px;
     letter-spacing: 1.5px;
     text-transform: uppercase;
     color: var(--ink-soft);
@@ -194,7 +194,7 @@
     transform: translateX(-50%);
     white-space: nowrap;
     font-family:'IBM Plex Mono', monospace;
-    font-size: 10px;
+    font-size: 11.5px;
     letter-spacing: 1.5px;
     text-transform: uppercase;
     color: var(--mercury-dim);
@@ -239,7 +239,7 @@
     background: var(--paper);
     padding: 30px 26px;
   }
-  .patterns .card .mark{ margin-bottom: 20px; }
+  .patterns .card .mark{ display:block; margin-bottom: 20px; }
   .patterns .card h3{
     font-family:'IBM Plex Serif', serif;
     font-weight: 700;
@@ -247,7 +247,7 @@
     margin-bottom: 10px;
   }
   .patterns .card p{
-    font-size: 15px;
+    font-size: 16px;
     color: var(--ink-faint);
     line-height: 1.6;
   }
@@ -274,7 +274,7 @@
     margin-bottom: 6px;
   }
   .process p{
-    font-size: 15.5px;
+    font-size: 16.5px;
     color: var(--ink-faint);
     max-width: 56ch;
   }
@@ -282,7 +282,7 @@
     display:block;
     margin-top: 8px;
     font-family:'IBM Plex Mono', monospace;
-    font-size: 10.5px;
+    font-size: 12px;
     letter-spacing: 1.5px;
     text-transform: uppercase;
     color: var(--mercury-dim);
@@ -321,7 +321,7 @@
     background: var(--mercury);
     color: var(--ink);
     font-family:'IBM Plex Mono', monospace;
-    font-size: 12.5px;
+    font-size: 13.5px;
     letter-spacing: 2px;
     text-transform: uppercase;
     font-weight: 600;
@@ -333,7 +333,7 @@
   .btn:focus-visible{ outline: 2px solid var(--paper); outline-offset: 3px; }
   .cta .alt{
     font-family:'IBM Plex Mono', monospace;
-    font-size: 12px;
+    font-size: 13.5px;
     letter-spacing: 0.5px;
     color: rgba(239,233,218,0.6);
   }
@@ -344,6 +344,8 @@
     border-top: 1px solid rgba(239,233,218,0.14);
     background: var(--ink);
     color: rgba(239,233,218,0.55);
+    position: relative;
+    overflow: hidden;
   }
   footer .wrap{
     display:flex;
@@ -352,7 +354,7 @@
     gap: 16px;
     flex-wrap: wrap;
     font-family:'IBM Plex Mono', monospace;
-    font-size: 10.5px;
+    font-size: 12px;
     letter-spacing: 2px;
     text-transform: uppercase;
   }
@@ -368,6 +370,7 @@
 <body>
 
 <header>
+  <div class="sec-mesh" aria-hidden="true" data-density="0.08"></div>
   <div class="wrap">
     <div class="brand">
       <svg class="glyph" viewBox="0 0 14 16" aria-hidden="true">
@@ -392,6 +395,7 @@
   </section>
 
   <section class="spectrum" style="border-top:none;">
+    <div class="sec-mesh" aria-hidden="true" data-density="0.1"></div>
     <div class="wrap">
       <div class="label-row">
         <span>Você, sozinho</span>
@@ -417,28 +421,35 @@
       </div>
       <div class="patterns">
         <div class="card">
-          <svg class="mark reactor" width="34" height="34" viewBox="-20 -20 40 40" aria-hidden="true">
-            <polygon class="hex" points="17,0 8.5,-14.7 -8.5,-14.7 -17,0 -8.5,14.7 8.5,14.7" stroke-width="1.4"/>
-            <circle class="core" r="5"/>
-            <circle class="core-ring" r="5" stroke-width="1"/>
+          <svg class="mark" width="34" height="34" viewBox="-20 -20 40 40" aria-hidden="true">
+            <rect x="-14" y="-14" width="28" height="28" fill="none" stroke="var(--ink)" stroke-width="1.4"/>
+            <line x1="-14" y1="-4.67" x2="14" y2="-4.67" stroke="var(--ink)" stroke-width="1"/>
+            <line x1="-14" y1="4.67" x2="14" y2="4.67" stroke="var(--ink)" stroke-width="1"/>
+            <line x1="-4.67" y1="-14" x2="-4.67" y2="14" stroke="var(--ink)" stroke-width="1"/>
+            <line x1="4.67" y1="-14" x2="4.67" y2="14" stroke="var(--ink)" stroke-width="1"/>
+            <rect x="4.67" y="-14" width="9.33" height="9.33" fill="var(--mercury)"/>
           </svg>
           <h3>Planilha que devia ser sistema</h3>
           <p>Controle de pedido, agenda ou estoque vivendo numa planilha que só uma pessoa sabe mexer direito.</p>
         </div>
         <div class="card">
-          <svg class="mark reactor" width="34" height="34" viewBox="-20 -20 40 40" aria-hidden="true">
-            <polygon class="hex" points="17,0 8.5,-14.7 -8.5,-14.7 -17,0 -8.5,14.7 8.5,14.7" stroke-width="1.4"/>
-            <circle class="core" r="5"/>
-            <circle class="core-ring" r="5" stroke-width="1"/>
+          <svg class="mark" width="34" height="34" viewBox="-20 -20 40 40" aria-hidden="true">
+            <rect x="-15" y="-13" width="30" height="19" fill="none" stroke="var(--ink)" stroke-width="1.4"/>
+            <polygon points="-9,6 -9,15 -1,6" fill="none" stroke="var(--ink)" stroke-width="1.4"/>
+            <line x1="-9" y1="-6" x2="9" y2="-6" stroke="var(--ink)" stroke-width="1"/>
+            <line x1="-9" y1="-1" x2="3" y2="-1" stroke="var(--ink)" stroke-width="1"/>
+            <circle cx="11" cy="-15" r="3.5" fill="var(--mercury)"/>
           </svg>
           <h3>WhatsApp sem resposta automática</h3>
           <p>Pergunta repetida, cliente esperando, e ninguém sobrando pra responder fora do horário.</p>
         </div>
         <div class="card">
-          <svg class="mark reactor" width="34" height="34" viewBox="-20 -20 40 40" aria-hidden="true">
-            <polygon class="hex" points="17,0 8.5,-14.7 -8.5,-14.7 -17,0 -8.5,14.7 8.5,14.7" stroke-width="1.4"/>
-            <circle class="core" r="5"/>
-            <circle class="core-ring" r="5" stroke-width="1"/>
+          <svg class="mark" width="34" height="34" viewBox="-20 -20 40 40" aria-hidden="true">
+            <rect x="-16" y="-16" width="9" height="9" fill="none" stroke="var(--ink)" stroke-width="1.2"/>
+            <rect x="3" y="-16" width="9" height="9" fill="none" stroke="var(--ink)" stroke-width="1.2"/>
+            <rect x="-16" y="3" width="9" height="9" fill="none" stroke="var(--ink)" stroke-width="1.2"/>
+            <rect x="1" y="1" width="15" height="15" fill="none" stroke="var(--ink)" stroke-width="1.6"/>
+            <circle cx="8.5" cy="8.5" r="2.5" fill="var(--mercury)"/>
           </svg>
           <h3>Dado espalhado, sem painel só</h3>
           <p>Uma parte no caderno, outra no Instagram, outra na cabeça de quem toca o negócio.</p>
@@ -504,6 +515,7 @@
 </main>
 
 <footer>
+  <div class="sec-mesh dark" aria-hidden="true" data-density="0.08"></div>
   <div class="wrap">
     <span>TimeLabs · Automação e IA · Belo Horizonte, MG</span>
     <span><a href="https://timelabs.com.br">timelabs.com.br</a> · (31) 99597-0472</span>
