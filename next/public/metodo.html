@@ -8,7 +8,7 @@
 <meta name="color-scheme" content="light">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Serif:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
   :root{
@@ -31,7 +31,7 @@
   body{
     background: var(--paper);
     color: var(--ink);
-    font-family:'IBM Plex Serif', Georgia, serif;
+    font-family:'IBM Plex Sans', Arial, sans-serif;
     font-size: 17px;
     line-height: 1.7;
     -webkit-font-smoothing: antialiased;
@@ -155,11 +155,8 @@
 
   /* ============================== SPECTRUM ============================== */
   .spectrum{
-    padding: 8px 0 72px;
-    position: relative;
-    overflow: hidden;
+    padding: 56px 0 72px;
   }
-  .spectrum > .wrap{ position: relative; z-index: 1; }
   .spectrum .label-row{
     display:flex;
     justify-content:space-between;
@@ -241,7 +238,7 @@
   }
   .patterns .card .mark{ display:block; margin-bottom: 20px; }
   .patterns .card h3{
-    font-family:'IBM Plex Serif', serif;
+    font-family:'IBM Plex Sans', Arial, sans-serif;
     font-weight: 700;
     font-size: 17px;
     margin-bottom: 10px;
@@ -268,7 +265,7 @@
     color: var(--mercury-dim);
   }
   .process h3{
-    font-family:'IBM Plex Serif', serif;
+    font-family:'IBM Plex Sans', Arial, sans-serif;
     font-weight: 700;
     font-size: 17.5px;
     margin-bottom: 6px;
@@ -395,7 +392,6 @@
   </section>
 
   <section class="spectrum" style="border-top:none;">
-    <div class="sec-mesh" aria-hidden="true" data-density="0.1"></div>
     <div class="wrap">
       <div class="label-row">
         <span>Você, sozinho</span>
