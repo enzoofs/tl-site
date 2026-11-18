@@ -291,7 +291,7 @@ export default function SeuBlocoPage() {
                   </Button>
                 </div>
                 <p style={{ marginTop: "var(--sp-3)", color: "var(--fg-soft)", fontSize: 14 }}>
-                  Já em uso por blocos de carnaval.
+                  Já em uso no Abalô-Caxi e no Lavô Tá Novo.
                 </p>
               </div>
               <Celular
