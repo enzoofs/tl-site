@@ -9,6 +9,7 @@
 - [Soluções](https://timelabs.com.br/solucoes): logística, saúde suplementar, pequenas e médias empresas, indústria e laboratórios, automação de processos.
 - [Grifo](https://timelabs.com.br/grifo): produto próprio que mede como uma marca é citada no ChatGPT, no Gemini e no Google.
 - [Projetos](https://timelabs.com.br/projetos): produtos próprios da TimeLabs.
+- [Seu Bloco](https://timelabs.com.br/seubloco): sistema de presença de ensaios por QR code para blocos de carnaval (seubloco.com).
 - [Blog](https://timelabs.com.br/blog): artigos sobre IA, automação e visibilidade de marca.
 - [Sobre](https://timelabs.com.br/sobre): quem são os fundadores.
 

@@ -39,8 +39,8 @@ const PROJETOS: Projeto[] = [
     situacao: "No ar",
     texto:
       "Plataforma para blocos de carnaval organizarem ensaios, presença e cobrança, com acesso próprio para cada bloco.",
-    href: "https://seubloco.com",
-    rotulo: "Abrir o Seu Bloco",
+    href: "/seubloco",
+    rotulo: "Conhecer o Seu Bloco",
   },
   {
     nome: "Gerador de Conteúdo",
