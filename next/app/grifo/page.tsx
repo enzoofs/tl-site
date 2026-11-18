@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import HexMesh from "@/components/ui/hex-mesh";
@@ -45,6 +46,20 @@ const entregas = [
   "Plano de ações priorizado, com guias",
   "Artigos escritos e revisados, com blog hospedado se você não tiver um",
   "Acompanhamento dos resultados, mês a mês",
+];
+
+// Prints do sistema (empresa de exemplo, dados fictícios)
+const prints = [
+  {
+    src: "/assets/prints/grifo/radar.webp",
+    alt: "Tela do radar do Grifo mostrando em quantas respostas das IAs a empresa de exemplo foi citada",
+    legenda: "Radar: em quantas respostas das IAs a sua marca é citada.",
+  },
+  {
+    src: "/assets/prints/grifo/plano-de-acoes.webp",
+    alt: "Tela do plano de ações do Grifo com guias passo a passo e a lista de ações por prioridade",
+    legenda: "Plano de ações: o que ajustar, em ordem de impacto, com guia de como fazer.",
+  },
 ];
 
 const planos = [
@@ -240,6 +255,38 @@ export default function GrifoPage() {
               <li key={e}>{e}</li>
             ))}
           </ul>
+        </Secao>
+
+        {/* O SISTEMA POR DENTRO: prints com dados fictícios (nenhum cliente real) */}
+        <Secao fundo="var(--bg)">
+          <p className="eyebrow">O sistema por dentro</p>
+          <h2 className="hl-gloock hl-mid" style={{ marginBottom: "var(--sp-2)" }}>
+            Veja como o Grifo mostra o resultado.
+          </h2>
+          <p style={{ color: "var(--fg-soft)", margin: "0 0 var(--sp-4)" }}>
+            Telas reais do sistema, com uma empresa de exemplo e dados fictícios.
+          </p>
+          <div style={grade}>
+            {prints.map((p) => (
+              <figure key={p.src} style={{ margin: 0 }}>
+                <Image
+                  src={p.src}
+                  alt={p.alt}
+                  width={1600}
+                  height={1000}
+                  sizes="(min-width: 900px) 520px, 100vw"
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    border: "1px solid var(--paper-soft)",
+                  }}
+                />
+                <figcaption style={{ marginTop: "var(--sp-1)", color: "var(--fg-soft)" }}>
+                  {p.legenda}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
         </Secao>
 
         {/* AGÊNCIAS */}

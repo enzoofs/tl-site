@@ -37,9 +37,9 @@ const ibmPlexMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "TimeLabs — consultoria de IA e software sob encomenda",
+  title: "TimeLabs — consultoria de IA e software sob encomenda em Belo Horizonte",
   description:
-    "TimeLabs — consultoria de IA e desenvolvimento de software sob encomenda. Mapeamos onde vale automatizar com IA e construímos o sistema que sua operação precisa.",
+    "TimeLabs — consultoria de IA e desenvolvimento de software sob encomenda em Belo Horizonte (MG). Mapeamos onde vale automatizar com IA e construímos o sistema que sua operação precisa.",
   metadataBase: new URL("https://timelabs.com.br"),
   alternates: {
     canonical: "/",
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "TimeLabs — consultoria de IA e software sob encomenda",
+    title: "TimeLabs — consultoria de IA e software sob encomenda em Belo Horizonte",
     description:
       "Mapeamos onde vale automatizar com IA e construímos o sistema que sua operação precisa — sob medida, sem plataforma genérica.",
     url: "https://timelabs.com.br",
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "TimeLabs — consultoria de IA e software sob encomenda",
+    title: "TimeLabs — consultoria de IA e software sob encomenda em Belo Horizonte",
     description:
       "Mapeamos onde vale automatizar com IA e construímos o sistema que sua operação precisa — sob medida, sem plataforma genérica.",
   },
@@ -120,6 +120,10 @@ export default function RootLayout({
               logo: "https://timelabs.com.br/assets/selo.svg",
               description:
                 "Consultoria de IA e desenvolvimento de software sob encomenda. Devolvemos tempo ao seu negócio automatizando com IA e construindo o sistema que a operação precisa.",
+              // Ajuda as IAs a não confundir a TimeLabs de BH com empresas de nome parecido
+              disambiguatingDescription:
+                "TimeLabs de Belo Horizonte (MG), Brasil, consultoria de IA e software sob encomenda. Sem relação com outras empresas de nome parecido.",
+              areaServed: { "@type": "City", name: "Belo Horizonte" },
               address: {
                 "@type": "PostalAddress",
                 addressLocality: "Belo Horizonte",

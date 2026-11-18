@@ -6,6 +6,7 @@ import { Operacoes } from "@/components/sections/operacoes";
 import { Metodo } from "@/components/sections/metodo";
 import { Resultados } from "@/components/sections/resultados";
 import { Integracoes } from "@/components/sections/integracoes";
+import { FaqHome } from "@/components/sections/faq-home";
 import { CtaFinal } from "@/components/sections/cta-final";
 import Halo from "@/components/ui/halo";
 import { WhatsAppFloat } from "@/components/ui/whatsapp-float";
@@ -25,6 +26,7 @@ export default function Home() {
         <Metodo />
         <Resultados />
         <Integracoes />
+        <FaqHome />
         <CtaFinal />
       </main>
       <Footer />
