@@ -40,7 +40,7 @@ export function Hero() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, ease }}
         >
-          IA & software sob encomenda
+          IA & software sob encomenda · Belo Horizonte
         </motion.p>
 
         <motion.div
@@ -48,7 +48,10 @@ export function Hero() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, ease }}
         >
-          <h1 aria-label="TimeLabs" className="wordmark">
+          <h1
+            aria-label="TimeLabs, consultoria de IA e software sob encomenda em Belo Horizonte"
+            className="wordmark"
+          >
             t
             <span className="wordmark-i">
               ı

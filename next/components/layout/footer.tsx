@@ -71,6 +71,10 @@ export function Footer() {
             <span className="footer-sep" aria-hidden="true">·</span>
             <FooterLink href="https://instagram.com/timelabsbr">instagram</FooterLink>
             <span className="footer-sep" aria-hidden="true">·</span>
+            <FooterLink href="/solucoes">soluções</FooterLink>
+            <span className="footer-sep" aria-hidden="true">·</span>
+            <FooterLink href="/blog">blog</FooterLink>
+            <span className="footer-sep" aria-hidden="true">·</span>
             <FooterLink href="/privacidade">privacidade</FooterLink>
             <span className="footer-sep" aria-hidden="true">·</span>
             <FooterLink href="/termos">termos</FooterLink>

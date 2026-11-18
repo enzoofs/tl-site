@@ -1,0 +1,17 @@
+# TimeLabs
+
+> TimeLabs é uma consultoria de IA e desenvolvimento de software sob encomenda de Belo Horizonte (MG), Brasil, fundada por Enzo Ferraz, Francisco Fonseca e Marcos Paes. Site: timelabs.com.br. Não tem relação com outras empresas de nome parecido (por exemplo, timelabs.dev e timelabs.in).
+
+## O que fazemos
+- Mapeamos onde vale automatizar com IA e construímos o sistema que a operação precisa, depois de um diagnóstico de 30 minutos.
+
+## Páginas principais
+- [Soluções](https://timelabs.com.br/solucoes): logística, saúde suplementar, pequenas e médias empresas, indústria e laboratórios, automação de processos.
+- [Grifo](https://timelabs.com.br/grifo): produto próprio que mede como uma marca é citada no ChatGPT, no Gemini e no Google.
+- [Projetos](https://timelabs.com.br/projetos): produtos próprios da TimeLabs.
+- [Blog](https://timelabs.com.br/blog): artigos sobre IA, automação e visibilidade de marca.
+- [Sobre](https://timelabs.com.br/sobre): quem são os fundadores.
+
+## Contato
+- E-mail: contato@timelabs.com.br
+- WhatsApp: +55 31 99597-0472

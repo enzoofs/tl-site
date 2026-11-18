@@ -299,6 +299,11 @@ export default function SobrePage() {
                   processo crítico não depende de alguém se lembrar de
                   fazer.
                 </p>
+                <p>
+                  A TimeLabs fica em Belo Horizonte (MG) e atende pelo site
+                  timelabs.com.br. Não temos relação com outras empresas de
+                  nome parecido, como a timelabs.dev ou a timelabs.in.
+                </p>
               </div>
             </div>
           </div>
